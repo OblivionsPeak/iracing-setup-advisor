@@ -170,9 +170,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
 /* ── Meta bar ── */
 .meta-bar{background:#161616;border-top:1px solid #222;border-bottom:1px solid #222;
-          padding:9px 28px;font-size:12px;color:#555;display:flex;gap:24px;flex-wrap:wrap}
+          padding:9px 28px;font-size:12px;color:#555;display:flex;gap:24px;flex-wrap:wrap;align-items:center}
 .meta-bar b{color:#999}
 .meta-car-track{font-size:12px;color:#2196F3;font-weight:600}
+.btn-reset{margin-left:auto;background:#2a2a2a;border:1px solid #3a3a3a;color:#ccc;
+           padding:5px 14px;border-radius:6px;font-size:12px;cursor:pointer}
+.btn-reset:hover{background:#333;color:#fff}
 
 /* ── Page layout ── */
 .page{max-width:980px;margin:0 auto;padding:24px 28px}
@@ -318,6 +321,13 @@ function setStatus(msg) {
   el.textContent = msg;
 }
 
+function reset() {
+  document.getElementById('results').style.display    = 'none';
+  document.getElementById('upload-wrap').style.display = '';
+  document.getElementById('fi').value = '';
+  setStatus('');
+}
+
 // ── Rendering ─────────────────────────────────────────────────────────────────
 function tempClass(t) {
   return t < 75 ? 'tc-cold' : t < 95 ? 'tc-ok' : t < 110 ? 'tc-warm' : 'tc-hot';
@@ -391,6 +401,7 @@ function render(data) {
     ${dur  ? `<div>Duration: <b>${Math.floor(dur/60)}m ${dur%60}s</b></div>` : ''}
     ${topv ? `<div>Top speed: <b>${topv} km/h</b></div>` : ''}
     <div>Sample rate: <b>${m.tick_rate || '?'} Hz</b></div>
+    <button class="btn-reset" onclick="reset()">&#8592; Analyse another file</button>
   </div>
   <div class="page">
     <div class="section-label">Tyre temperatures &amp; hot pressures</div>
