@@ -1,0 +1,9 @@
+{
+  "name": "Ligier JS F4",
+  "class": "F4",
+  "target_hot_psi": { "LF": 22.0, "RF": 22.0, "LR": 21.0, "RR": 21.0 },
+  "temp_min": 70,
+  "temp_max": 90,
+  "rear_weight_bias_c": 0.0,
+  "notes": "Open-wheel formula car — runs significantly lower pressures than GT. Tyres are very sensitive to temperature; narrow optimal window. Symmetric weight distribution so no natural front-rear temp bias."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Red Bull Ring",
+  "short": "Red Bull Ring",
+  "country": "Austria",
+  "sectors": [
+    { "name": "S1 — T1–T3 (Remus & Lienz corners)",     "start": 0.00, "end": 0.35 },
+    { "name": "S2 — T4–T7 (Schlossgold & Rindt curve)", "start": 0.35, "end": 0.68 },
+    { "name": "S3 — T8–T10 (Jochen Rindt to finish)",   "start": 0.68, "end": 1.00 }
+  ]
+}
