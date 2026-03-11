@@ -1,0 +1,9 @@
+{
+  "name": "Audi R8 LMS GT3 EVO II",
+  "class": "GT3",
+  "target_hot_psi": { "LF": 28.5, "RF": 28.5, "LR": 28.5, "RR": 28.5 },
+  "temp_min": 80,
+  "temp_max": 100,
+  "rear_weight_bias_c": 3.0,
+  "notes": "Mid-engine with longitudinal layout — well-balanced tyre loads"
+}

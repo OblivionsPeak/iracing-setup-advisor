@@ -1,0 +1,10 @@
+{
+  "name": "Brands Hatch",
+  "short": "Brands Hatch",
+  "country": "UK",
+  "sectors": [
+    { "name": "S1 — Paddock Hill to Druids",             "start": 0.00, "end": 0.28 },
+    { "name": "S2 — Graham Hill Bend to Hawthorn",       "start": 0.28, "end": 0.60 },
+    { "name": "S3 — Clark/Stirlings/Surtees to finish",  "start": 0.60, "end": 1.00 }
+  ]
+}

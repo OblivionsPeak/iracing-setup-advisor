@@ -1,0 +1,10 @@
+{
+  "name": "Silverstone Circuit",
+  "short": "Silverstone",
+  "country": "UK",
+  "sectors": [
+    { "name": "S1 — Copse to Maggots entry",               "start": 0.00, "end": 0.33 },
+    { "name": "S2 — Maggots/Becketts/Chapel to Stowe",     "start": 0.33, "end": 0.65 },
+    { "name": "S3 — Vale/Club to finish",                  "start": 0.65, "end": 1.00 }
+  ]
+}

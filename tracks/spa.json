@@ -1,0 +1,10 @@
+{
+  "name": "Circuit de Spa-Francorchamps",
+  "short": "Spa",
+  "country": "Belgium",
+  "sectors": [
+    { "name": "S1 — La Source to Eau Rouge/Raidillon", "start": 0.00, "end": 0.28 },
+    { "name": "S2 — Kemmel straight to Pouhon",        "start": 0.28, "end": 0.62 },
+    { "name": "S3 — Fagnes to Bus Stop chicane",       "start": 0.62, "end": 1.00 }
+  ]
+}

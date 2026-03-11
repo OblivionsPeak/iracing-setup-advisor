@@ -1,0 +1,9 @@
+{
+  "name": "Mazda MX-5 Cup",
+  "class": "Cup",
+  "target_hot_psi": { "LF": 30.0, "RF": 30.0, "LR": 29.5, "RR": 29.5 },
+  "temp_min": 70,
+  "temp_max": 90,
+  "rear_weight_bias_c": 1.0,
+  "notes": "Lightweight RWD — limited setup adjustability; tyre management is key"
+}

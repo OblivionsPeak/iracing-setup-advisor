@@ -1,0 +1,10 @@
+{
+  "name": "Autodromo Nazionale Monza",
+  "short": "Monza",
+  "country": "Italy",
+  "sectors": [
+    { "name": "S1 — T1–T2 chicane to Curva Grande", "start": 0.00, "end": 0.28 },
+    { "name": "S2 — Lesmo 1 & 2 through Ascari",    "start": 0.28, "end": 0.68 },
+    { "name": "S3 — Parabolica to finish",           "start": 0.68, "end": 1.00 }
+  ]
+}

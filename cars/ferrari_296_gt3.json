@@ -1,0 +1,9 @@
+{
+  "name": "Ferrari 296 GT3",
+  "class": "GT3",
+  "target_hot_psi": { "LF": 28.5, "RF": 28.5, "LR": 28.5, "RR": 28.5 },
+  "temp_min": 80,
+  "temp_max": 100,
+  "rear_weight_bias_c": 3.0,
+  "notes": "Mid-engine layout — relatively balanced tyre loading front to rear"
+}

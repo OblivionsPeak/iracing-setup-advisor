@@ -1,0 +1,10 @@
+{
+  "name": "Virginia International Raceway",
+  "short": "VIR",
+  "country": "USA",
+  "sectors": [
+    { "name": "S1 — Oak Tree to Hog Pen",          "start": 0.00, "end": 0.33 },
+    { "name": "S2 — Climbing Esses to Roller Coaster", "start": 0.33, "end": 0.66 },
+    { "name": "S3 — South Bend to finish",          "start": 0.66, "end": 1.00 }
+  ]
+}
