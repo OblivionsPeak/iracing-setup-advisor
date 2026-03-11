@@ -1,0 +1,9 @@
+{
+  "name": "BMW M4 GT4",
+  "class": "GT4",
+  "target_hot_psi": { "LF": 29.0, "RF": 29.0, "LR": 29.5, "RR": 29.5 },
+  "temp_min": 75,
+  "temp_max": 95,
+  "rear_weight_bias_c": 2.0,
+  "notes": "Front-engine RWD — well-balanced GT4 with good mechanical grip. Fronts can overheat in heavy braking zones; watch inner-outer spread on front axle."
+}

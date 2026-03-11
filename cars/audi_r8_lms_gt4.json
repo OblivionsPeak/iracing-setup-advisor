@@ -1,0 +1,9 @@
+{
+  "name": "Audi R8 LMS GT4",
+  "class": "GT4",
+  "target_hot_psi": { "LF": 29.0, "RF": 29.0, "LR": 29.0, "RR": 29.0 },
+  "temp_min": 75,
+  "temp_max": 95,
+  "rear_weight_bias_c": 3.0,
+  "notes": "Mid-engine — very neutral tyre loading, one of the most forgiving GT4 cars. Equal front and rear target pressures suit the balanced weight distribution."
+}

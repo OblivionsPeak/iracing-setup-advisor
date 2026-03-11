@@ -1,0 +1,9 @@
+{
+  "name": "Dallara P217 LMP2",
+  "class": "LMP2",
+  "target_hot_psi": { "LF": 27.5, "RF": 27.5, "LR": 28.0, "RR": 28.0 },
+  "temp_min": 80,
+  "temp_max": 105,
+  "rear_weight_bias_c": 2.0,
+  "notes": "Open prototype — much higher aero and cornering loads than GT. Tyres heat quickly; front aero balance is critical. Runs slightly lower pressures than GT3 due to Michelin LMP compound."
+}
