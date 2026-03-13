@@ -519,14 +519,33 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
     # ── 13. Individual lap times ──────────────────────────────────────────────
     if lap is not None and lap_time_ch is not None:
         _lap_int = lap.astype(np.int32)
-        changes  = np.where(np.diff(_lap_int) > 0)[0] + 1
+        max_lap  = int(np.max(_lap_int))
         laps_list = []
-        for idx in changes:
-            lap_num  = int(_lap_int[idx]) - 1   # lap that just completed
-            lt       = float(lap_time_ch[idx])
-            if lap_num >= 1 and 20.0 < lt < 600.0:
+        for lap_num in range(1, max_lap + 1):
+            # LapLastLapTime holds lap_num's time while Lap == lap_num + 1.
+            # Read from the middle of that period to avoid boundary glitches
+            # where the channel hasn't updated yet.
+            in_next = np.where(_lap_int == lap_num + 1)[0]
+            if len(in_next) == 0:
+                continue
+            mid_idx = in_next[len(in_next) // 2]
+            lt = float(lap_time_ch[mid_idx])
+            if 20.0 < lt < 600.0:
                 laps_list.append({'lap': lap_num, 'time_s': round(lt, 3)})
         if laps_list:
             out['lap_times'] = laps_list
+        # Debug: always include channel availability and raw sample for diagnosis
+        out['_lap_debug'] = {
+            'has_lap_ch':     True,
+            'has_laptime_ch': True,
+            'max_lap':        max_lap,
+            'laps_found':     len(laps_list),
+            'sample_lt':      round(float(lap_time_ch[len(lap_time_ch) // 2]), 3),
+        }
+    else:
+        out['_lap_debug'] = {
+            'has_lap_ch':     lap is not None,
+            'has_laptime_ch': lap_time_ch is not None,
+        }
 
     return out

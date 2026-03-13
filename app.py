@@ -837,6 +837,7 @@ function render(data) {
     ${s.peak_lat_g ? `<div>Peak lat G: <b>${s.peak_lat_g}g</b></div>` : ''}
     ${s.peak_brake_g ? `<div>Peak brake G: <b>${s.peak_brake_g}g</b></div>` : ''}
     <div>Sample rate: <b>${m.tick_rate || '?'} Hz</b></div>
+    ${data._lap_debug ? `<div style="color:#555;font-size:11px" title="${JSON.stringify(data._lap_debug)}">Laps extracted: <b style="color:${(data._lap_debug.laps_found||0)>0?'#4caf50':'#f44336'}">${data._lap_debug.laps_found ?? '?'}</b></div>` : ''}
     <button class="btn-reset" onclick="reset()">&#8592; Analyse another file</button>
   </div>
   <div class="page">
