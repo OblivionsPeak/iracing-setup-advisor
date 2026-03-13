@@ -1,0 +1,10 @@
+{
+  "name": "Dallara IR18 (IndyCar)",
+  "class": "IndyCar",
+  "iracing_car_path": ["dallaraIR18", "dallara_ir18"],
+  "target_hot_psi": { "LF": 12.0, "RF": 12.0, "LR": 12.0, "RR": 12.0 },
+  "temp_min": 70,
+  "temp_max": 100,
+  "rear_weight_bias_c": 4.0,
+  "notes": "Spec IndyCar — low tyre pressures; configs vary significantly road vs oval"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Super Formula SF23",
+  "class": "Super Formula",
+  "iracing_car_path": ["super_formula_sf23", "dallarasf23"],
+  "target_hot_psi": { "LF": 20.5, "RF": 20.5, "LR": 18.5, "RR": 18.5 },
+  "temp_min": 80,
+  "temp_max": 100,
+  "rear_weight_bias_c": 3.0,
+  "notes": "Japanese Super Formula — high downforce, Yokohama tyres, rear-heavy aero"
+}

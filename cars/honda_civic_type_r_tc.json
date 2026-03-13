@@ -1,0 +1,10 @@
+{
+  "name": "Honda Civic Type R TC",
+  "class": "TCR",
+  "iracing_car_path": ["honda_civic_type_r_tc", "honda_civic_type_r"],
+  "target_hot_psi": { "LF": 32.0, "RF": 32.0, "LR": 29.0, "RR": 29.0 },
+  "temp_min": 75,
+  "temp_max": 95,
+  "rear_weight_bias_c": 1.0,
+  "notes": "Front-wheel-drive TCR — front tyres carry significantly more load; camber critical on front axle"
+}

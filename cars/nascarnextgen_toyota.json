@@ -1,0 +1,10 @@
+{
+  "name": "NASCAR Cup Series Toyota Camry XSE",
+  "class": "NASCAR Cup",
+  "iracing_car_path": ["nascarnextgen_toyota", "nascar_nextgen_toyota"],
+  "target_hot_psi": { "LF": 30.0, "RF": 30.0, "LR": 30.0, "RR": 30.0 },
+  "temp_min": 70,
+  "temp_max": 95,
+  "rear_weight_bias_c": 2.0,
+  "notes": "NASCAR Next Gen — spec Goodyear tyres across all three manufacturers"
+}

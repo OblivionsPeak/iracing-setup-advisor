@@ -1,0 +1,10 @@
+{
+  "name": "Tatuus F4",
+  "class": "F4",
+  "iracing_car_path": ["tatuus_f4", "tatuus_pm18"],
+  "target_hot_psi": { "LF": 22.0, "RF": 22.0, "LR": 20.0, "RR": 20.0 },
+  "temp_min": 75,
+  "temp_max": 90,
+  "rear_weight_bias_c": 2.0,
+  "notes": "Formula 4 entry-level spec — limited setup adjustability"
+}

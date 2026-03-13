@@ -1,6 +1,7 @@
 {
   "name": "Ligier JS F4",
   "class": "F4",
+  "iracing_car_path": "ligier_js_f4",
   "target_hot_psi": { "LF": 22.0, "RF": 22.0, "LR": 21.0, "RR": 21.0 },
   "temp_min": 70,
   "temp_max": 90,

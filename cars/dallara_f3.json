@@ -1,0 +1,10 @@
+{
+  "name": "Dallara F3",
+  "class": "F3",
+  "iracing_car_path": ["dallaraf3", "dallara_f3"],
+  "target_hot_psi": { "LF": 21.5, "RF": 21.5, "LR": 19.5, "RR": 19.5 },
+  "temp_min": 75,
+  "temp_max": 95,
+  "rear_weight_bias_c": 2.0,
+  "notes": "Formula 3 — Hankook tyres, significant rear downforce, aero-sensitive setup"
+}

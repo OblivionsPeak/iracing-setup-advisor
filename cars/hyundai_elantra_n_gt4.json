@@ -1,0 +1,10 @@
+{
+  "name": "Hyundai Elantra N GT4",
+  "class": "GT4",
+  "iracing_car_path": "hyundai_elantra_n_gt4",
+  "target_hot_psi": { "LF": 28.0, "RF": 28.0, "LR": 27.0, "RR": 27.0 },
+  "temp_min": 75,
+  "temp_max": 95,
+  "rear_weight_bias_c": 1.5,
+  "notes": "FWD-based GT4 — distinctive front-heavy thermal signature vs RWD GT4s; fronts run hotter"
+}

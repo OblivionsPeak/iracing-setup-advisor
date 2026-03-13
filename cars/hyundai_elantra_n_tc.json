@@ -1,0 +1,10 @@
+{
+  "name": "Hyundai Elantra N TC",
+  "class": "TCR",
+  "iracing_car_path": ["hyundai_elantra_n_tc", "hyundai_elantra_n"],
+  "target_hot_psi": { "LF": 32.0, "RF": 32.0, "LR": 29.0, "RR": 29.0 },
+  "temp_min": 75,
+  "temp_max": 95,
+  "rear_weight_bias_c": 1.0,
+  "notes": "FWD TCR — brake bias far forward, front tyres do majority of the work"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Skip Barber Formula 2000",
+  "class": "Formula",
+  "iracing_car_path": ["skipbarber_f2000", "skipbarber"],
+  "target_hot_psi": { "LF": 22.0, "RF": 22.0, "LR": 20.0, "RR": 20.0 },
+  "temp_min": 75,
+  "temp_max": 90,
+  "rear_weight_bias_c": 1.5,
+  "notes": "Classic iRacing entry-level formula car"
+}

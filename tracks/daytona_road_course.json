@@ -3,8 +3,24 @@
   "short": "Daytona RC",
   "country": "USA",
   "sectors": [
-    { "name": "S1 — T1 bus stop to banking entry",        "start": 0.00, "end": 0.30 },
-    { "name": "S2 — Banking & infield technical section",  "start": 0.30, "end": 0.65 },
-    { "name": "S3 — Final infield to finish straight",     "start": 0.65, "end": 1.00 }
+    {
+      "name": "S1 — T1 bus stop to banking entry",
+      "start": 0.0,
+      "end": 0.3
+    },
+    {
+      "name": "S2 — Banking & infield technical section",
+      "start": 0.3,
+      "end": 0.65
+    },
+    {
+      "name": "S3 — Final infield to finish straight",
+      "start": 0.65,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "daytona international speedway road course",
+    "daytona road course"
   ]
 }

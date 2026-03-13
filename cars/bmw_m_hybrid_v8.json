@@ -1,0 +1,10 @@
+{
+  "name": "BMW M Hybrid V8 GTP",
+  "class": "GTP",
+  "iracing_car_path": "bmw_m_hybrid_v8",
+  "target_hot_psi": { "LF": 23.0, "RF": 23.0, "LR": 23.0, "RR": 23.0 },
+  "temp_min": 85,
+  "temp_max": 110,
+  "rear_weight_bias_c": 5.0,
+  "notes": "LMDh — balanced weight distribution"
+}

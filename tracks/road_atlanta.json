@@ -3,8 +3,23 @@
   "short": "Road Atlanta",
   "country": "USA",
   "sectors": [
-    { "name": "S1 — T1–T3 (opening sequence)",    "start": 0.00, "end": 0.30 },
-    { "name": "S2 — Esses & switchback",           "start": 0.30, "end": 0.65 },
-    { "name": "S3 — T10a through bridge to finish","start": 0.65, "end": 1.00 }
+    {
+      "name": "S1 — T1–T3 (opening sequence)",
+      "start": 0.0,
+      "end": 0.3
+    },
+    {
+      "name": "S2 — Esses & switchback",
+      "start": 0.3,
+      "end": 0.65
+    },
+    {
+      "name": "S3 — T10a through bridge to finish",
+      "start": 0.65,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "road atlanta"
   ]
 }

@@ -1,6 +1,7 @@
 {
   "name": "Toyota GR86 Cup",
   "class": "Cup",
+  "iracing_car_path": "toyota_gr86_cup",
   "target_hot_psi": { "LF": 31.0, "RF": 31.0, "LR": 30.0, "RR": 30.0 },
   "temp_min": 75,
   "temp_max": 95,

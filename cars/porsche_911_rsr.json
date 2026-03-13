@@ -1,0 +1,10 @@
+{
+  "name": "Porsche 911 RSR",
+  "class": "GTE",
+  "iracing_car_path": "porsche_911_rsr",
+  "target_hot_psi": { "LF": 27.5, "RF": 27.5, "LR": 28.0, "RR": 28.0 },
+  "temp_min": 80,
+  "temp_max": 100,
+  "rear_weight_bias_c": 6.0,
+  "notes": "Rear-engine layout — rear tyres work significantly harder; higher rear PSI and rear_weight_bias_c reflects this"
+}

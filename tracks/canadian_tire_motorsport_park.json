@@ -3,8 +3,24 @@
   "short": "CTMP",
   "country": "Canada",
   "sectors": [
-    { "name": "S1 — T1–T4 (Moss Corner to Andretti hairpin)", "start": 0.00, "end": 0.35 },
-    { "name": "S2 — T5–T8 (Esses & back section)",            "start": 0.35, "end": 0.65 },
-    { "name": "S3 — T9–T12 (Dip to finish)",                  "start": 0.65, "end": 1.00 }
+    {
+      "name": "S1 — T1–T4 (Moss Corner to Andretti hairpin)",
+      "start": 0.0,
+      "end": 0.35
+    },
+    {
+      "name": "S2 — T5–T8 (Esses & back section)",
+      "start": 0.35,
+      "end": 0.65
+    },
+    {
+      "name": "S3 — T9–T12 (Dip to finish)",
+      "start": 0.65,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "canadian tire motorsports park",
+    "canadian tire motorsport park"
   ]
 }

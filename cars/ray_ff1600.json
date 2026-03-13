@@ -1,0 +1,10 @@
+{
+  "name": "Ray FF1600",
+  "class": "FF1600",
+  "iracing_car_path": "ray_ff1600",
+  "target_hot_psi": { "LF": 22.0, "RF": 22.0, "LR": 20.0, "RR": 20.0 },
+  "temp_min": 75,
+  "temp_max": 90,
+  "rear_weight_bias_c": 1.0,
+  "notes": "Naturally aspirated formula car — mechanical grip focused, no aero"
+}

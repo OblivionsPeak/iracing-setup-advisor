@@ -1,0 +1,10 @@
+{
+  "name": "Ligier JS P320 LMP3",
+  "class": "LMP3",
+  "iracing_car_path": "ligier_js_p320",
+  "target_hot_psi": { "LF": 20.5, "RF": 20.5, "LR": 20.5, "RR": 20.5 },
+  "temp_min": 75,
+  "temp_max": 95,
+  "rear_weight_bias_c": 3.0,
+  "notes": "LMP3 spec car — Michelin slicks, narrower setup window than LMP2"
+}

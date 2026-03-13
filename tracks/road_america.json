@@ -3,8 +3,23 @@
   "short": "Road America",
   "country": "USA",
   "sectors": [
-    { "name": "S1 — T1–T5 (Canada Corner to Carousel)", "start": 0.00, "end": 0.32 },
-    { "name": "S2 — T6–T11 (Kettle Bottom to T11)",     "start": 0.32, "end": 0.64 },
-    { "name": "S3 — T12–T14 (Kink to finish)",          "start": 0.64, "end": 1.00 }
+    {
+      "name": "S1 — T1–T5 (Canada Corner to Carousel)",
+      "start": 0.0,
+      "end": 0.32
+    },
+    {
+      "name": "S2 — T6–T11 (Kettle Bottom to T11)",
+      "start": 0.32,
+      "end": 0.64
+    },
+    {
+      "name": "S3 — T12–T14 (Kink to finish)",
+      "start": 0.64,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "road america"
   ]
 }

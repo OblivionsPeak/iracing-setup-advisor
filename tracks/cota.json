@@ -3,8 +3,23 @@
   "short": "COTA",
   "country": "USA",
   "sectors": [
-    { "name": "S1 — T1–T10 (Uphill hairpin & infield)",        "start": 0.00, "end": 0.38 },
-    { "name": "S2 — T11–T15 (Back straight & fast sweepers)",  "start": 0.38, "end": 0.62 },
-    { "name": "S3 — T16–T20 (Stadium section)",                "start": 0.62, "end": 1.00 }
+    {
+      "name": "S1 — T1–T10 (Uphill hairpin & infield)",
+      "start": 0.0,
+      "end": 0.38
+    },
+    {
+      "name": "S2 — T11–T15 (Back straight & fast sweepers)",
+      "start": 0.38,
+      "end": 0.62
+    },
+    {
+      "name": "S3 — T16–T20 (Stadium section)",
+      "start": 0.62,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "circuit of the americas"
   ]
 }

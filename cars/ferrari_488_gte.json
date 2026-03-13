@@ -1,0 +1,10 @@
+{
+  "name": "Ferrari 488 GTE",
+  "class": "GTE",
+  "iracing_car_path": "ferrari_488_gte",
+  "target_hot_psi": { "LF": 26.5, "RF": 26.5, "LR": 27.5, "RR": 27.5 },
+  "temp_min": 80,
+  "temp_max": 100,
+  "rear_weight_bias_c": 3.5,
+  "notes": "Mid-engine layout — tail-happy under power, aggressive camber typical"
+}

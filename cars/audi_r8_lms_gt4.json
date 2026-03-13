@@ -1,6 +1,7 @@
 {
   "name": "Audi R8 LMS GT4",
   "class": "GT4",
+  "iracing_car_path": "audi_r8_lms_gt4",
   "target_hot_psi": { "LF": 29.0, "RF": 29.0, "LR": 29.0, "RR": 29.0 },
   "temp_min": 75,
   "temp_max": 95,

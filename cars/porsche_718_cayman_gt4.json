@@ -1,6 +1,7 @@
 {
   "name": "Porsche 718 Cayman GT4 Clubsport",
   "class": "GT4",
+  "iracing_car_path": "porsche_718_cayman_gt4_clubsport_mr",
   "target_hot_psi": { "LF": 29.5, "RF": 29.5, "LR": 30.0, "RR": 30.0 },
   "temp_min": 75,
   "temp_max": 95,

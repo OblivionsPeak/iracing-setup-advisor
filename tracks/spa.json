@@ -3,8 +3,25 @@
   "short": "Spa",
   "country": "Belgium",
   "sectors": [
-    { "name": "S1 — La Source to Eau Rouge/Raidillon", "start": 0.00, "end": 0.28 },
-    { "name": "S2 — Kemmel straight to Pouhon",        "start": 0.28, "end": 0.62 },
-    { "name": "S3 — Fagnes to Bus Stop chicane",       "start": 0.62, "end": 1.00 }
+    {
+      "name": "S1 — La Source to Eau Rouge/Raidillon",
+      "start": 0.0,
+      "end": 0.28
+    },
+    {
+      "name": "S2 — Kemmel straight to Pouhon",
+      "start": 0.28,
+      "end": 0.62
+    },
+    {
+      "name": "S3 — Fagnes to Bus Stop chicane",
+      "start": 0.62,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "spa-francorchamps",
+    "circuit de spa-francorchamps",
+    "spa francorchamps"
   ]
 }

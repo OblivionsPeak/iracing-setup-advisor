@@ -1,0 +1,10 @@
+{
+  "name": "Dallara iR-01",
+  "class": "Formula iRacing",
+  "iracing_car_path": "dallara_ir01",
+  "target_hot_psi": { "LF": 21.0, "RF": 21.0, "LR": 19.0, "RR": 19.0 },
+  "temp_min": 75,
+  "temp_max": 95,
+  "rear_weight_bias_c": 2.0,
+  "notes": "iRacing's own formula car — balanced aero package"
+}

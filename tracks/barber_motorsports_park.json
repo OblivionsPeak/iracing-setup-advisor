@@ -3,8 +3,23 @@
   "short": "Barber",
   "country": "USA",
   "sectors": [
-    { "name": "S1 — T1–T5 (opening sequence & Turn 5 hairpin)", "start": 0.00, "end": 0.32 },
-    { "name": "S2 — T6–T12 (back section & elevation changes)",  "start": 0.32, "end": 0.65 },
-    { "name": "S3 — T13–T17 (final complex to finish)",          "start": 0.65, "end": 1.00 }
+    {
+      "name": "S1 — T1–T5 (opening sequence & Turn 5 hairpin)",
+      "start": 0.0,
+      "end": 0.32
+    },
+    {
+      "name": "S2 — T6–T12 (back section & elevation changes)",
+      "start": 0.32,
+      "end": 0.65
+    },
+    {
+      "name": "S3 — T13–T17 (final complex to finish)",
+      "start": 0.65,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "barber motorsports park"
   ]
 }

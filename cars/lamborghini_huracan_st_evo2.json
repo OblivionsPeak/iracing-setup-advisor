@@ -1,0 +1,10 @@
+{
+  "name": "Lamborghini Huracán Super Trofeo EVO2",
+  "class": "GT3 Cup",
+  "iracing_car_path": ["lamborghini_huracan_st_evo2", "lamborghini_huracan_st"],
+  "target_hot_psi": { "LF": 27.0, "RF": 27.0, "LR": 27.0, "RR": 27.0 },
+  "temp_min": 80,
+  "temp_max": 100,
+  "rear_weight_bias_c": 4.0,
+  "notes": "Mid-engine trophy car — spec Pirelli tyres"
+}

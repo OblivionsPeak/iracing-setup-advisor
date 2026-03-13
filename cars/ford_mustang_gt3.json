@@ -1,6 +1,7 @@
 {
   "name": "Ford Mustang GT3",
   "class": "GT3",
+  "iracing_car_path": "ford_mustang_gt3",
   "target_hot_psi": { "LF": 28.5, "RF": 28.5, "LR": 29.0, "RR": 29.0 },
   "temp_min": 80,
   "temp_max": 100,

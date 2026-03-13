@@ -3,8 +3,25 @@
   "short": "Brands Hatch",
   "country": "UK",
   "sectors": [
-    { "name": "S1 — Paddock Hill to Druids",             "start": 0.00, "end": 0.28 },
-    { "name": "S2 — Graham Hill Bend to Hawthorn",       "start": 0.28, "end": 0.60 },
-    { "name": "S3 — Clark/Stirlings/Surtees to finish",  "start": 0.60, "end": 1.00 }
+    {
+      "name": "S1 — Paddock Hill to Druids",
+      "start": 0.0,
+      "end": 0.28
+    },
+    {
+      "name": "S2 — Graham Hill Bend to Hawthorn",
+      "start": 0.28,
+      "end": 0.6
+    },
+    {
+      "name": "S3 — Clark/Stirlings/Surtees to finish",
+      "start": 0.6,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "brands hatch circuit",
+    "brands hatch circuit grand prix",
+    "brands hatch"
   ]
 }

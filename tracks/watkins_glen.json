@@ -3,8 +3,25 @@
   "short": "Watkins Glen",
   "country": "USA",
   "sectors": [
-    { "name": "S1 — T1 to the Esses",          "start": 0.00, "end": 0.35 },
-    { "name": "S2 — Boot section",              "start": 0.35, "end": 0.65 },
-    { "name": "S3 — Inner loop to finish",      "start": 0.65, "end": 1.00 }
+    {
+      "name": "S1 — T1 to the Esses",
+      "start": 0.0,
+      "end": 0.35
+    },
+    {
+      "name": "S2 — Boot section",
+      "start": 0.35,
+      "end": 0.65
+    },
+    {
+      "name": "S3 — Inner loop to finish",
+      "start": 0.65,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "watkins glen international",
+    "watkins glen international boot",
+    "watkins glen"
   ]
 }
