@@ -508,6 +508,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .tm-btn:hover{background:#252525;color:#aaa}
 .tm-btn.active{background:#0d2a40;border-color:#2196F3;color:#64b5f6}
 
+/* ── Track map tooltip ── */
+#tm-tooltip{position:fixed;background:#1a1a1a;border:1px solid #2a2a2a;color:#e0e0e0;
+            padding:8px 12px;border-radius:6px;font-size:11px;pointer-events:none;
+            display:none;z-index:1000;line-height:1.7;min-width:100px;
+            box-shadow:0 4px 12px rgba(0,0,0,.5)}
+
 /* ── Lap times ── */
 .lap-table{background:#181818;border-radius:10px;overflow:hidden;max-height:420px;overflow-y:auto}
 .lap-row{display:grid;grid-template-columns:56px 1fr 1fr;align-items:center;
@@ -587,6 +593,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 </div>
 
 <div id="status"></div>
+<div id="tm-tooltip"></div>
 <div id="results" style="display:none"></div>
 
 <script>
@@ -1011,6 +1018,8 @@ function renderTrackMap(tm) {
     <button class="tm-btn active" data-mode="speed"    onclick="drawTrackMap('speed')">Speed</button>
     <button class="tm-btn"        data-mode="throttle" onclick="drawTrackMap('throttle')">Throttle</button>
     <button class="tm-btn"        data-mode="brake"    onclick="drawTrackMap('brake')">Brake</button>
+    <button class="tm-btn"        data-mode="gear"     onclick="drawTrackMap('gear')">Gear</button>
+    <button class="tm-btn" onclick="saveTrackMapPNG()" style="margin-left:auto">&#8595; PNG</button>
   </div>
   <svg id="track-map-svg" style="width:100%;max-height:500px;display:block"></svg>
   <div style="display:flex;gap:18px;margin-top:10px;font-size:11px;color:#444;flex-wrap:wrap;align-items:center">
@@ -1055,6 +1064,11 @@ function drawTrackMap(mode) {
       const [r,g,b] = lRGB([26,26,26], [0,230,118], c(v));
       return `rgb(${r},${g},${b})`;
     }
+    if (m === 'gear') {
+      const gc = [[60,60,60],[244,67,54],[255,152,0],[255,235,59],[76,175,80],[0,188,212],[33,150,243],[124,77,255],[224,64,251]];
+      const [r,g,b] = gc[Math.min(8, Math.max(0, Math.round(v)))];
+      return `rgb(${r},${g},${b})`;
+    }
     const [r,g,b] = lRGB([26,26,26], [244,67,54], c(v));
     return `rgb(${r},${g},${b})`;
   }
@@ -1067,6 +1081,7 @@ function drawTrackMap(mode) {
     const p0 = pts[i-1], p1 = pts[i];
     const v = mode === 'speed'    ? ((p0.spd + p1.spd) / 2) / mx
             : mode === 'throttle' ? (p0.thr + p1.thr) / 2
+            : mode === 'gear'     ? ((p0.gear || 0) + (p1.gear || 0)) / 2
             :                       (p0.brk + p1.brk) / 2;
     const col = valColor(v, mode);
     svg += `<line x1="${(p0.x+ox).toFixed(1)}" y1="${(p0.y+oy).toFixed(1)}" `
@@ -1104,12 +1119,71 @@ function drawTrackMap(mode) {
       speed:    'linear-gradient(to right,rgb(26,79,216),rgb(0,188,212),rgb(76,175,80),rgb(255,235,59),rgb(244,67,54))',
       throttle: 'linear-gradient(to right,rgb(26,26,26),rgb(0,230,118))',
       brake:    'linear-gradient(to right,rgb(26,26,26),rgb(244,67,54))',
+      gear:     'linear-gradient(to right,rgb(244,67,54),rgb(255,152,0),rgb(255,235,59),rgb(76,175,80),rgb(0,188,212),rgb(33,150,243),rgb(124,77,255),rgb(224,64,251))',
     };
-    const labels = { speed: `Slow → ${mx} mph`, throttle: '0 → 100% throttle', brake: '0 → 100% brake' };
+    const labels = { speed: `Slow → ${mx} mph`, throttle: '0 → 100% throttle', brake: '0 → 100% brake', gear: '1st → 8th gear' };
     leg.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px">
       <span style="display:inline-block;width:80px;height:6px;border-radius:3px;background:${gradients[mode]}"></span>
       <span>${labels[mode]}</span></span>`;
   }
+
+  if (svgEl) {
+    if (svgEl._tmMousemove)  svgEl.removeEventListener('mousemove',  svgEl._tmMousemove);
+    if (svgEl._tmMouseleave) svgEl.removeEventListener('mouseleave', svgEl._tmMouseleave);
+    const tt = document.getElementById('tm-tooltip');
+    const _pts = pts, _ox = ox, _oy = oy;
+    svgEl._tmMousemove = function(e) {
+      const rect = svgEl.getBoundingClientRect();
+      const vb = svgEl.viewBox.baseVal;
+      if (!vb.width) return;
+      const mx = (e.clientX - rect.left) / rect.width * vb.width;
+      const my = (e.clientY - rect.top)  / rect.height * vb.height;
+      let bestIdx = 0, bestD = Infinity;
+      _pts.forEach((p, i) => {
+        const d = (p.x + _ox - mx) ** 2 + (p.y + _oy - my) ** 2;
+        if (d < bestD) { bestD = d; bestIdx = i; }
+      });
+      const bp = _pts[bestIdx];
+      const _thresh = (vb.width * 0.06) ** 2;
+      if (tt && bestD < _thresh) {
+        const gStr = bp.gear != null ? `<br>Gear: <b>${bp.gear || 'N'}</b>` : '';
+        tt.innerHTML = `<b>${bp.spd.toFixed(0)} mph</b><br>Throttle: ${(bp.thr*100).toFixed(0)}%<br>Brake: ${(bp.brk*100).toFixed(0)}%${gStr}<br><span style="color:#555">${(bp.pct*100).toFixed(1)}% lap</span>`;
+        tt.style.display = 'block';
+        tt.style.left = (e.clientX + 16) + 'px';
+        tt.style.top  = (e.clientY - 8)  + 'px';
+      } else if (tt) { tt.style.display = 'none'; }
+    };
+    svgEl._tmMouseleave = function() { if (tt) tt.style.display = 'none'; };
+    svgEl.addEventListener('mousemove',  svgEl._tmMousemove);
+    svgEl.addEventListener('mouseleave', svgEl._tmMouseleave);
+  }
+}
+
+function saveTrackMapPNG() {
+  const svgEl = document.getElementById('track-map-svg');
+  if (!svgEl) return;
+  const vb = svgEl.viewBox.baseVal;
+  if (!vb.width) return;
+  const scale = 2, w = Math.round(vb.width * scale), h = Math.round(vb.height * scale);
+  const svgData = new XMLSerializer().serializeToString(svgEl);
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#181818';
+  ctx.fillRect(0, 0, w, h);
+  const blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0, w, h);
+    URL.revokeObjectURL(url);
+    const a = document.createElement('a');
+    const tm = window._trackMapData;
+    a.download = tm ? `track-map-lap${tm.lap}.png` : 'track-map.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  };
+  img.src = url;
 }
 
 function renderLapTimes(lapTimes) {
@@ -1125,7 +1199,20 @@ function renderLapTimes(lapTimes) {
       <div class="lap-delta">${deltaStr}</div>
     </div>`;
   }).join('');
+  const _mn = best, _mx2 = Math.max(...lapTimes.map(l => l.time_s)), _rng = _mx2 - _mn || 1;
+  const _SW = 400, _SH = 28, _SP = 3;
+  const _sparkSegs = lapTimes.map((l, i) => {
+    if (i === 0) return '';
+    const x1 = _SP + ((i-1)/(lapTimes.length-1))*(_SW-2*_SP);
+    const y1 = _SH - _SP - ((lapTimes[i-1].time_s - _mn)/_rng)*(_SH-2*_SP);
+    const x2 = _SP + (i/(lapTimes.length-1))*(_SW-2*_SP);
+    const y2 = _SH - _SP - ((l.time_s - _mn)/_rng)*(_SH-2*_SP);
+    const d = l.time_s - _mn;
+    const col = d < 0.3 ? '#4caf50' : d < 1.5 ? '#ff9800' : '#f44336';
+    return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${col}" stroke-width="2" stroke-linecap="round"/>`;
+  }).join('');
   return `<div class="section-label">Lap times</div>
+<svg viewBox="0 0 400 28" style="width:100%;height:28px;display:block;margin-bottom:6px;background:#111;border-radius:6px">${_sparkSegs}</svg>
 <div class="lap-table">
   <div class="lap-row lap-header">
     <div>Lap</div><div>Time</div><div>Δ Best</div>

@@ -752,6 +752,9 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
                              else np.zeros(int(_lm.sum())))
                     _dpct = (dist_pct[_lm]    if dist_pct   is not None
                              else np.linspace(0.0, 1.0, int(_lm.sum())))
+                    _gear_ch2 = _ch(channels, 'Gear')
+                    _gears = (_gear_ch2[_lm].astype(int) if _gear_ch2 is not None
+                              else np.zeros(int(_lm.sum()), dtype=int))
 
                     # Downsample to ≤800 evenly-spaced points
                     _n   = min(800, int(_lm.sum()))
@@ -759,6 +762,7 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
                     _lats = _lats[_idx];  _lons = _lons[_idx]
                     _spds = _spds[_idx];  _thrs = _thrs[_idx]
                     _brks = _brks[_idx];  _dpct = _dpct[_idx]
+                    _gears = _gears[_idx]
 
                     # Equirectangular projection → local XY (metres); N = up
                     _lat_c = float(np.mean(_lats))
@@ -789,6 +793,7 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
                                 'thr': round(float(_thrs[i]), 2),
                                 'brk': round(float(_brks[i]), 2),
                                 'pct': round(float(_dpct[i]), 3),
+                                'gear': int(_gears[i]),
                             }
                             for i in range(_n)
                         ],
