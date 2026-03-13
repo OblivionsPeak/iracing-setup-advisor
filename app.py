@@ -80,23 +80,29 @@ for _key, _cfg in TRACKS.items():
 def _detect_from_session(session_info):
     """
     Parse iRacing session YAML to detect car and track.
-    Returns (car_id, track_id) — either may be None.
+    Returns (car_id, track_id, raw_car_path, raw_track_name) — any may be None.
     """
     import re
     car_id   = None
     track_id = None
+    raw_track_name = None
+    raw_car_path   = None
 
-    # Track name
-    m = re.search(r'TrackName:\s*(.+)', session_info)
-    if m:
-        tn = m.group(1).strip().lower()
-        track_id = TRACK_NAME_INDEX.get(tn)
-        # Fuzzy: try substring match if exact fails
-        if track_id is None:
-            for k in TRACK_NAME_INDEX:
-                if k in tn or tn in k:
-                    track_id = TRACK_NAME_INDEX[k]
-                    break
+    # Track name — try TrackName first, fall back to TrackDisplayName
+    for pattern in (r'TrackName:\s*(.+)', r'TrackDisplayName:\s*(.+)'):
+        m = re.search(pattern, session_info)
+        if m:
+            raw_track_name = m.group(1).strip()
+            tn = raw_track_name.lower()
+            track_id = TRACK_NAME_INDEX.get(tn)
+            # Fuzzy: substring match in both directions
+            if track_id is None:
+                for k in TRACK_NAME_INDEX:
+                    if k in tn or tn in k:
+                        track_id = TRACK_NAME_INDEX[k]
+                        break
+            if track_id:
+                break
 
     # Player car: find DriverCarIdx, then match CarPath for that index
     idx_m = re.search(r'DriverCarIdx:\s*(\d+)', session_info)
@@ -109,16 +115,17 @@ def _detect_from_session(session_info):
         session_info, re.DOTALL
     )
     if block_m:
-        cp = block_m.group(1).strip().lower()
+        raw_car_path = block_m.group(1).strip()
+        cp = raw_car_path.lower()
         car_id = CAR_PATH_INDEX.get(cp)
         if car_id is None:
-            # Fuzzy: check if any known path is a substring
+            # Fuzzy: substring in either direction
             for k in CAR_PATH_INDEX:
                 if k in cp or cp in k:
                     car_id = CAR_PATH_INDEX[k]
                     break
 
-    return car_id, track_id
+    return car_id, track_id, raw_car_path, raw_track_name
 
 
 # ── Find a free port ──────────────────────────────────────────────────────────
@@ -187,10 +194,10 @@ def detect_debug():
         blk_m  = re.search(
             r'(?<![A-Za-z])CarIdx:\s*' + re.escape(car_idx) + r'\b.*?CarPath:\s*(\S+)',
             session_info, re.DOTALL)
-        detected_car, detected_track = _detect_from_session(session_info)
+        detected_car, detected_track, raw_cp, raw_tn = _detect_from_session(session_info)
         return jsonify({
-            'raw_track_name':   tn_m.group(1).strip() if tn_m else None,
-            'raw_car_path':     blk_m.group(1).strip() if blk_m else None,
+            'raw_track_name':   raw_tn,
+            'raw_car_path':     raw_cp,
             'driver_car_idx':   car_idx,
             'detected_car_id':   detected_car,
             'detected_track_id': detected_track,
@@ -223,7 +230,8 @@ def analyze_route():
         channels, session_info, tick_rate, record_count = parse_ibt(tmp_path)
 
         # Auto-detect car/track from session YAML if not manually specified
-        detected_car_id, detected_track_id = _detect_from_session(session_info)
+        detected_car_id, detected_track_id, raw_car_path, raw_track_name = \
+            _detect_from_session(session_info)
         auto_detected_car   = False
         auto_detected_track = False
 
@@ -248,6 +256,8 @@ def analyze_route():
             'track_id':          track_id if auto_detected_track else None,
             'auto_detected_car': auto_detected_car,
             'auto_detected_track': auto_detected_track,
+            'raw_car_path':      raw_car_path,
+            'raw_track_name':    raw_track_name,
         }
         return jsonify(result)
     except Exception as e:
@@ -831,7 +841,18 @@ function render(data) {
     ⚡ Auto-detected from telemetry${det.auto_detected_car ? ' · Car: <b>' + (data.car || det.car_id) + '</b>' : ''}${det.auto_detected_track ? ' · Track: <b>' + (data.track || det.track_id) + '</b>' : ''}
   </div>` : '';
 
-  let html = `${autoDetectBanner}<div class="meta-bar">
+  const carId_selected   = document.getElementById('car-select').value;
+  const trackId_selected = document.getElementById('track-select').value;
+  const missingBanner = (!det.auto_detected_car && !carId_selected) || (!det.auto_detected_track && !trackId_selected) ? `
+  <div style="background:#1a1000;border-left:3px solid #ff9800;padding:8px 28px;font-size:12px;color:#ffb74d">
+    ⚠ Could not auto-detect from telemetry —
+    ${det.raw_car_path   ? 'CarPath: <b>' + det.raw_car_path   + '</b>' : 'CarPath: <b>not found</b>'}
+    &nbsp;·&nbsp;
+    ${det.raw_track_name ? 'TrackName: <b>' + det.raw_track_name + '</b>' : 'TrackName: <b>not found</b>'}
+    &nbsp;— select manually above or report this so the config can be updated.
+  </div>` : '';
+
+  let html = `${autoDetectBanner}${missingBanner}<div class="meta-bar">
     <div><b>${m.filename || ''}</b></div>
     <div class="meta-car-track">${carLabel} &nbsp;·&nbsp; ${trackLabel}</div>
     ${laps ? `<div>Laps: <b>${laps}</b></div>` : ''}
