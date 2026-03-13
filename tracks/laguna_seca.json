@@ -1,0 +1,27 @@
+{
+  "name": "WeatherTech Raceway Laguna Seca",
+  "short": "Laguna Seca",
+  "country": "USA",
+  "sectors": [
+    {
+      "name": "S1 — T1 Andretti Hairpin to T3",
+      "start": 0.0,
+      "end": 0.32
+    },
+    {
+      "name": "S2 — Rainey Curve complex",
+      "start": 0.32,
+      "end": 0.65
+    },
+    {
+      "name": "S3 — Corkscrew to finish",
+      "start": 0.65,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "weathertech raceway laguna seca",
+    "mazda raceway laguna seca",
+    "laguna seca"
+  ]
+}

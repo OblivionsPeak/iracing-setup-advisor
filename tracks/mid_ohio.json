@@ -1,0 +1,27 @@
+{
+  "name": "Mid-Ohio Sports Car Course",
+  "short": "Mid-Ohio",
+  "country": "USA",
+  "sectors": [
+    {
+      "name": "S1 — The Keyhole to Turn 4",
+      "start": 0.0,
+      "end": 0.35
+    },
+    {
+      "name": "S2 — Chicane through Thunder Valley",
+      "start": 0.35,
+      "end": 0.65
+    },
+    {
+      "name": "S3 — Madness to Carousel to finish",
+      "start": 0.65,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "mid-ohio sports car course",
+    "mid ohio sports car course",
+    "mid-ohio"
+  ]
+}

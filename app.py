@@ -128,6 +128,16 @@ def _detect_from_session(session_info):
     return car_id, track_id, raw_car_path, raw_track_name
 
 
+def _detect_session_type(session_info):
+    """Extract EventType (Race / Practice / Qualify / Time Trial) from session YAML."""
+    import re
+    for pattern in (r'EventType:\s*(.+)', r'SessionType:\s*(.+)'):
+        m = re.search(pattern, session_info)
+        if m:
+            return m.group(1).strip()
+    return None
+
+
 def _car_from_filename(filename):
     """
     iRacing names IBT files: {carpath}_{track} {date}.ibt
@@ -240,6 +250,8 @@ def analyze_route():
 
     car_id   = request.form.get('car',   '').strip()
     track_id = request.form.get('track', '').strip()
+    air_temp_raw = request.form.get('air_temp_f', '').strip()
+    ambient_temp_f = float(air_temp_raw) if air_temp_raw else None
     car_cfg   = CARS.get(car_id)
     track_cfg = TRACKS.get(track_id)
 
@@ -273,11 +285,15 @@ def analyze_route():
             track_cfg = TRACKS.get(track_id)
             auto_detected_track = True
 
-        result = analyze(channels, tick_rate, car_cfg=car_cfg, track_cfg=track_cfg)
+        session_type = _detect_session_type(session_info)
+        result = analyze(channels, tick_rate, car_cfg=car_cfg, track_cfg=track_cfg,
+                         ambient_temp_f=ambient_temp_f)
         result['meta'] = {
             'filename':     f.filename,
             'tick_rate':    tick_rate,
             'record_count': record_count,
+            'session_type': session_type,
+            'ambient_temp_f': ambient_temp_f,
         }
         result['detected'] = {
             'car_id':            car_id   if auto_detected_car   else None,
@@ -517,6 +533,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     <label>Track</label>
     <select id="track-select"><option value="">— Any / Generic —</option></select>
   </div>
+  <div class="config-group" style="flex:0;min-width:120px">
+    <label>Air Temp</label>
+    <div style="display:flex;align-items:center;gap:6px">
+      <input type="number" id="air-temp" placeholder="—" min="0" max="130" step="1"
+             style="background:#1e1e1e;border:1px solid #333;color:#e0e0e0;padding:8px 10px;
+                    border-radius:6px;font-size:13px;width:70px">
+      <span style="font-size:13px;color:#555">°F</span>
+    </div>
+  </div>
   <div class="config-hint">Select your car and track, then drop your .ibt file below</div>
 </div>
 
@@ -662,9 +687,10 @@ async function go(file) {
   document.getElementById('results').style.display = 'none';
 
   const form = new FormData();
-  form.append('file',  file);
-  form.append('car',   carId);
-  form.append('track', trackId);
+  form.append('file',     file);
+  form.append('car',      carId);
+  form.append('track',    trackId);
+  form.append('air_temp_f', document.getElementById('air-temp').value || '');
 
   try {
     const res  = await fetch('/api/analyze', { method: 'POST', body: form });
@@ -1033,9 +1059,22 @@ function render(data) {
     &nbsp;— select manually above or report this so the config can be updated.
   </div>` : '';
 
-  let html = `${autoDetectBanner}${missingBanner}<div class="meta-bar">
-    <div><b>${m.filename || ''}</b></div>
+  const sessionType = m.session_type || null;
+  const sessionBadge = sessionType
+    ? `<span style="background:${sessionType.toLowerCase().includes('race') ? '#7c2d12' : '#1a2a1a'};
+                    color:${sessionType.toLowerCase().includes('race') ? '#fca5a5' : '#86efac'};
+                    border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;
+                    text-transform:uppercase;letter-spacing:.5px">${sessionType}</span>`
+    : '';
+  const raceWarning = sessionType && sessionType.toLowerCase().includes('race')
+    ? `<div style="background:#1a0a00;border-left:3px solid #f59e0b;padding:6px 28px;font-size:12px;color:#fbbf24">
+         ⚠ Race session detected — tyre data may include SC laps or early-stint anomalies. Recommendations are less reliable than practice/qual data.
+       </div>` : '';
+
+  let html = `${autoDetectBanner}${missingBanner}${raceWarning}<div class="meta-bar">
+    <div style="display:flex;align-items:center;gap:8px"><b>${m.filename || ''}</b> ${sessionBadge}</div>
     <div class="meta-car-track">${carLabel} &nbsp;·&nbsp; ${trackLabel}</div>
+    ${m.ambient_temp_f ? `<div>Air temp: <b>${m.ambient_temp_f} °F</b></div>` : ''}
     ${laps ? `<div>Laps: <b>${laps}</b></div>` : ''}
     ${dur  ? `<div>Duration: <b>${Math.floor(dur/60)}m ${dur%60}s</b></div>` : ''}
     ${topv ? `<div>Top speed: <b>${topv} mph</b></div>` : ''}

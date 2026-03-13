@@ -83,16 +83,17 @@ def _flying_lap_mask(channels, n):
     return mask
 
 
-def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
+def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=None):
     """
     Analyse iRacing telemetry.
 
     Parameters
     ----------
-    channels   : dict returned by ibt_parser.parse_ibt()
-    tick_rate  : int — samples per second
-    car_cfg    : dict loaded from cars/<name>.json  (falls back to DEFAULT_CAR)
-    track_cfg  : dict loaded from tracks/<name>.json (falls back to DEFAULT_TRACK)
+    channels       : dict returned by ibt_parser.parse_ibt()
+    tick_rate      : int — samples per second
+    car_cfg        : dict loaded from cars/<name>.json  (falls back to DEFAULT_CAR)
+    track_cfg      : dict loaded from tracks/<name>.json (falls back to DEFAULT_TRACK)
+    ambient_temp_f : float | None — ambient air temperature in °F for cold pressure correction
 
     Returns
     -------
@@ -111,6 +112,16 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
 
     n    = len(next(iter(channels.values())))
     mask = _flying_lap_mask(channels, n)
+
+    # ── Ambient temperature correction for cold pressure targets ──────────────
+    # Hot-to-cold ratio is ~0.6; ambient deviation from 70 °F shifts cold start
+    # by roughly 0.35 psi per 10 °F (colder air = lower cold pressure needed).
+    temp_correction = 0.0
+    if ambient_temp_f is not None:
+        try:
+            temp_correction = -(float(ambient_temp_f) - 70.0) / 10.0 * 0.35
+        except (TypeError, ValueError):
+            pass
 
     out = {
         'car':             car.get('name', 'Unknown'),
@@ -179,13 +190,33 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
         for sector_name, s0, s1 in sectors:
             in_sector = (dist_m >= s0) & (dist_m < s1) & (np.abs(lat_g) > 0.5)
             if in_sector.sum() < 50:
-                out['handling'][sector_name] = {'tendency': 'insufficient data', 'index': None}
+                out['handling'][sector_name] = {'tendency': 'insufficient data', 'index': None, 'phases': {}}
                 raw_indices.append(None)
                 continue
-            us_idx = float(np.mean(
-                np.abs(steer_m[in_sector]) / (np.abs(lat_g[in_sector]) + 0.01)
-            ))
-            out['handling'][sector_name] = {'tendency': None, 'index': us_idx}
+
+            steer_abs = np.abs(steer_m[in_sector])
+            lat_abs   = np.abs(lat_g[in_sector])
+            us_idx    = float(np.mean(steer_abs / (lat_abs + 0.01)))
+
+            # Phase detection: entry / apex / exit by steering-angle rate of change
+            phases = {}
+            if in_sector.sum() >= 90:
+                steer_rate = np.gradient(steer_abs)
+                std_rate   = float(np.std(steer_rate))
+                if std_rate > 1e-4:
+                    thresh = std_rate * 0.3
+                    for phase_name, pmask in [
+                        ('entry', steer_rate >  thresh),
+                        ('apex',  np.abs(steer_rate) <= thresh),
+                        ('exit',  steer_rate < -thresh),
+                    ]:
+                        if pmask.sum() >= 15:
+                            phases[phase_name] = {
+                                'index':    float(np.mean(steer_abs[pmask] / (lat_abs[pmask] + 0.01))),
+                                'tendency': None,
+                            }
+
+            out['handling'][sector_name] = {'tendency': None, 'index': us_idx, 'phases': phases}
             raw_indices.append(us_idx)
 
         valid_idx = [x for x in raw_indices if x is not None]
@@ -202,6 +233,15 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
                     'oversteer'  if norm < 0.85 else
                     'neutral'
                 )
+                # Classify each phase against the same session_mean baseline
+                for phase_data in d['phases'].values():
+                    pnorm = phase_data['index'] / session_mean
+                    phase_data['normalised'] = round(pnorm, 3)
+                    phase_data['tendency'] = (
+                        'understeer' if pnorm > 1.15 else
+                        'oversteer'  if pnorm < 0.85 else
+                        'neutral'
+                    )
 
     # ── 4. Recommendations (logic in °C, display strings in °F) ──────────────
 
@@ -212,7 +252,7 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
         target = target_hot_psi[corner]
         diff   = hot_psi - target
         if abs(diff) > 0.5:
-            cold_adj  = -diff * 0.6
+            cold_adj  = -diff * 0.6 + temp_correction
             direction = 'Reduce' if cold_adj < 0 else 'Increase'
             recs.append({
                 'category': 'Tyre Pressure',
@@ -323,23 +363,59 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
                 'priority': 'medium',
             })
 
-    # 4e. Sector handling
+    # 4e. Sector handling — phase-aware recommendations
     for sector_name, sd in out['handling'].items():
         tendency = sd.get('tendency')
+        if tendency not in ('understeer', 'oversteer'):
+            continue
+
+        phases = sd.get('phases', {})
+        # Find which phases show the same issue
+        issue_phases = [p for p, pd in phases.items() if pd.get('tendency') == tendency]
+
+        if len(issue_phases) == 1:
+            phase_label = issue_phases[0]
+        else:
+            phase_label = None  # throughout, or no phase data
+
         if tendency == 'understeer':
+            if phase_label == 'entry':
+                action = '① Shift brake bias rearward 0.5–1%  ② Increase trail-braking depth  ③ Soften front ARB 1 click'
+                phase_str = ' — entry'
+            elif phase_label == 'apex':
+                action = '① Add 0.1–0.2° front negative camber  ② Soften front springs 1 step  ③ Soften front ARB 1 click'
+                phase_str = ' — apex'
+            elif phase_label == 'exit':
+                action = '① Soften rear ARB 1–2 clicks  ② Increase rear toe-in 0.05°  ③ Raise rear ride height 1mm'
+                phase_str = ' — exit'
+            else:
+                action = '① Soften front ARB 1–2 clicks  ② Stiffen rear ARB 1 click  ③ Add 0.1–0.2° front camber  ④ Shift brake bias rearward 0.5–1%'
+                phase_str = ''
             recs.append({
                 'category': 'Handling',
                 'corner':   sector_name,
-                'issue':    f'Above-average understeer in {sector_name}',
-                'action':   '① Soften front ARB 1–2 clicks  ② Stiffen rear ARB 1 click  ③ Add 0.1–0.2° front camber  ④ Shift brake bias rearward 0.5–1%',
+                'issue':    f'Understeer in {sector_name}{phase_str}',
+                'action':   action,
                 'priority': 'medium',
             })
         elif tendency == 'oversteer':
+            if phase_label == 'entry':
+                action = '① Shift brake bias forward 0.5–1%  ② Stiffen rear ARB 1 click  ③ Increase rear toe-in 0.05°'
+                phase_str = ' — entry'
+            elif phase_label == 'apex':
+                action = '① Check rear camber (add 0.1°)  ② Soften front ARB 1 click  ③ Increase rear toe-in 0.05°'
+                phase_str = ' — apex'
+            elif phase_label == 'exit':
+                action = '① Stiffen rear ARB 1–2 clicks  ② Reduce rear toe-in 0.05°  ③ Lower rear ride height 1mm'
+                phase_str = ' — exit'
+            else:
+                action = '① Soften rear ARB 1–2 clicks  ② Increase rear toe-in 0.05°  ③ Stiffen front ARB 1 click  ④ Shift brake bias forward 0.5–1%'
+                phase_str = ''
             recs.append({
                 'category': 'Handling',
                 'corner':   sector_name,
-                'issue':    f'Oversteer tendency in {sector_name}',
-                'action':   '① Soften rear ARB 1–2 clicks  ② Increase rear toe-in 0.05°  ③ Stiffen front ARB 1 click  ④ Shift brake bias forward 0.5–1%',
+                'issue':    f'Oversteer in {sector_name}{phase_str}',
+                'action':   action,
                 'priority': 'medium',
             })
 
@@ -560,7 +636,7 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
             continue
         tgt  = target_hot_psi[_corner]
         diff = hot - tgt
-        cold_adj = round(-diff * 0.6, 1)
+        cold_adj = round(-diff * 0.6 + temp_correction, 1)
         sc['tyres']['pressures'].append({
             'corner':         _corner,
             'hot_psi':        round(hot, 1),
@@ -613,30 +689,32 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
             })
 
     # Sector handling
+    _phase_us_opts = {
+        'entry': ['Shift brake bias rearward 0.5–1%', 'Increase trail-braking depth', 'Soften front ARB 1 click'],
+        'apex':  ['Add 0.1–0.2° front negative camber', 'Soften front springs 1 step', 'Soften front ARB 1 click'],
+        'exit':  ['Soften rear ARB 1–2 clicks', 'Increase rear toe-in 0.05°', 'Raise rear ride height 1mm'],
+        None:    ['Soften front ARB 1–2 clicks', 'Stiffen rear ARB 1 click', 'Add 0.1–0.2° front negative camber', 'Shift brake bias rearward 0.5–1%'],
+    }
+    _phase_os_opts = {
+        'entry': ['Shift brake bias forward 0.5–1%', 'Stiffen rear ARB 1 click', 'Increase rear toe-in 0.05°'],
+        'apex':  ['Check rear camber (add 0.1°)', 'Soften front ARB 1 click', 'Increase rear toe-in 0.05°'],
+        'exit':  ['Stiffen rear ARB 1–2 clicks', 'Reduce rear toe-in 0.05°', 'Lower rear ride height 1mm'],
+        None:    ['Soften rear ARB 1–2 clicks', 'Increase rear toe-in 0.05°', 'Stiffen front ARB 1 click', 'Shift brake bias forward 0.5–1%'],
+    }
     for _sec, _sd in out['handling'].items():
         _t = _sd.get('tendency')
-        if _t == 'understeer':
-            sc['suspension'].append({
-                'priority': 'medium', 'sector': _sec, 'issue': 'understeer',
-                'label': f'{_sec} — understeer',
-                'options': [
-                    'Soften front ARB 1–2 clicks',
-                    'Stiffen rear ARB 1 click',
-                    'Add 0.1–0.2° front negative camber',
-                    'Shift brake bias rearward 0.5–1%',
-                ],
-            })
-        elif _t == 'oversteer':
-            sc['suspension'].append({
-                'priority': 'medium', 'sector': _sec, 'issue': 'oversteer',
-                'label': f'{_sec} — oversteer',
-                'options': [
-                    'Soften rear ARB 1–2 clicks',
-                    'Increase rear toe-in 0.05°',
-                    'Stiffen front ARB 1 click',
-                    'Shift brake bias forward 0.5–1%',
-                ],
-            })
+        if _t not in ('understeer', 'oversteer'):
+            continue
+        _phases = _sd.get('phases', {})
+        _issue_phases = [p for p, pd in _phases.items() if pd.get('tendency') == _t]
+        _phase_key = _issue_phases[0] if len(_issue_phases) == 1 else None
+        _opts_map = _phase_us_opts if _t == 'understeer' else _phase_os_opts
+        _phase_suffix = f' — {_phase_key}' if _phase_key else ''
+        sc['suspension'].append({
+            'priority': 'medium', 'sector': _sec, 'issue': _t,
+            'label': f'{_sec}{_phase_suffix} — {_t}',
+            'options': _opts_map[_phase_key],
+        })
 
     _pri2 = {'high': 0, 'medium': 1, 'low': 2}
     sc['suspension'].sort(key=lambda x: _pri2.get(x['priority'], 3))

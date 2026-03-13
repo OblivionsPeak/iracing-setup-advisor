@@ -1,0 +1,28 @@
+{
+  "name": "Indianapolis Motor Speedway Road Course",
+  "short": "Indy Road Course",
+  "country": "USA",
+  "sectors": [
+    {
+      "name": "S1 — T1–T7 (oval entry & early infield)",
+      "start": 0.0,
+      "end": 0.33
+    },
+    {
+      "name": "S2 — T8–T12 (inner infield loop)",
+      "start": 0.33,
+      "end": 0.67
+    },
+    {
+      "name": "S3 — T13–T16 (final infield to oval)",
+      "start": 0.67,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "indianapolis motor speedway road course",
+    "indianapolis road course",
+    "indy road course",
+    "indianapolis motor speedway - road course"
+  ]
+}

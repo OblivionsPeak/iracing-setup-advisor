@@ -1,0 +1,26 @@
+{
+  "name": "Okayama International Circuit",
+  "short": "Okayama",
+  "country": "Japan",
+  "sectors": [
+    {
+      "name": "S1 — T1 hairpin complex",
+      "start": 0.0,
+      "end": 0.35
+    },
+    {
+      "name": "S2 — Revolver & S-curves",
+      "start": 0.35,
+      "end": 0.68
+    },
+    {
+      "name": "S3 — Moss S to finish",
+      "start": 0.68,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "okayama international circuit",
+    "okayama"
+  ]
+}
