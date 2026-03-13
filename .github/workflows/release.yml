@@ -26,7 +26,11 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: pip install flask numpy pyinstaller
+        run: pip install flask numpy pillow pyinstaller
+
+      - name: Generate icon
+        shell: bash
+        run: python make_icon.py
 
       - name: Build executable
         shell: pwsh
@@ -35,6 +39,7 @@ jobs:
           pyinstaller `
             --onefile `
             --noconsole `
+            --icon=icon.ico `
             --name "SetupAdvisor-v$v" `
             --add-data "version.txt;." `
             --add-data "cars;cars" `

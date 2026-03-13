@@ -33,6 +33,7 @@ echo [2/3] Building executable...
 pyinstaller ^
     --onefile ^
     --noconsole ^
+    --icon=icon.ico ^
     --name "SetupAdvisor-v%VERSION%" ^
     --add-data "version.txt;." ^
     --add-data "cars;cars" ^
