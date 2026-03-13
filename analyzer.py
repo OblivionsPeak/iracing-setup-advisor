@@ -289,8 +289,8 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
             recs.append({
                 'category': 'Balance',
                 'corner':   'REAR',
-                'issue':    f'Rear tyres {diff_f:.1f} °F hotter than fronts (adjusted offset for {car.get("name","this car")}: {round(_diff_to_f(rear_bias_c))} °F)',
-                'action':   'Soften rear ARB, raise rear ride height, increase rear wing (if adjustable), or reduce rear toe-in',
+                'issue':    f'Rear tyres {diff_f:.1f} °F hotter than fronts (adjusted for {car.get("name","this car")} rear-bias offset)',
+                'action':   '① Soften rear ARB 1–2 clicks  ② Raise rear ride height 1–2mm  ③ Increase rear wing 1 step (if available)  ④ Reduce rear toe-in 0.05°',
                 'priority': 'high',
             })
         elif adjusted < -12:
@@ -298,7 +298,7 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
                 'category': 'Balance',
                 'corner':   'FRONT',
                 'issue':    f'Front tyres {_diff_to_f(f_avg - r_avg):.1f} °F hotter than rears — push/understeer',
-                'action':   'Stiffen rear ARB, lower front ride height, increase front wing, or increase front toe-out slightly',
+                'action':   '① Stiffen rear ARB 1 click  ② Lower front ride height 1mm  ③ Increase front wing 1 step (if available)  ④ Increase front toe-out 0.05°',
                 'priority': 'high',
             })
 
@@ -331,7 +331,7 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
                 'category': 'Handling',
                 'corner':   sector_name,
                 'issue':    f'Above-average understeer in {sector_name}',
-                'action':   'Soften front spring or ARB, add front camber, increase rear toe-in, or shift brake bias slightly rearward',
+                'action':   '① Soften front ARB 1–2 clicks  ② Stiffen rear ARB 1 click  ③ Add 0.1–0.2° front camber  ④ Shift brake bias rearward 0.5–1%',
                 'priority': 'medium',
             })
         elif tendency == 'oversteer':
@@ -339,7 +339,7 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
                 'category': 'Handling',
                 'corner':   sector_name,
                 'issue':    f'Oversteer tendency in {sector_name}',
-                'action':   'Stiffen rear spring or ARB, add rear camber, check rear toe-in, or shift brake bias slightly forward',
+                'action':   '① Soften rear ARB 1–2 clicks  ② Increase rear toe-in 0.05°  ③ Stiffen front ARB 1 click  ④ Shift brake bias forward 0.5–1%',
                 'priority': 'medium',
             })
 
@@ -547,5 +547,99 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None):
             'has_lap_ch':     lap is not None,
             'has_laptime_ch': lap_time_ch is not None,
         }
+
+    # ── 14. Setup Card ────────────────────────────────────────────────────────
+    # Structured, garage-ready summary: tyres + suspension grouped by priority.
+    sc = {'tyres': {'pressures': [], 'camber': []}, 'suspension': []}
+
+    # Tyre pressure targets
+    for _corner in ('LF', 'RF', 'LR', 'RR'):
+        hot = out['tyre_pressures'].get(_corner)
+        if hot is None:
+            sc['tyres']['pressures'].append({'corner': _corner, 'status': 'no_data'})
+            continue
+        tgt  = target_hot_psi[_corner]
+        diff = hot - tgt
+        cold_adj = round(-diff * 0.6, 1)
+        sc['tyres']['pressures'].append({
+            'corner':         _corner,
+            'hot_psi':        round(hot, 1),
+            'target_hot_psi': tgt,
+            'cold_adj':       cold_adj,
+            'status':         'over' if diff > 0.5 else 'under' if diff < -0.5 else 'ok',
+        })
+
+    # Camber (inner–outer spread)
+    for _corner, _td in _temps_c.items():
+        if _td is None or abs(_td['spread']) < 8.0:
+            continue
+        _sp = _td['spread']
+        _adj = abs(_sp) / 10.0
+        sc['tyres']['camber'].append({
+            'corner':    _corner,
+            'spread_f':  round(_diff_to_f(_sp), 1),
+            'direction': 'add' if _sp > 0 else 'reduce',
+            'range':     f'{max(_adj - 0.1, 0.1):.1f}–{_adj + 0.1:.1f}°',
+        })
+
+    # Balance (front-rear, suspension priority)
+    _f_ok = [_temps_c[c]['avg'] for c in ('LF', 'RF') if _temps_c.get(c)]
+    _r_ok = [_temps_c[c]['avg'] for c in ('LR', 'RR') if _temps_c.get(c)]
+    if _f_ok and _r_ok:
+        _fa = float(np.mean(_f_ok))
+        _ra = float(np.mean(_r_ok))
+        _adj2 = (_ra - _fa) - rear_bias_c
+        if _adj2 > 12:
+            sc['suspension'].append({
+                'priority': 'high', 'sector': 'ALL', 'issue': 'rear_hot',
+                'label':   'Rear temp bias',
+                'options': [
+                    'Soften rear ARB 1–2 clicks',
+                    'Raise rear ride height 1–2mm',
+                    'Increase rear wing 1 step (if adjustable)',
+                    'Reduce rear toe-in 0.05°',
+                ],
+            })
+        elif _adj2 < -12:
+            sc['suspension'].append({
+                'priority': 'high', 'sector': 'ALL', 'issue': 'front_hot',
+                'label':   'Front temp bias',
+                'options': [
+                    'Stiffen rear ARB 1 click',
+                    'Lower front ride height 1mm',
+                    'Increase front wing 1 step (if adjustable)',
+                    'Increase front toe-out 0.05°',
+                ],
+            })
+
+    # Sector handling
+    for _sec, _sd in out['handling'].items():
+        _t = _sd.get('tendency')
+        if _t == 'understeer':
+            sc['suspension'].append({
+                'priority': 'medium', 'sector': _sec, 'issue': 'understeer',
+                'label': f'{_sec} — understeer',
+                'options': [
+                    'Soften front ARB 1–2 clicks',
+                    'Stiffen rear ARB 1 click',
+                    'Add 0.1–0.2° front negative camber',
+                    'Shift brake bias rearward 0.5–1%',
+                ],
+            })
+        elif _t == 'oversteer':
+            sc['suspension'].append({
+                'priority': 'medium', 'sector': _sec, 'issue': 'oversteer',
+                'label': f'{_sec} — oversteer',
+                'options': [
+                    'Soften rear ARB 1–2 clicks',
+                    'Increase rear toe-in 0.05°',
+                    'Stiffen front ARB 1 click',
+                    'Shift brake bias forward 0.5–1%',
+                ],
+            })
+
+    _pri2 = {'high': 0, 'medium': 1, 'low': 2}
+    sc['suspension'].sort(key=lambda x: _pri2.get(x['priority'], 3))
+    out['setup_card'] = sc
 
     return out

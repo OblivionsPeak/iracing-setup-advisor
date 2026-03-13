@@ -443,6 +443,47 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .rec-issue{font-size:13px;color:#ccc;margin-bottom:5px}
 .rec-action{font-size:13px;color:#66bb6a;font-style:italic}
 
+/* ── Setup card ── */
+.setup-card{background:#141414;border:1px solid #222;border-radius:12px;overflow:hidden;margin-bottom:8px}
+.sc-header{background:#181818;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222}
+.sc-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#777}
+.btn-print{background:#1e1e1e;border:1px solid #333;color:#888;padding:5px 14px;border-radius:6px;
+           font-size:11px;cursor:pointer;font-weight:600;letter-spacing:.4px}
+.btn-print:hover{background:#252525;color:#ccc}
+.sc-section{padding:14px 20px;border-bottom:1px solid #1a1a1a}
+.sc-section:last-child{border-bottom:none}
+.sc-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#444;margin-bottom:10px}
+/* Tyre pressure grid */
+.sc-psi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sc-psi-cell{background:#181818;border-radius:8px;padding:10px 12px;text-align:center}
+.sc-psi-corner{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555;margin-bottom:5px}
+.sc-psi-hot{font-size:16px;font-weight:700;line-height:1}
+.sc-psi-hot.psi-over{color:#f44336}.sc-psi-hot.psi-under{color:#2196F3}.sc-psi-hot.psi-ok{color:#4caf50}
+.sc-psi-target{font-size:11px;color:#444;margin-top:3px}
+.sc-psi-adj{font-size:12px;font-weight:700;margin-top:6px;padding:3px 0;border-radius:4px}
+.sc-psi-adj.adj-over{color:#ff6b6b;background:#1a0505}
+.sc-psi-adj.adj-under{color:#64b5f6;background:#0a1520}
+.sc-psi-adj.adj-ok{color:#4caf50;background:#0a1a0a}
+/* Camber */
+.sc-camber-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #1a1a1a}
+.sc-camber-row:last-child{border-bottom:none}
+.sc-camber-corner{font-size:11px;font-weight:700;color:#888;width:32px}
+.sc-camber-action{font-size:13px;color:#ccc;flex:1}
+.sc-camber-detail{font-size:11px;color:#555}
+/* Suspension items */
+.sc-susp-item{padding:10px 0;border-bottom:1px solid #1a1a1a}
+.sc-susp-item:last-child{border-bottom:none}
+.sc-susp-label{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sc-susp-name{font-size:13px;font-weight:600;color:#ccc}
+.sc-priority-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;
+                   padding:2px 8px;border-radius:8px}
+.sc-priority-badge.high{background:#2d0a0a;color:#f44336}
+.sc-priority-badge.medium{background:#1a1000;color:#ff9800}
+.sc-options{display:flex;flex-direction:column;gap:4px}
+.sc-option{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#888}
+.sc-opt-num{color:#c084fc;font-weight:700;flex-shrink:0;width:16px}
+.sc-opt-text{flex:1}
+
 /* ── Lap times ── */
 .lap-table{background:#181818;border-radius:10px;overflow:hidden;max-height:420px;overflow-y:auto}
 .lap-row{display:grid;grid-template-columns:56px 1fr 1fr;align-items:center;
@@ -814,6 +855,118 @@ function renderOverlap(o) {
 ${sectorHtml}`;
 }
 
+function renderSetupCard(sc, car, track) {
+  if (!sc) return '';
+  const t = sc.tyres || {};
+  const pressures = t.pressures || [];
+  const cambers   = t.camber   || [];
+  const susp      = sc.suspension || [];
+
+  // ── Tyre pressure grid ───────────────────────────────────────────────────
+  const psiCells = pressures.map(p => {
+    if (p.status === 'no_data') return `
+      <div class="sc-psi-cell">
+        <div class="sc-psi-corner">${p.corner}</div>
+        <div class="sc-psi-hot psi-ok" style="font-size:13px;color:#333">No data</div>
+      </div>`;
+    const cls   = p.status === 'over' ? 'psi-over' : p.status === 'under' ? 'psi-under' : 'psi-ok';
+    const adjCls = p.status === 'over' ? 'adj-over' : p.status === 'under' ? 'adj-under' : 'adj-ok';
+    const adjStr = p.status === 'ok'
+      ? '✓ On target'
+      : (p.cold_adj > 0 ? `+${p.cold_adj}` : `${p.cold_adj}`) + ' psi cold';
+    return `
+      <div class="sc-psi-cell">
+        <div class="sc-psi-corner">${p.corner}</div>
+        <div class="sc-psi-hot ${cls}">${p.hot_psi} <span style="font-size:11px;font-weight:400">psi</span></div>
+        <div class="sc-psi-target">target ${p.target_hot_psi} psi hot</div>
+        <div class="sc-psi-adj ${adjCls}">${adjStr}</div>
+      </div>`;
+  }).join('');
+
+  // ── Camber ───────────────────────────────────────────────────────────────
+  let camberHtml = '';
+  if (cambers.length) {
+    const rows = cambers.map(c => {
+      const dir = c.direction === 'add' ? 'Add' : 'Reduce';
+      const why = c.direction === 'add'
+        ? `outer ${Math.abs(c.spread_f)}°F hotter — rolling onto outside edge`
+        : `inner ${Math.abs(c.spread_f)}°F hotter — too much negative camber`;
+      return `<div class="sc-camber-row">
+        <div class="sc-camber-corner">${c.corner}</div>
+        <div class="sc-camber-action">${dir} negative camber <b>${c.range}</b></div>
+        <div class="sc-camber-detail">${why}</div>
+      </div>`;
+    }).join('');
+    camberHtml = `<div class="sc-section">
+      <div class="sc-section-title">Camber</div>${rows}</div>`;
+  }
+
+  // ── Suspension ───────────────────────────────────────────────────────────
+  let suspHtml = '';
+  if (susp.length) {
+    const items = susp.map(s => {
+      const optItems = s.options.map((o, i) =>
+        `<div class="sc-option"><span class="sc-opt-num">${i+1}</span><span class="sc-opt-text">${o}</span></div>`
+      ).join('');
+      return `<div class="sc-susp-item">
+        <div class="sc-susp-label">
+          <span class="sc-susp-name">${s.label}</span>
+          <span class="sc-priority-badge ${s.priority}">${s.priority}</span>
+        </div>
+        <div class="sc-options">${optItems}</div>
+      </div>`;
+    }).join('');
+    suspHtml = `<div class="sc-section">
+      <div class="sc-section-title">Suspension</div>${items}</div>`;
+  }
+
+  if (!psiCells && !camberHtml && !suspHtml) return '';
+
+  return `<div class="section-label">Setup card
+    <button class="btn-print" onclick="printCard()" style="float:right;margin-top:-2px">&#128438; Print / Save PDF</button>
+  </div>
+  <div class="setup-card" id="setup-card-block">
+    <div class="sc-header">
+      <span class="sc-title">Garage adjustments — ${car || 'Car'} at ${track || 'Track'}</span>
+    </div>
+    <div class="sc-section">
+      <div class="sc-section-title">Tyre pressures — adjust cold to hit hot targets</div>
+      <div class="sc-psi-grid">${psiCells}</div>
+    </div>
+    ${camberHtml}
+    ${suspHtml}
+  </div>`;
+}
+
+function printCard() {
+  const card = document.getElementById('setup-card-block');
+  if (!card) return;
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Setup Card</title>
+  <style>
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#111;padding:24px;font-size:13px}
+    h2{font-size:16px;margin-bottom:16px}
+    .sc-psi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+    .sc-psi-cell{border:1px solid #ddd;border-radius:6px;padding:10px;text-align:center}
+    .sc-psi-corner{font-size:10px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px}
+    .sc-psi-hot{font-size:18px;font-weight:700}
+    .sc-psi-hot.psi-over{color:#c00}.sc-psi-hot.psi-under{color:#00c}.sc-psi-hot.psi-ok{color:#080}
+    .sc-psi-target{font-size:11px;color:#888;margin-top:2px}
+    .sc-psi-adj{font-size:12px;font-weight:700;margin-top:6px}
+    .adj-over{color:#c00}.adj-under{color:#00c}.adj-ok{color:#080}
+    .section{margin:16px 0}
+    .sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#999;margin-bottom:8px}
+    .camber-row{display:flex;gap:10px;padding:4px 0;border-bottom:1px solid #eee}
+    .susp-item{padding:8px 0;border-bottom:1px solid #eee}
+    .susp-label{font-weight:600;margin-bottom:4px}
+    .option{display:flex;gap:6px;font-size:12px;color:#444;margin:2px 0}
+    .opt-num{color:#7c3aed;font-weight:700;width:16px}
+    @media print{body{padding:0}}
+  </style></head><body>` + card.innerHTML + `</body></html>`);
+  win.document.close();
+  win.print();
+}
+
 function renderLapTimes(lapTimes) {
   if (!lapTimes || !lapTimes.length) return '';
   const best = Math.min(...lapTimes.map(l => l.time_s));
@@ -910,7 +1063,8 @@ function render(data) {
     ${renderBrake(data.brake)}
     ${renderOverlap(data.throttle_overlap)}
     ${renderLapTimes(data.lap_times)}
-    <div class="section-label">Setup recommendations</div>
+    ${renderSetupCard(data.setup_card, data.car, data.track)}
+    <div class="section-label">Full recommendations</div>
     <div class="rec-list">${renderRecs(data.recommendations)}</div>
   </div>`;
 
