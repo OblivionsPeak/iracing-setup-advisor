@@ -128,6 +128,27 @@ def _detect_from_session(session_info):
     return car_id, track_id, raw_car_path, raw_track_name
 
 
+def _car_from_filename(filename):
+    """
+    iRacing names IBT files: {carpath}_{track} {date}.ibt
+    The car path is the underscore-connected prefix before any spaces.
+    Try progressively shorter prefixes against the car index.
+    """
+    stem  = os.path.splitext(os.path.basename(filename))[0].lower()
+    # Everything before the first space is "{carpath}_{partialtrack}"
+    no_space = stem.split(' ')[0]          # e.g. "porsche992rgt3_roadatlanta"
+    parts    = no_space.split('_')
+    # Try longest-to-shortest prefix
+    for i in range(len(parts), 0, -1):
+        candidate = '_'.join(parts[:i])    # e.g. "porsche992rgt3"
+        if candidate in CAR_PATH_INDEX:
+            return CAR_PATH_INDEX[candidate], candidate
+        for k in CAR_PATH_INDEX:
+            if len(candidate) > 5 and (k == candidate or k in candidate or candidate in k):
+                return CAR_PATH_INDEX[k], candidate
+    return None, None
+
+
 # ── Find a free port ──────────────────────────────────────────────────────────
 # Ports blocked by Chromium-based browsers (Opera, Edge, Chrome) and Firefox
 _BROWSER_BLOCKED_PORTS = {
@@ -234,6 +255,13 @@ def analyze_route():
             _detect_from_session(session_info)
         auto_detected_car   = False
         auto_detected_track = False
+
+        # Fallback: filename-based car detection if YAML gave no car or matched pace car
+        if not detected_car_id or (raw_car_path and raw_car_path.lower() == 'safety'):
+            fname_car_id, fname_raw = _car_from_filename(f.filename)
+            if fname_car_id:
+                detected_car_id = fname_car_id
+                raw_car_path    = fname_raw
 
         if not car_cfg and detected_car_id:
             car_id   = detected_car_id

@@ -1,7 +1,7 @@
 {
   "name": "Porsche 911 GT3R",
   "class": "GT3",
-  "iracing_car_path": ["porsche_911gt3r_992", "porsche_911gt3r"],
+  "iracing_car_path": ["porsche992rgt3", "porsche_992gt3r", "porsche_911gt3r_992", "porsche_911gt3r"],
   "target_hot_psi": { "LF": 28.5, "RF": 28.5, "LR": 29.0, "RR": 29.0 },
   "temp_min": 80,
   "temp_max": 100,
