@@ -1,0 +1,55 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Read version
+        id: ver
+        shell: bash
+        run: echo "version=$(tr -d '[:space:]' < version.txt)" >> $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        shell: bash
+        run: pip install flask numpy pyinstaller
+
+      - name: Build executable
+        shell: pwsh
+        run: |
+          $v = (Get-Content version.txt -Raw).Trim()
+          pyinstaller `
+            --onefile `
+            --noconsole `
+            --name "SetupAdvisor-v$v" `
+            --add-data "version.txt;." `
+            --add-data "cars;cars" `
+            --add-data "tracks;tracks" `
+            --hidden-import=flask `
+            --hidden-import=werkzeug `
+            --hidden-import=werkzeug.serving `
+            --hidden-import=werkzeug.routing `
+            --hidden-import=numpy `
+            --collect-submodules=flask `
+            app.py
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Setup Advisor v${{ steps.ver.outputs.version }}"
+          files: dist/SetupAdvisor-v${{ steps.ver.outputs.version }}.exe
+          generate_release_notes: true
