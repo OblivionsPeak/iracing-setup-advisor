@@ -500,6 +500,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .sc-opt-num{color:#c084fc;font-weight:700;flex-shrink:0;width:16px}
 .sc-opt-text{flex:1}
 
+/* ── Track map ── */
+.tm-controls{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.tm-btn{background:#1e1e1e;border:1px solid #333;color:#666;padding:5px 14px;
+        border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;
+        text-transform:uppercase;letter-spacing:.3px;transition:background .15s,color .15s}
+.tm-btn:hover{background:#252525;color:#aaa}
+.tm-btn.active{background:#0d2a40;border-color:#2196F3;color:#64b5f6}
+
 /* ── Lap times ── */
 .lap-table{background:#181818;border-radius:10px;overflow:hidden;max-height:420px;overflow-y:auto}
 .lap-row{display:grid;grid-template-columns:56px 1fr 1fr;align-items:center;
@@ -721,6 +729,7 @@ function reset() {
   document.getElementById('upload-wrap').style.display = '';
   document.getElementById('fi').value = '';
   setStatus('');
+  window._trackMapData = null;
   updatePreview();
 }
 
@@ -993,6 +1002,116 @@ function printCard() {
   win.print();
 }
 
+function renderTrackMap(tm) {
+  if (!tm || !tm.points || tm.points.length < 20) return '';
+  window._trackMapData = tm;
+  return `<div class="section-label">Track map — Lap ${tm.lap || '?'} &nbsp;·&nbsp; ${tm.max_speed} mph top speed</div>
+<div style="background:#181818;border-radius:10px;padding:16px 18px">
+  <div class="tm-controls">
+    <button class="tm-btn active" data-mode="speed"    onclick="drawTrackMap('speed')">Speed</button>
+    <button class="tm-btn"        data-mode="throttle" onclick="drawTrackMap('throttle')">Throttle</button>
+    <button class="tm-btn"        data-mode="brake"    onclick="drawTrackMap('brake')">Brake</button>
+  </div>
+  <svg id="track-map-svg" style="width:100%;max-height:500px;display:block"></svg>
+  <div style="display:flex;gap:18px;margin-top:10px;font-size:11px;color:#444;flex-wrap:wrap;align-items:center">
+    <span id="tm-legend-bar"></span>
+    <span>&#9679; Sector split</span>
+    <span>&#9675; Start / Finish</span>
+  </div>
+</div>`;
+}
+
+function drawTrackMap(mode) {
+  const tm = window._trackMapData;
+  if (!tm) return;
+  const pts = tm.points;
+
+  document.querySelectorAll('.tm-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.mode === mode));
+
+  // Bounding box of Python-normalised coords (0–1000 range)
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  pts.forEach(p => {
+    if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x;
+    if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
+  });
+  const PAD = 36;
+  const VW  = (maxX - minX) + 2 * PAD;
+  const VH  = (maxY - minY) + 2 * PAD;
+  const ox  = -minX + PAD;
+  const oy  = -minY + PAD;
+
+  function valColor(v, m) {
+    const c = x => Math.max(0, Math.min(1, x));
+    const L = (a, b, t) => Math.round(a + (b - a) * c(t));
+    const lRGB = (c1, c2, t) => [L(c1[0],c2[0],t), L(c1[1],c2[1],t), L(c1[2],c2[2],t)];
+    if (m === 'speed') {
+      const stops = [[26,79,216],[0,188,212],[76,175,80],[255,235,59],[244,67,54]];
+      const t4 = c(v) * 4, i = Math.min(3, Math.floor(t4));
+      const [r,g,b] = lRGB(stops[i], stops[i+1], t4 - i);
+      return `rgb(${r},${g},${b})`;
+    }
+    if (m === 'throttle') {
+      const [r,g,b] = lRGB([26,26,26], [0,230,118], c(v));
+      return `rgb(${r},${g},${b})`;
+    }
+    const [r,g,b] = lRGB([26,26,26], [244,67,54], c(v));
+    return `rgb(${r},${g},${b})`;
+  }
+
+  const mx = tm.max_speed;
+  let svg = '';
+
+  // Coloured track path
+  for (let i = 1; i < pts.length; i++) {
+    const p0 = pts[i-1], p1 = pts[i];
+    const v = mode === 'speed'    ? ((p0.spd + p1.spd) / 2) / mx
+            : mode === 'throttle' ? (p0.thr + p1.thr) / 2
+            :                       (p0.brk + p1.brk) / 2;
+    const col = valColor(v, mode);
+    svg += `<line x1="${(p0.x+ox).toFixed(1)}" y1="${(p0.y+oy).toFixed(1)}" `
+         + `x2="${(p1.x+ox).toFixed(1)}" y2="${(p1.y+oy).toFixed(1)}" `
+         + `stroke="${col}" stroke-width="3.5" stroke-linecap="round"/>`;
+  }
+
+  // Sector boundary markers
+  (tm.sectors || []).forEach((s, si) => {
+    if (s.start <= 0.005) return;
+    let closest = 0, minD = Infinity;
+    pts.forEach((p, i) => { const d = Math.abs(p.pct - s.start); if (d < minD) { minD = d; closest = i; } });
+    const p = pts[closest];
+    svg += `<circle cx="${(p.x+ox).toFixed(1)}" cy="${(p.y+oy).toFixed(1)}" r="5" fill="#f59e0b" stroke="#111" stroke-width="1.5"/>`;
+    svg += `<text x="${(p.x+ox+8).toFixed(0)}" y="${(p.y+oy+4).toFixed(0)}" fill="#f59e0b" font-size="12" font-family="sans-serif" font-weight="700">S${si+1}</text>`;
+  });
+
+  // Start / finish ring
+  if (pts.length > 0) {
+    const sf = pts[0];
+    svg += `<circle cx="${(sf.x+ox).toFixed(1)}" cy="${(sf.y+oy).toFixed(1)}" r="6" fill="none" stroke="#fff" stroke-width="2.5"/>`;
+    svg += `<circle cx="${(sf.x+ox).toFixed(1)}" cy="${(sf.y+oy).toFixed(1)}" r="2.5" fill="#fff"/>`;
+  }
+
+  const svgEl = document.getElementById('track-map-svg');
+  if (svgEl) {
+    svgEl.setAttribute('viewBox', `0 0 ${VW.toFixed(0)} ${VH.toFixed(0)}`);
+    svgEl.innerHTML = svg;
+  }
+
+  // Update colour legend
+  const leg = document.getElementById('tm-legend-bar');
+  if (leg) {
+    const gradients = {
+      speed:    'linear-gradient(to right,rgb(26,79,216),rgb(0,188,212),rgb(76,175,80),rgb(255,235,59),rgb(244,67,54))',
+      throttle: 'linear-gradient(to right,rgb(26,26,26),rgb(0,230,118))',
+      brake:    'linear-gradient(to right,rgb(26,26,26),rgb(244,67,54))',
+    };
+    const labels = { speed: `Slow → ${mx} mph`, throttle: '0 → 100% throttle', brake: '0 → 100% brake' };
+    leg.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px">
+      <span style="display:inline-block;width:80px;height:6px;border-radius:3px;background:${gradients[mode]}"></span>
+      <span>${labels[mode]}</span></span>`;
+  }
+}
+
 function renderLapTimes(lapTimes) {
   if (!lapTimes || !lapTimes.length) return '';
   const best = Math.min(...lapTimes.map(l => l.time_s));
@@ -1097,6 +1216,7 @@ function render(data) {
       ${tyreCard('RR — Right Rear',  t.RR, p.RR)}
     </div>
     ${renderBalance(data.balance)}
+    ${renderTrackMap(data.track_map)}
     ${renderHandling(data.handling)}
     ${renderBrake(data.brake)}
     ${renderOverlap(data.throttle_overlap)}
@@ -1110,6 +1230,7 @@ function render(data) {
   resultsEl.innerHTML = html;
   resultsEl.style.display = 'block';
   document.getElementById('upload-wrap').style.display = 'none';
+  if (window._trackMapData) setTimeout(() => drawTrackMap('speed'), 20);
 }
 </script>
 </body>

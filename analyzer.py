@@ -720,4 +720,78 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
     sc['suspension'].sort(key=lambda x: _pri2.get(x['priority'], 3))
     out['setup_card'] = sc
 
+    # ── 15. Track map (GPS-based colour-coded path) ───────────────────────────
+    _lat_ch = _ch(channels, 'Lat')
+    _lon_ch = _ch(channels, 'Lon')
+
+    if (_lat_ch is not None and _lon_ch is not None
+            and lap is not None and speed is not None):
+        _map_lap_int = lap.astype(np.int32)
+
+        # Choose best flying lap; fall back to a median flying lap
+        _map_lap = None
+        if out.get('lap_times'):
+            _map_lap = min(out['lap_times'], key=lambda _l: _l['time_s'])['lap']
+        else:
+            _fl_laps = np.unique(_map_lap_int[mask])
+            if len(_fl_laps) > 0:
+                _map_lap = int(_fl_laps[len(_fl_laps) // 2])
+
+        if _map_lap is not None:
+            _lm = _map_lap_int == _map_lap
+            if _lm.sum() >= 100:
+                _lats = _lat_ch[_lm].astype(float)
+                _lons = _lon_ch[_lm].astype(float)
+
+                # Verify GPS data has real variance (not zeroed out)
+                if float(np.std(_lats)) > 1e-6 and float(np.std(_lons)) > 1e-6:
+                    _spds = speed[_lm] * MS_TO_MPH
+                    _thrs = (throttle_ch[_lm] if throttle_ch is not None
+                             else np.zeros(int(_lm.sum())))
+                    _brks = (brake_ch[_lm]    if brake_ch   is not None
+                             else np.zeros(int(_lm.sum())))
+                    _dpct = (dist_pct[_lm]    if dist_pct   is not None
+                             else np.linspace(0.0, 1.0, int(_lm.sum())))
+
+                    # Downsample to ≤800 evenly-spaced points
+                    _n   = min(800, int(_lm.sum()))
+                    _idx = np.round(np.linspace(0, int(_lm.sum()) - 1, _n)).astype(int)
+                    _lats = _lats[_idx];  _lons = _lons[_idx]
+                    _spds = _spds[_idx];  _thrs = _thrs[_idx]
+                    _brks = _brks[_idx];  _dpct = _dpct[_idx]
+
+                    # Equirectangular projection → local XY (metres); N = up
+                    _lat_c = float(np.mean(_lats))
+                    _R     = 6_371_000.0
+                    _xs = ((_lons - float(np.mean(_lons)))
+                           * np.cos(np.radians(_lat_c)) * (np.pi / 180.0) * _R)
+                    _ys = -(_lats - _lat_c) * (np.pi / 180.0) * _R
+
+                    # Normalise to 0–1000 coordinate space (aspect ratio preserved)
+                    _xr = float(np.max(_xs) - np.min(_xs))
+                    _yr = float(np.max(_ys) - np.min(_ys))
+                    _sc = 1000.0 / max(_xr, _yr, 1.0)
+                    _xs = (_xs - float(np.min(_xs))) * _sc
+                    _ys = (_ys - float(np.min(_ys))) * _sc
+
+                    out['track_map'] = {
+                        'lap':       int(_map_lap),
+                        'max_speed': round(float(np.max(_spds)), 1),
+                        'sectors': [
+                            {'name': s[0], 'start': round(s[1], 3), 'end': round(s[2], 3)}
+                            for s in sectors
+                        ],
+                        'points': [
+                            {
+                                'x':   round(float(_xs[i]), 1),
+                                'y':   round(float(_ys[i]), 1),
+                                'spd': round(float(_spds[i]), 1),
+                                'thr': round(float(_thrs[i]), 2),
+                                'brk': round(float(_brks[i]), 2),
+                                'pct': round(float(_dpct[i]), 3),
+                            }
+                            for i in range(_n)
+                        ],
+                    }
+
     return out
