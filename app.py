@@ -122,8 +122,16 @@ def _detect_from_session(session_info):
 
 
 # ── Find a free port ──────────────────────────────────────────────────────────
-def _free_port(start=5050):
-    for port in range(start, start + 20):
+# Ports blocked by Chromium-based browsers (Opera, Edge, Chrome) and Firefox
+_BROWSER_BLOCKED_PORTS = {
+    5060, 5061,   # SIP / SIPS
+    6000, 6001, 6002, 6003, 6004, 6005, 6006, 6007,  # X11
+}
+
+def _free_port(start=7700):
+    for port in range(start, start + 50):
+        if port in _BROWSER_BLOCKED_PORTS:
+            continue
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             try:
                 s.bind(('127.0.0.1', port))
