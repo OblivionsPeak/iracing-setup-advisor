@@ -113,13 +113,38 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
     n    = len(next(iter(channels.values())))
     mask = _flying_lap_mask(channels, n)
 
+    # ── 0. Signal validation — flag implausible channel values ────────────────
+    _signal_warnings = []
+    _spd_v = _ch(channels, 'Speed')
+    if _spd_v is not None and float(np.max(_spd_v)) * MS_TO_MPH > 280:
+        _signal_warnings.append('Speed >280 mph detected — possible data corruption')
+    _lat_v = _ch(channels, 'LatAccel')
+    if _lat_v is not None and float(np.max(np.abs(_lat_v))) > 78.5:  # >8G
+        _signal_warnings.append('LatAccel >8G detected — possible data corruption')
+    _thr_v = _ch(channels, 'Throttle')
+    if _thr_v is not None and float(np.max(_thr_v)) > 1.05:
+        _signal_warnings.append('Throttle channel has values outside 0–1 range')
+    _brk_v = _ch(channels, 'Brake')
+    if _brk_v is not None and float(np.max(_brk_v)) > 1.05:
+        _signal_warnings.append('Brake channel has values outside 0–1 range')
+
     # ── Ambient temperature correction for cold pressure targets ──────────────
     # Hot-to-cold ratio is ~0.6; ambient deviation from 70 °F shifts cold start
     # by roughly 0.35 psi per 10 °F (colder air = lower cold pressure needed).
     temp_correction = 0.0
     if ambient_temp_f is not None:
         try:
-            temp_correction = -(float(ambient_temp_f) - 70.0) / 10.0 * 0.35
+            _tf = float(ambient_temp_f)
+            # Piecewise correction: tyre heat-up rate changes with ambient temp.
+            # Cold air (<40°F): 0.45 psi per 10°F deviation — larger swing needed.
+            # Moderate (40–70°F): 0.35 psi per 10°F — standard baseline.
+            # Warm (>70°F): 0.25 psi per 10°F — tyre heats less aggressively.
+            if _tf < 40.0:
+                temp_correction = -(40.0 - 70.0) / 10.0 * 0.35 + -(_tf - 40.0) / 10.0 * 0.45
+            elif _tf > 70.0:
+                temp_correction = -(_tf - 70.0) / 10.0 * 0.25
+            else:
+                temp_correction = -(_tf - 70.0) / 10.0 * 0.35
         except (TypeError, ValueError):
             pass
 
@@ -756,6 +781,23 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
                     _gears = (_gear_ch2[_lm].astype(int) if _gear_ch2 is not None
                               else np.zeros(int(_lm.sum()), dtype=int))
 
+                    # Per-sample US/OS index (steer/lat_g ratio normalised by lap median)
+                    _lat_map_ch  = _ch(channels, 'LatAccel')
+                    _steer_map_ch = _ch(channels, 'SteeringWheelAngle')
+                    if _lat_map_ch is not None and _steer_map_ch is not None:
+                        _lat_lap_m   = _lat_map_ch[_lm].astype(float)
+                        _steer_lap_m = _steer_map_ch[_lm].astype(float)
+                        _lat_g_lap   = _lat_lap_m / G
+                        _ratio_raw   = np.abs(_steer_lap_m) / (np.abs(_lat_g_lap) + 0.01)
+                        _wlen = max(1, min(30, int(_lm.sum()) // 8))
+                        _ratio_sm = (np.convolve(_ratio_raw, np.ones(_wlen) / _wlen, mode='same')
+                                     if _wlen > 1 else _ratio_raw)
+                        _ratio_med = float(np.median(_ratio_sm))
+                        _us_idx_arr = (_ratio_sm / _ratio_med
+                                       if _ratio_med > 0 else np.ones(len(_ratio_sm)))
+                    else:
+                        _us_idx_arr = np.ones(int(_lm.sum()))
+
                     # Downsample to ≤800 evenly-spaced points
                     _n   = min(800, int(_lm.sum()))
                     _idx = np.round(np.linspace(0, int(_lm.sum()) - 1, _n)).astype(int)
@@ -763,6 +805,7 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
                     _spds = _spds[_idx];  _thrs = _thrs[_idx]
                     _brks = _brks[_idx];  _dpct = _dpct[_idx]
                     _gears = _gears[_idx]
+                    _us_idx_arr = _us_idx_arr[_idx]
 
                     # Equirectangular projection → local XY (metres); N = up
                     _lat_c = float(np.mean(_lats))
@@ -794,9 +837,325 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
                                 'brk': round(float(_brks[i]), 2),
                                 'pct': round(float(_dpct[i]), 3),
                                 'gear': int(_gears[i]),
+                                'us':  round(float(_us_idx_arr[i]), 3),
                             }
                             for i in range(_n)
                         ],
                     }
+
+    # ── 16. Speed trace (best 5 laps, speed vs LapDistPct) ───────────────────────
+    if (speed is not None and dist_pct is not None
+            and lap is not None and out.get('lap_times')):
+        _lap_int_st = lap.astype(np.int32)
+        _sorted_laps_st = sorted(out['lap_times'], key=lambda _l: _l['time_s'])
+        _trace_laps_st  = _sorted_laps_st[:5]
+        _best_lap_st    = _sorted_laps_st[0]['lap'] if _sorted_laps_st else None
+        _trace_list_st  = []
+        for _tl in _trace_laps_st:
+            _tl_num = _tl['lap']
+            _tlm = _lap_int_st == _tl_num
+            if _tlm.sum() < 50:
+                continue
+            _t_spds = speed[_tlm] * MS_TO_MPH
+            _t_pcts = dist_pct[_tlm]
+            _t_thrs = (throttle_ch[_tlm] if throttle_ch is not None
+                       else np.zeros(int(_tlm.sum())))
+            _t_brks = (brake_ch[_tlm]    if brake_ch    is not None
+                       else np.zeros(int(_tlm.sum())))
+            _tn = min(200, int(_tlm.sum()))
+            _tidx = np.round(np.linspace(0, int(_tlm.sum()) - 1, _tn)).astype(int)
+            _t_spds = _t_spds[_tidx]
+            _t_pcts = _t_pcts[_tidx]
+            _t_thrs = _t_thrs[_tidx]
+            _t_brks = _t_brks[_tidx]
+            _trace_list_st.append({
+                'lap':     _tl_num,
+                'time_s':  _tl['time_s'],
+                'is_best': _tl_num == _best_lap_st,
+                'points':  [
+                    {
+                        'pct': round(float(_t_pcts[i]), 3),
+                        'spd': round(float(_t_spds[i]), 1),
+                        'thr': round(float(_t_thrs[i]), 2),
+                        'brk': round(float(_t_brks[i]), 2),
+                    }
+                    for i in range(_tn)
+                ],
+            })
+        if _trace_list_st:
+            out['speed_trace'] = {'laps': _trace_list_st}
+
+    # ── 17. Stint analysis (pit detection via FuelLevel jumps) ───────────────────
+    if fuel_ch is not None and lap is not None and out.get('lap_times'):
+        _lap_int_pi = lap.astype(np.int32)
+        _laps_unique_pi = np.unique(_lap_int_pi)
+        # Fuel level at start of each lap (litres, raw)
+        _lap_fuel_start_pi = {}
+        for _ln in _laps_unique_pi:
+            _ln_idx = np.where(_lap_int_pi == _ln)[0]
+            if len(_ln_idx) > 0:
+                _lap_fuel_start_pi[int(_ln)] = float(fuel_ch[_ln_idx[0]])
+        _lt_dict_pi = {_l['lap']: _l['time_s'] for _l in out['lap_times']}
+        _all_laps_pi = sorted(_lt_dict_pi.keys())
+        if len(_all_laps_pi) >= 2:
+            # Detect pit stops: fuel went UP between consecutive lap starts
+            _pit_after_pi = []
+            for _pi in range(len(_all_laps_pi) - 1):
+                _la = _all_laps_pi[_pi]
+                _lb = _all_laps_pi[_pi + 1]
+                _fa = _lap_fuel_start_pi.get(_la)
+                _fb = _lap_fuel_start_pi.get(_lb)
+                if _fa is not None and _fb is not None and _fb > _fa:
+                    _pit_after_pi.append(_la)
+            # Build stint boundaries
+            _stint_start_laps = [_all_laps_pi[0]]
+            for _pa in _pit_after_pi:
+                _pa_i = _all_laps_pi.index(_pa)
+                if _pa_i + 1 < len(_all_laps_pi):
+                    _stint_start_laps.append(_all_laps_pi[_pa_i + 1])
+            _stint_end_laps = _pit_after_pi + [_all_laps_pi[-1]]
+            _stints_out = []
+            for _si, (_ss, _se) in enumerate(zip(_stint_start_laps, _stint_end_laps)):
+                _stint_lap_nums = [_l for _l in _all_laps_pi if _ss <= _l <= _se]
+                _stint_times_pi = [_lt_dict_pi[_l] for _l in _stint_lap_nums if _l in _lt_dict_pi]
+                if not _stint_times_pi:
+                    continue
+                _f_start_pi = _lap_fuel_start_pi.get(_ss)
+                _next_ss = _stint_start_laps[_si + 1] if _si + 1 < len(_stint_start_laps) else None
+                _f_end_pi = (_lap_fuel_start_pi.get(_next_ss) if _next_ss
+                             else float(fuel_ch[-1]))
+                _fuel_used_pi = (round((_f_start_pi - _f_end_pi) * L_TO_GAL, 3)
+                                 if (_f_start_pi and _f_end_pi and _f_start_pi > _f_end_pi)
+                                 else None)
+                _stints_out.append({
+                    'stint':         _si + 1,
+                    'start_lap':     _ss,
+                    'end_lap':       _se,
+                    'lap_count':     len(_stint_lap_nums),
+                    'avg_lap_s':     round(float(np.mean(_stint_times_pi)), 3),
+                    'best_lap_s':    round(float(np.min(_stint_times_pi)), 3),
+                    'fuel_used_gal': _fuel_used_pi,
+                })
+            if _stints_out:
+                out['stints'] = _stints_out
+
+    # ── 18. Sector split times ────────────────────────────────────────────────────
+    if (dist_pct is not None and lap is not None
+            and out.get('lap_times') and len(sectors) >= 2):
+        _lap_int_sc = lap.astype(np.int32)
+        _lt_dict_sc = {_l['lap']: _l['time_s'] for _l in out['lap_times']}
+        _sector_laps_sc = []
+        for _lap_num_sc, _lap_total_sc in _lt_dict_sc.items():
+            _lm_sc = _lap_int_sc == _lap_num_sc
+            if _lm_sc.sum() < 20:
+                continue
+            _dp_sc = dist_pct[_lm_sc]
+            _total_sc = float(_lm_sc.sum())
+            _splits = []
+            for _sec_name, _s0, _s1 in sectors:
+                _in_sec = float(np.sum((_dp_sc >= _s0) & (_dp_sc < _s1)))
+                _splits.append(_lap_total_sc * _in_sec / max(_total_sc, 1))
+            # Renormalise so splits sum exactly to lap total
+            _split_sum = sum(_splits)
+            if _split_sum > 0:
+                _splits = [round(s * _lap_total_sc / _split_sum, 3) for s in _splits]
+            _sector_laps_sc.append({
+                'lap':     _lap_num_sc,
+                'total_s': round(_lap_total_sc, 3),
+                'splits':  _splits,
+            })
+        if _sector_laps_sc:
+            _num_sec_sc = len(sectors)
+            _best_splits_sc = []
+            for _si_sc in range(_num_sec_sc):
+                _vs = [_l['splits'][_si_sc] for _l in _sector_laps_sc
+                       if len(_l['splits']) > _si_sc and _l['splits'][_si_sc] > 0]
+                _best_splits_sc.append(round(min(_vs), 3) if _vs else None)
+            out['sector_times'] = {
+                'sectors':     [{'name': s[0], 'start': round(s[1], 3), 'end': round(s[2], 3)}
+                                 for s in sectors],
+                'laps':        _sector_laps_sc,
+                'best_splits': _best_splits_sc,
+            }
+
+    # ── 19. Per-lap tyre temperature trend ───────────────────────────────────────
+    if lap is not None and out.get('lap_times'):
+        _lap_int_tt = lap.astype(np.int32)
+        _trend_rows = []
+        for _tl_tt in out['lap_times']:
+            _ln_tt = _tl_tt['lap']
+            _lm_tt = _lap_int_tt == _ln_tt
+            if _lm_tt.sum() < 20:
+                continue
+            _row_tt = {'lap': _ln_tt}
+            for _corner_tt, (_iv_tt, _mv_tt, _ov_tt) in TEMP_VARS.items():
+                _ic = _ch(channels, _iv_tt)
+                _mc = _ch(channels, _mv_tt)
+                _oc = _ch(channels, _ov_tt)
+                if _ic is None:
+                    _row_tt[_corner_tt] = None
+                    continue
+                _im_tt = _ic[_lm_tt]
+                _mm_tt = _mc[_lm_tt] if _mc is not None else _im_tt
+                _om_tt = _oc[_lm_tt] if _oc is not None else _im_tt
+                _all_tt = np.concatenate([_im_tt, _mm_tt, _om_tt])
+                _valid_tt = _all_tt[_all_tt > 20]
+                if len(_valid_tt) < 10:
+                    _row_tt[_corner_tt] = None
+                    continue
+                _row_tt[_corner_tt] = round(_c_to_f(float(np.mean(_valid_tt))), 1)
+            _trend_rows.append(_row_tt)
+        if _trend_rows:
+            out['tyre_trend'] = {'laps': _trend_rows}
+
+    # ── 21. Ride heights (optional — not all cars expose these channels) ──────
+    _rh_names = {'LF': 'LFrideHeight', 'RF': 'RFrideHeight',
+                 'LR': 'LRrideHeight', 'RR': 'RRrideHeight'}
+    _rh_out   = {}
+    _any_rh   = False
+    for _rh_corner, _rh_name in _rh_names.items():
+        _rh_ch = _ch(channels, _rh_name)
+        if _rh_ch is None:
+            _rh_out[_rh_corner] = None
+            continue
+        _any_rh = True
+        _rh_lm  = _rh_ch[mask]
+        _rh_valid = _rh_lm[_rh_lm > 0.001]   # filter parked / zero
+        if len(_rh_valid) < 100:
+            _rh_out[_rh_corner] = None
+            continue
+        _rh_mm = round(float(np.mean(_rh_valid)) * 1000.0, 1)   # m → mm
+        _rh_out[_rh_corner] = _rh_mm
+        if _rh_mm < 15.0:
+            recs.append({
+                'category': 'Ride Height',
+                'corner':   _rh_corner,
+                'issue':    f'{_rh_corner} ride height {_rh_mm:.1f} mm — risk of bottoming',
+                'action':   'Raise ride height by ≥5 mm or stiffen spring to reduce dynamic compression',
+                'priority': 'high',
+            })
+    if _any_rh:
+        out['ride_heights'] = _rh_out
+
+    # ── 20. Throttle application points & corner minimum speeds ──────────────
+    if (out.get('track_map') and throttle_ch is not None and brake_ch is not None
+            and speed is not None and dist_pct is not None and lap is not None):
+        _tm_lap   = out['track_map']['lap']
+        _lap_int_ta = lap.astype(np.int32)
+        _lm_ta    = _lap_int_ta == _tm_lap
+        if _lm_ta.sum() >= 100:
+            _spd_ta  = speed[_lm_ta] * MS_TO_MPH
+            _thr_ta  = throttle_ch[_lm_ta].astype(float)
+            _brk_ta  = brake_ch[_lm_ta].astype(float)
+            _pct_ta  = dist_pct[_lm_ta].astype(float)
+            _n_ta    = int(_lm_ta.sum())
+
+            # ── Throttle application points ───────────────────────────────
+            # Find indices where brake was active (>0.2) then went below 0.05,
+            # and the first sample where throttle then exceeds 0.15.
+            _tap_events = []
+            _braking = False
+            _post_brake = False
+            for _i in range(_n_ta):
+                if _brk_ta[_i] > 0.2:
+                    _braking = True
+                    _post_brake = False
+                elif _braking and _brk_ta[_i] < 0.05:
+                    _post_brake = True
+                    _braking = False
+                if _post_brake and _thr_ta[_i] > 0.15:
+                    _tap_events.append(_i)
+                    _post_brake = False
+
+            # Map raw indices → normalised track map XY (use downsampled _idx array)
+            # We re-build the downsampled index mapping: the track map has ≤800 pts
+            # sampled with linspace over the lap. We find the closest downsampled pt.
+            _tm_pts = out['track_map']['points']
+            _n_ds   = len(_tm_pts)
+            _ds_idx = np.round(np.linspace(0, _n_ta - 1, _n_ds)).astype(int)
+
+            _throttle_apps = []
+            for _raw_i in _tap_events:
+                # Find the downsampled point whose raw index is closest to _raw_i
+                _closest_ds = int(np.argmin(np.abs(_ds_idx - _raw_i)))
+                _pt = _tm_pts[_closest_ds]
+                _throttle_apps.append({
+                    'x':   _pt['x'],
+                    'y':   _pt['y'],
+                    'pct': round(float(_pct_ta[_raw_i]), 3),
+                    'spd': round(float(_spd_ta[_raw_i]), 1),
+                })
+            if _throttle_apps:
+                out['track_map']['throttle_apps'] = _throttle_apps
+
+            # ── Corner minimum speeds ─────────────────────────────────────
+            # Find local speed minima that are at least 15 mph below local max,
+            # deduplicated within a 3% lap-distance window. Cap at 15 corners.
+            _wsize = max(1, _n_ta // 20)  # ~5% lap window for local context
+            _corner_mins_raw = []
+            for _i in range(_wsize, _n_ta - _wsize):
+                _local_min = float(np.min(_spd_ta[max(0, _i - _wsize):_i + _wsize]))
+                _local_max = float(np.max(_spd_ta[max(0, _i - _wsize):_i + _wsize]))
+                if _spd_ta[_i] == _local_min and (_local_max - _local_min) >= 15:
+                    _corner_mins_raw.append((_i, float(_spd_ta[_i]), float(_pct_ta[_i])))
+
+            # Deduplicate: keep lowest speed within any 3% window
+            _corner_mins_raw.sort(key=lambda _x: _x[2])  # sort by pct
+            _deduped = []
+            for _cm in _corner_mins_raw:
+                if not _deduped or (_cm[2] - _deduped[-1][2]) > 0.03:
+                    _deduped.append(_cm)
+                elif _cm[1] < _deduped[-1][1]:
+                    _deduped[-1] = _cm  # replace with slower
+
+            # Sort by speed, keep top 15 slowest
+            _deduped.sort(key=lambda _x: _x[1])
+            _deduped = _deduped[:15]
+
+            _corner_mins_out = []
+            for _raw_i, _spd_v, _pct_v in _deduped:
+                _closest_ds = int(np.argmin(np.abs(_ds_idx - _raw_i)))
+                _pt = _tm_pts[_closest_ds]
+                _corner_mins_out.append({
+                    'x':   _pt['x'],
+                    'y':   _pt['y'],
+                    'pct': round(_pct_v, 3),
+                    'spd': round(_spd_v, 1),
+                })
+            if _corner_mins_out:
+                out['track_map']['corner_mins'] = _corner_mins_out
+
+    # ── 22. Confidence scoring ────────────────────────────────────────────────
+    _conf_expected = [
+        'Speed', 'Throttle', 'Brake', 'Lap', 'LapDistPct',
+        'LFtempCL', 'RFtempCL', 'LRtempCL', 'RRtempCL',
+        'LFpressure', 'RFpressure', 'LRpressure', 'RRpressure',
+        'LatAccel', 'LongAccel', 'SteeringWheelAngle',
+    ]
+    _conf_missing   = [c for c in _conf_expected if _ch(channels, c) is None]
+    _conf_lap_count = len(out.get('lap_times') or [])
+    _conf_issues    = list(_signal_warnings)
+    if _conf_missing:
+        _conf_issues.append(f"Missing channels: {', '.join(_conf_missing)}")
+    if _conf_lap_count < 3:
+        _conf_issues.append(
+            f"Only {_conf_lap_count} flying lap(s) — more laps improve recommendation reliability"
+        )
+    if ambient_temp_f is None:
+        _conf_issues.append(
+            "No ambient temperature — cold pressure targets use uncorrected baseline"
+        )
+    # Quality score: starts at 1.0, penalised for missing channels and few laps
+    _dq = 1.0 - (len(_conf_missing) / len(_conf_expected)) * 0.5
+    _dq -= max(0, (5 - _conf_lap_count)) / 5.0 * 0.3
+    _dq  = max(0.0, round(_dq, 2))
+    out['confidence'] = {
+        'data_quality':    _dq,
+        'flying_laps':     _conf_lap_count,
+        'missing_channels': _conf_missing,
+        'issues':          _conf_issues,
+    }
+    if _signal_warnings:
+        out['signal_warnings'] = _signal_warnings
 
     return out

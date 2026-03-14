@@ -1,0 +1,10 @@
+{
+  "name": "Indy Pro 2000 (Tatuus PM-18)",
+  "class": "Indy Pro 2000",
+  "iracing_car_path": ["tatuus_pm18", "indy_pro_2000", "pm18"],
+  "target_hot_psi": { "LF": 28.0, "RF": 28.0, "LR": 27.0, "RR": 27.0 },
+  "temp_min": 80,
+  "temp_max": 105,
+  "rear_weight_bias_c": 2.0,
+  "notes": "Rear-engine open-wheel ladder series — mid-level downforce, even tyre loads"
+}

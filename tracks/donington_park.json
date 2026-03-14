@@ -1,0 +1,11 @@
+{
+  "name": "Donington Park",
+  "short": "Donington",
+  "country": "UK",
+  "sectors": [
+    {"name": "S1 — Redgate to Craner Curves", "start": 0.0, "end": 0.35},
+    {"name": "S2 — Old Hairpin to Melbourne Hairpin", "start": 0.35, "end": 0.65},
+    {"name": "S3 — Goddards to Finish", "start": 0.65, "end": 1.0}
+  ],
+  "iracing_track_name": ["donington park", "donington", "donington park circuit"]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Autodromo Enzo e Dino Ferrari",
+  "short": "Imola",
+  "country": "Italy",
+  "sectors": [
+    {"name": "S1 — Tamburello to Villeneuve", "start": 0.0, "end": 0.32},
+    {"name": "S2 — Tosa to Rivazza", "start": 0.32, "end": 0.67},
+    {"name": "S3 — Variante Alta to Traguardo", "start": 0.67, "end": 1.0}
+  ],
+  "iracing_track_name": ["autodromo enzo e dino ferrari", "imola", "autodromo di imola"]
+}

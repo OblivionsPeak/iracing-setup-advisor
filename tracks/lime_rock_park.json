@@ -1,0 +1,11 @@
+{
+  "name": "Lime Rock Park",
+  "short": "Lime Rock",
+  "country": "USA",
+  "sectors": [
+    {"name": "S1 — Start to Big Bend", "start": 0.0, "end": 0.38},
+    {"name": "S2 — Uphill to Downhill", "start": 0.38, "end": 0.68},
+    {"name": "S3 — Hairpin to Finish", "start": 0.68, "end": 1.0}
+  ],
+  "iracing_track_name": ["lime rock park", "lime rock", "limerock"]
+}

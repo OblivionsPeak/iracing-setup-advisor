@@ -1,0 +1,10 @@
+{
+  "name": "NASCAR Camping World Truck",
+  "class": "NASCAR Truck",
+  "iracing_car_path": ["nascarcwts", "nascar_camping_world_truck", "nascar_truck"],
+  "target_hot_psi": { "LF": 21.0, "RF": 22.0, "LR": 21.0, "RR": 22.0 },
+  "temp_min": 80,
+  "temp_max": 110,
+  "rear_weight_bias_c": 1.0,
+  "notes": "Oval-spec RWD pickup — higher body/aero drag than Cup; slightly lower tyre loads"
+}

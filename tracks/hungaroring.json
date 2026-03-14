@@ -1,0 +1,11 @@
+{
+  "name": "Hungaroring",
+  "short": "Hungaroring",
+  "country": "Hungary",
+  "sectors": [
+    {"name": "S1 — T1 to T4 Hairpin", "start": 0.0, "end": 0.33},
+    {"name": "S2 — T5 to T8 Complex", "start": 0.33, "end": 0.65},
+    {"name": "S3 — T9 to T14 Finish", "start": 0.65, "end": 1.0}
+  ],
+  "iracing_track_name": ["hungaroring", "budapest", "hungaroring grand prix circuit"]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "KTM X-Bow GT4",
+  "class": "GT4",
+  "iracing_car_path": "ktm_xbow_gt4",
+  "target_hot_psi": { "LF": 28.5, "RF": 28.5, "LR": 28.0, "RR": 28.0 },
+  "temp_min": 75,
+  "temp_max": 95,
+  "rear_weight_bias_c": 2.5,
+  "notes": "Lightweight mid-engine GT4; highly sensitive to aero and ride height changes. Excellent rotation but requires careful downforce balance."
+}

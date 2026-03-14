@@ -1,0 +1,11 @@
+{
+  "name": "Suzuka International Racing Course",
+  "short": "Suzuka",
+  "country": "Japan",
+  "sectors": [
+    {"name": "S1 — Turn 1 to Degner 2", "start": 0.0, "end": 0.30},
+    {"name": "S2 — Hairpin to Spoon Curve", "start": 0.30, "end": 0.62},
+    {"name": "S3 — 130R to Casio Triangle", "start": 0.62, "end": 1.0}
+  ],
+  "iracing_track_name": ["suzuka international racing course", "suzuka circuit", "suzuka"]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Mount Panorama Motor Racing Circuit",
+  "short": "Bathurst",
+  "country": "Australia",
+  "sectors": [
+    {"name": "S1 — Skyline to The Cutting", "start": 0.0, "end": 0.35},
+    {"name": "S2 — Mountain Straight to Forrest's Elbow", "start": 0.35, "end": 0.68},
+    {"name": "S3 — Chase to Finish", "start": 0.68, "end": 1.0}
+  ],
+  "iracing_track_name": ["mount panorama motor racing circuit", "mount panorama", "bathurst", "circuit park bathurst"]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Nissan GT-R Nismo GT3",
+  "class": "GT3",
+  "iracing_car_path": "nissangtrnismo_gt3",
+  "target_hot_psi": { "LF": 29.5, "RF": 29.5, "LR": 29.0, "RR": 29.0 },
+  "temp_min": 80,
+  "temp_max": 100,
+  "rear_weight_bias_c": 3.0,
+  "notes": "FR GT-R-based platform; stable understeer tendency, good traction. Watch front left tyre loading in long fast corners."
+}

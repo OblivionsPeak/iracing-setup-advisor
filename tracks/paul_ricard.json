@@ -1,0 +1,11 @@
+{
+  "name": "Circuit Paul Ricard",
+  "short": "Paul Ricard",
+  "country": "France",
+  "sectors": [
+    {"name": "S1 — Mistral Straight to Signes", "start": 0.0, "end": 0.34},
+    {"name": "S2 — Beausset to Bendor", "start": 0.34, "end": 0.64},
+    {"name": "S3 — Chicane to Finish", "start": 0.64, "end": 1.0}
+  ],
+  "iracing_track_name": ["circuit paul ricard", "paul ricard", "le castellet", "paul ricard circuit"]
+}

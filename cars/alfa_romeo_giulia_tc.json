@@ -1,0 +1,10 @@
+{
+  "name": "Alfa Romeo Giulia TCR",
+  "class": "TCR",
+  "iracing_car_path": ["alfa_romeo_giulia_tcr", "alfaromeo_giulia_tcr", "giulia_tcr"],
+  "target_hot_psi": { "LF": 33.0, "RF": 33.0, "LR": 29.0, "RR": 29.0 },
+  "temp_min": 75,
+  "temp_max": 95,
+  "rear_weight_bias_c": -4.0,
+  "notes": "FF touring car — fronts carry drive and braking loads, run 4–6 °C hotter than rears"
+}

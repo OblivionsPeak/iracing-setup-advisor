@@ -1,0 +1,27 @@
+{
+  "name": "Homestead-Miami Speedway Road Course",
+  "short": "Homestead",
+  "country": "USA",
+  "sectors": [
+    {
+      "name": "S1 — T1–T3 (oval entry & infield opener)",
+      "start": 0.0,
+      "end": 0.38
+    },
+    {
+      "name": "S2 — T3–T10 (infield complex)",
+      "start": 0.38,
+      "end": 0.70
+    },
+    {
+      "name": "S3 — T10 to finish (oval banking exit)",
+      "start": 0.70,
+      "end": 1.0
+    }
+  ],
+  "iracing_track_name": [
+    "homestead-miami speedway road course",
+    "homestead miami road course",
+    "homestead"
+  ]
+}

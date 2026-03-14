@@ -1,0 +1,11 @@
+{
+  "name": "Circuit Zandvoort",
+  "short": "Zandvoort",
+  "country": "Netherlands",
+  "sectors": [
+    {"name": "S1 — Tarzan to Hugenholtzbocht", "start": 0.0, "end": 0.31},
+    {"name": "S2 — Hunserug to Arie Luyendijkbocht", "start": 0.31, "end": 0.63},
+    {"name": "S3 — Scheivlak to Finish", "start": 0.63, "end": 1.0}
+  ],
+  "iracing_track_name": ["circuit zandvoort", "zandvoort", "circuit park zandvoort"]
+}

@@ -7,6 +7,7 @@ Runs entirely on your local machine — no data leaves your PC.
 
 import json
 import os
+import re
 import socket
 import sys
 import tempfile
@@ -82,7 +83,6 @@ def _detect_from_session(session_info):
     Parse iRacing session YAML to detect car and track.
     Returns (car_id, track_id, raw_car_path, raw_track_name) — any may be None.
     """
-    import re
     car_id   = None
     track_id = None
     raw_track_name = None
@@ -130,7 +130,6 @@ def _detect_from_session(session_info):
 
 def _detect_session_type(session_info):
     """Extract EventType (Race / Practice / Qualify / Time Trial) from session YAML."""
-    import re
     for pattern in (r'EventType:\s*(.+)', r'SessionType:\s*(.+)'):
         m = re.search(pattern, session_info)
         if m:
@@ -262,6 +261,16 @@ def analyze_route():
     try:
         channels, session_info, tick_rate, record_count = parse_ibt(tmp_path)
 
+        # Auto ambient + track temp from session YAML
+        track_temp_f = None
+        if session_info:
+            _at_m = re.search(r'AirTemp:\s*([\d.]+)\s*C', session_info)
+            if _at_m and ambient_temp_f is None:
+                ambient_temp_f = round(float(_at_m.group(1)) * 9/5 + 32, 1)
+            _tt_m = re.search(r'TrackTemp:\s*([\d.]+)\s*C', session_info)
+            if _tt_m:
+                track_temp_f = round(float(_tt_m.group(1)) * 9/5 + 32, 1)
+
         # Auto-detect car/track from session YAML if not manually specified
         detected_car_id, detected_track_id, raw_car_path, raw_track_name = \
             _detect_from_session(session_info)
@@ -294,6 +303,7 @@ def analyze_route():
             'record_count': record_count,
             'session_type': session_type,
             'ambient_temp_f': ambient_temp_f,
+            'track_temp_f':  track_temp_f,
         }
         result['detected'] = {
             'car_id':            car_id   if auto_detected_car   else None,
@@ -308,7 +318,49 @@ def analyze_route():
         import traceback
         return jsonify({'error': str(e), 'trace': traceback.format_exc()}), 500
     finally:
-        os.unlink(tmp_path)
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+
+
+@app.route('/api/compare', methods=['POST'])
+def compare_route():
+    for key in ('file_a', 'file_b'):
+        if key not in request.files:
+            return jsonify({'error': f'Missing {key}'}), 400
+    results = {}
+    tmp_paths = []
+    try:
+        for key, car_key, track_key in [('file_a', 'car_a', 'track_a'), ('file_b', 'car_b', 'track_b')]:
+            f = request.files[key]
+            if not f.filename.lower().endswith('.ibt'):
+                return jsonify({'error': f'{key} must be .ibt'}), 400
+            car_id    = request.form.get(car_key, '').strip()
+            track_id  = request.form.get(track_key, '').strip()
+            car_cfg   = CARS.get(car_id)
+            track_cfg = TRACKS.get(track_id)
+            with tempfile.NamedTemporaryFile(suffix='.ibt', delete=False) as tmp:
+                tmp_path = tmp.name
+                f.save(tmp_path)
+                tmp_paths.append(tmp_path)
+            channels, session_info, tick_rate, _ = parse_ibt(tmp_path)
+            det_car, det_track, _, _ = _detect_from_session(session_info)
+            if not car_cfg and det_car:
+                car_cfg = CARS.get(det_car)
+            if not track_cfg and det_track:
+                track_cfg = TRACKS.get(det_track)
+            result = analyze(channels, tick_rate, car_cfg=car_cfg, track_cfg=track_cfg)
+            result['meta'] = {'filename': f.filename, 'tick_rate': tick_rate}
+            results[key[5:]] = result   # 'a' or 'b'
+        return jsonify(results)
+    except Exception as e:
+        import traceback
+        return jsonify({'error': str(e), 'trace': traceback.format_exc()}), 500
+    finally:
+        for _p in tmp_paths:
+            try: os.unlink(_p)
+            except Exception: pass
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -514,6 +566,70 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
             display:none;z-index:1000;line-height:1.7;min-width:100px;
             box-shadow:0 4px 12px rgba(0,0,0,.5)}
 
+/* ── Input trace (3-panel) ── */
+.input-trace-wrap{background:#181818;border-radius:10px;padding:16px 18px}
+.it-panel-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+                color:#555;margin:8px 0 2px}
+.it-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px}
+.it-legend-item{display:flex;align-items:center;gap:5px}
+.it-legend-dot{width:18px;height:3px;border-radius:2px}
+
+/* ── Sector splits ── */
+.sector-splits-table{background:#181818;border-radius:10px;overflow:hidden}
+.ss-row{display:grid;align-items:center;padding:9px 18px;border-bottom:1px solid #222;
+        font-size:12px;color:#777}
+.ss-row:last-child{border-bottom:none}
+.ss-header{background:#111;position:sticky;top:0}
+.ss-header div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
+.ss-best{color:#c084fc;font-weight:700}
+.ss-delta{font-size:11px}
+.ss-delta.fast{color:#4caf50}.ss-delta.med{color:#ff9800}.ss-delta.slow{color:#f44336}
+
+/* ── Tyre trend ── */
+.tyre-trend-wrap{background:#181818;border-radius:10px;padding:16px 18px}
+.tt-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px}
+.tt-legend-item{display:flex;align-items:center;gap:5px}
+.tt-legend-dot{width:14px;height:3px;border-radius:2px}
+
+/* ── Speed trace ── */
+.speed-trace-wrap{background:#181818;border-radius:10px;padding:16px 18px}
+.st-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px}
+.st-legend-item{display:flex;align-items:center;gap:5px}
+.st-legend-dot{width:18px;height:3px;border-radius:2px}
+
+/* ── Stints ── */
+.stint-table{background:#181818;border-radius:10px;overflow:hidden}
+.stint-row{display:grid;grid-template-columns:52px 80px 50px 90px 90px 80px;
+           align-items:center;padding:9px 18px;border-bottom:1px solid #222;
+           font-size:12px;color:#777}
+.stint-row:last-child{border-bottom:none}
+.stint-header{background:#111;position:sticky;top:0}
+.stint-header div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
+
+/* ── Compare ── */
+.compare-wrap{background:#181818;border:2px dashed #2a2a2a;border-radius:14px;padding:28px;margin-top:16px;display:none}
+.compare-wrap.visible{display:block}
+.compare-inputs{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px}
+.compare-file-group{flex:1;min-width:200px;display:flex;flex-direction:column;gap:6px}
+.compare-file-group label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
+.compare-file-btn{background:#1e1e1e;border:1px solid #333;color:#777;padding:8px 14px;
+                  border-radius:6px;font-size:12px;cursor:pointer;text-align:left}
+.compare-file-btn.has-file{border-color:#2196F3;color:#64b5f6}
+.btn-compare-go{background:#0d2a40;border:1px solid #2196F3;color:#64b5f6;padding:8px 20px;
+                border-radius:6px;font-size:13px;font-weight:700;cursor:pointer}
+.btn-compare-go:disabled{opacity:.4;cursor:default}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.compare-col{background:#141414;border-radius:8px;padding:14px 18px}
+.compare-col-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+                   color:#2196F3;margin-bottom:10px}
+.compare-stat-row{display:flex;justify-content:space-between;align-items:center;
+                  padding:5px 0;border-bottom:1px solid #1e1e1e;font-size:12px;color:#888}
+.compare-stat-row:last-child{border-bottom:none}
+.compare-stat-label{color:#555}
+.compare-stat-val{font-weight:600;color:#ccc}
+.compare-better{color:#4caf50}
+.compare-worse{color:#f44336}
+
 /* ── Lap times ── */
 .lap-table{background:#181818;border-radius:10px;overflow:hidden;max-height:420px;overflow-y:auto}
 .lap-row{display:grid;grid-template-columns:56px 1fr 1fr;align-items:center;
@@ -593,6 +709,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 </div>
 
 <div id="status"></div>
+<div style="text-align:center;padding:0 24px 8px">
+  <button onclick="toggleCompare()" id="btn-compare-toggle"
+          style="background:none;border:1px solid #333;color:#555;padding:5px 16px;
+                 border-radius:6px;font-size:12px;cursor:pointer">
+    ⚖ Compare two files
+  </button>
+</div>
+<div class="compare-wrap" id="compare-wrap">
+  <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:14px">Compare two .ibt files</div>
+  <div class="compare-inputs">
+    <div class="compare-file-group">
+      <label>File A</label>
+      <button class="compare-file-btn" id="cmp-btn-a" onclick="document.getElementById('cmp-fi-a').click()">Choose .ibt file…</button>
+      <input type="file" id="cmp-fi-a" accept=".ibt" style="display:none">
+    </div>
+    <div class="compare-file-group">
+      <label>File B</label>
+      <button class="compare-file-btn" id="cmp-btn-b" onclick="document.getElementById('cmp-fi-b').click()">Choose .ibt file…</button>
+      <input type="file" id="cmp-fi-b" accept=".ibt" style="display:none">
+    </div>
+    <div style="display:flex;align-items:flex-end">
+      <button class="btn-compare-go" id="btn-cmp-go" onclick="runCompare()" disabled>Compare →</button>
+    </div>
+  </div>
+  <div id="compare-results"></div>
+</div>
 <div id="tm-tooltip"></div>
 <div id="results" style="display:none"></div>
 
@@ -625,6 +767,12 @@ async function loadOptions() {
     opt.textContent = t.name + (t.country ? ` — ${t.country}` : '');
     trackSel.appendChild(opt);
   });
+  // Restore saved selections from localStorage
+  const savedCar   = localStorage.getItem('iracing-car');
+  const savedTrack = localStorage.getItem('iracing-track');
+  if (savedCar)   document.getElementById('car-select').value   = savedCar;
+  if (savedTrack) document.getElementById('track-select').value = savedTrack;
+  updatePreview();
 }
 loadOptions();
 
@@ -632,6 +780,8 @@ loadOptions();
 function updatePreview() {
   const carId   = document.getElementById('car-select').value;
   const trackId = document.getElementById('track-select').value;
+  if (carId)   localStorage.setItem('iracing-car',   carId);
+  if (trackId) localStorage.setItem('iracing-track', trackId);
   const bar     = document.getElementById('preview-bar');
 
   const carCard   = document.getElementById('car-preview');
@@ -729,6 +879,27 @@ async function go(file) {
 function setStatus(msg) {
   const el = document.getElementById('status');
   el.textContent = msg;
+}
+
+window._selectedLap = null;
+function selectLap(lapNum) {
+  window._selectedLap = (window._selectedLap === lapNum) ? null : lapNum;
+  // Highlight lap row
+  document.querySelectorAll('.lap-row[data-lap]').forEach(el => {
+    el.style.outline = (parseInt(el.dataset.lap) === window._selectedLap) ? '2px solid #2196F3' : '';
+    el.style.background = (parseInt(el.dataset.lap) === window._selectedLap) ? '#0d2a40' : '';
+  });
+  // Highlight tyre trend row
+  document.querySelectorAll('.tt-row[data-lap]').forEach(el => {
+    el.style.outline = (parseInt(el.dataset.lap) === window._selectedLap) ? '2px solid #2196F3' : '';
+    el.style.background = (parseInt(el.dataset.lap) === window._selectedLap) ? '#0d2a40' : '';
+  });
+  // Highlight lap delta dot
+  document.querySelectorAll('[data-lap-dot]').forEach(el => {
+    const isSelected = parseInt(el.dataset.lapDot) === window._selectedLap;
+    el.setAttribute('r', isSelected ? '7' : '4');
+    el.setAttribute('stroke-width', isSelected ? '2.5' : '1');
+  });
 }
 
 function reset() {
@@ -1019,6 +1190,7 @@ function renderTrackMap(tm) {
     <button class="tm-btn"        data-mode="throttle" onclick="drawTrackMap('throttle')">Throttle</button>
     <button class="tm-btn"        data-mode="brake"    onclick="drawTrackMap('brake')">Brake</button>
     <button class="tm-btn"        data-mode="gear"     onclick="drawTrackMap('gear')">Gear</button>
+    <button class="tm-btn"        data-mode="balance"  onclick="drawTrackMap('balance')">Balance</button>
     <button class="tm-btn" onclick="saveTrackMapPNG()" style="margin-left:auto">&#8595; PNG</button>
   </div>
   <svg id="track-map-svg" style="width:100%;max-height:500px;display:block"></svg>
@@ -1031,6 +1203,7 @@ function renderTrackMap(tm) {
 }
 
 function drawTrackMap(mode) {
+  if (mode) localStorage.setItem('iracing-tm-mode', mode);
   const tm = window._trackMapData;
   if (!tm) return;
   const pts = tm.points;
@@ -1069,6 +1242,12 @@ function drawTrackMap(mode) {
       const [r,g,b] = gc[Math.min(8, Math.max(0, Math.round(v)))];
       return `rgb(${r},${g},${b})`;
     }
+    if (m === 'balance') {
+      // v is us_idx: <0.85 oversteer (red), ~1.0 neutral (gray), >1.15 understeer (blue)
+      const t = Math.max(0, Math.min(1, (v - 0.7) / 0.6));   // 0=OS, 0.5=neutral, 1=US
+      if (t < 0.5) { const [r,g,b] = lRGB([244,67,54],[80,80,80],t*2); return `rgb(${r},${g},${b})`; }
+      else          { const [r,g,b] = lRGB([80,80,80],[33,150,243],(t-0.5)*2); return `rgb(${r},${g},${b})`; }
+    }
     const [r,g,b] = lRGB([26,26,26], [244,67,54], c(v));
     return `rgb(${r},${g},${b})`;
   }
@@ -1082,6 +1261,7 @@ function drawTrackMap(mode) {
     const v = mode === 'speed'    ? ((p0.spd + p1.spd) / 2) / mx
             : mode === 'throttle' ? (p0.thr + p1.thr) / 2
             : mode === 'gear'     ? ((p0.gear || 0) + (p1.gear || 0)) / 2
+            : mode === 'balance'  ? ((p0.us  || 1) + (p1.us  || 1)) / 2
             :                       (p0.brk + p1.brk) / 2;
     const col = valColor(v, mode);
     svg += `<line x1="${(p0.x+ox).toFixed(1)}" y1="${(p0.y+oy).toFixed(1)}" `
@@ -1106,6 +1286,37 @@ function drawTrackMap(mode) {
     svg += `<circle cx="${(sf.x+ox).toFixed(1)}" cy="${(sf.y+oy).toFixed(1)}" r="2.5" fill="#fff"/>`;
   }
 
+  // Throttle application points (orange dots)
+  (tm.throttle_apps || []).forEach(ap => {
+    svg += `<circle cx="${(ap.x+ox).toFixed(1)}" cy="${(ap.y+oy).toFixed(1)}" r="4" fill="#f97316" stroke="#111" stroke-width="1" opacity="0.85"/>`;
+  });
+
+  // Corner minimum speed dots (cyan) with speed label
+  (tm.corner_mins || []).forEach(cm => {
+    svg += `<circle cx="${(cm.x+ox).toFixed(1)}" cy="${(cm.y+oy).toFixed(1)}" r="5" fill="#06b6d4" stroke="#111" stroke-width="1" opacity="0.9"/>`;
+    svg += `<text x="${(cm.x+ox+7).toFixed(0)}" y="${(cm.y+oy+4).toFixed(0)}" fill="#06b6d4" font-size="9" font-family="sans-serif" font-weight="600">${cm.spd.toFixed(0)}</text>`;
+  });
+
+  // Coast zone overlay — grey segments where throttle < 5% and brake < 5%
+  {
+    const _coastSegs = [];
+    let _cSeg = null;
+    pts.forEach(p => {
+      if (p.thr < 0.05 && p.brk < 0.05) {
+        if (!_cSeg) _cSeg = [];
+        _cSeg.push(p);
+      } else {
+        if (_cSeg && _cSeg.length > 1) _coastSegs.push(_cSeg);
+        _cSeg = null;
+      }
+    });
+    if (_cSeg && _cSeg.length > 1) _coastSegs.push(_cSeg);
+    _coastSegs.forEach(seg => {
+      const d = seg.map((p, i) => `${i===0?'M':'L'}${(p.x+ox).toFixed(1)},${(p.y+oy).toFixed(1)}`).join(' ');
+      svg += `<path d="${d}" fill="none" stroke="rgba(200,200,200,0.45)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    });
+  }
+
   const svgEl = document.getElementById('track-map-svg');
   if (svgEl) {
     svgEl.setAttribute('viewBox', `0 0 ${VW.toFixed(0)} ${VH.toFixed(0)}`);
@@ -1120,11 +1331,16 @@ function drawTrackMap(mode) {
       throttle: 'linear-gradient(to right,rgb(26,26,26),rgb(0,230,118))',
       brake:    'linear-gradient(to right,rgb(26,26,26),rgb(244,67,54))',
       gear:     'linear-gradient(to right,rgb(244,67,54),rgb(255,152,0),rgb(255,235,59),rgb(76,175,80),rgb(0,188,212),rgb(33,150,243),rgb(124,77,255),rgb(224,64,251))',
+      balance:  'linear-gradient(to right,rgb(244,67,54),rgb(80,80,80),rgb(33,150,243))',
     };
-    const labels = { speed: `Slow → ${mx} mph`, throttle: '0 → 100% throttle', brake: '0 → 100% brake', gear: '1st → 8th gear' };
+    const labels = { speed: `Slow → ${mx} mph`, throttle: '0 → 100% throttle', brake: '0 → 100% brake', gear: '1st → 8th gear', balance: 'Oversteer ← Neutral → Understeer' };
     leg.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px">
       <span style="display:inline-block;width:80px;height:6px;border-radius:3px;background:${gradients[mode]}"></span>
-      <span>${labels[mode]}</span></span>`;
+      <span>${labels[mode]}</span></span>
+      <span style="display:inline-flex;align-items:center;gap:4px;margin-left:12px;opacity:0.7">
+        <span style="display:inline-block;width:18px;height:4px;border-radius:2px;background:rgba(200,200,200,0.6)"></span>
+        <span style="font-size:11px">coast</span>
+      </span>`;
   }
 
   if (svgEl) {
@@ -1186,6 +1402,413 @@ function saveTrackMapPNG() {
   img.src = url;
 }
 
+// ── Input Trace (3-panel speed / throttle / brake) ───────────────────────────
+function renderInputTrace(st) {
+  if (!st || !st.laps || !st.laps.length) return '';
+  const W = 600, PL = 44, PR = 12, PT = 6, PB = 18;
+  const panels = [
+    {key: 'spd', label: 'Speed (mph)', h: 100, color: '#c084fc', max: null},
+    {key: 'thr', label: 'Throttle %',  h: 60,  color: '#4caf50', max: 1},
+    {key: 'brk', label: 'Brake %',     h: 60,  color: '#f44336', max: 1},
+  ];
+
+  // Determine max speed across all laps
+  let maxSpd = 0;
+  st.laps.forEach(l => l.points.forEach(p => { if (p.spd > maxSpd) maxSpd = p.spd; }));
+  panels[0].max = maxSpd || 1;
+
+  const colors = ['#c084fc','#64b5f6','#81c784','#ffb74d','#f06292'];
+
+  let totalH = panels.reduce((s, p) => s + p.h + PT + PB, 0) + 10;
+  let svgContent = '';
+  let yOffset = 0;
+
+  panels.forEach((panel, pi) => {
+    const IW = W - PL - PR, IH = panel.h;
+    const yBase = yOffset + PT;
+
+    // Background
+    svgContent += `<rect x="${PL}" y="${yBase}" width="${IW}" height="${IH}" fill="#111" rx="3"/>`;
+
+    // Grid lines (25%, 50%, 75%)
+    for (let g = 25; g <= 75; g += 25) {
+      const gy = (yBase + IH - (g / 100) * IH).toFixed(1);
+      const val = panel.key === 'spd' ? Math.round(panel.max * g / 100) : g;
+      svgContent += `<line x1="${PL}" y1="${gy}" x2="${W - PR}" y2="${gy}" stroke="#222" stroke-width="1"/>`;
+      svgContent += `<text x="${PL - 4}" y="${parseFloat(gy) + 4}" text-anchor="end" fill="#444" font-size="9">${val}</text>`;
+    }
+
+    // Panel label
+    svgContent += `<text x="${PL}" y="${yBase - 2}" fill="#555" font-size="9" font-weight="700" text-transform="uppercase">${panel.label}</text>`;
+
+    // Draw non-best laps first (dimmed)
+    st.laps.filter(l => !l.is_best).forEach((l, li) => {
+      if (!l.points[0] || l.points[0][panel.key] == null) return;
+      const col = colors[(li + 1) % colors.length];
+      const pts = l.points.map(p => {
+        const v = panel.key === 'spd' ? p.spd / panel.max : (p[panel.key] || 0);
+        return `${(PL + p.pct * IW).toFixed(1)},${(yBase + IH - v * IH).toFixed(1)}`;
+      }).join(' ');
+      svgContent += `<polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1" opacity="0.35"/>`;
+    });
+
+    // Draw best lap on top
+    st.laps.filter(l => l.is_best).forEach(l => {
+      if (!l.points[0] || l.points[0][panel.key] == null) return;
+      const pts = l.points.map(p => {
+        const v = panel.key === 'spd' ? p.spd / panel.max : (p[panel.key] || 0);
+        return `${(PL + p.pct * IW).toFixed(1)},${(yBase + IH - v * IH).toFixed(1)}`;
+      }).join(' ');
+      svgContent += `<polyline points="${pts}" fill="none" stroke="${panel.color}" stroke-width="1.8"/>`;
+    });
+
+    // X-axis labels on last panel only
+    if (pi === panels.length - 1) {
+      svgContent += `<text x="${PL}" y="${yBase + IH + 12}" fill="#444" font-size="9">0%</text>`;
+      svgContent += `<text x="${W - PR}" y="${yBase + IH + 12}" text-anchor="end" fill="#444" font-size="9">100% lap</text>`;
+    }
+
+    yOffset += PT + IH + PB;
+  });
+
+  const legendItems = st.laps.map((l, i) => {
+    const col = l.is_best ? '#c084fc' : colors[i % colors.length];
+    const op  = l.is_best ? '1' : '0.5';
+    return `<span class="it-legend-item" style="opacity:${op}">
+      <span class="it-legend-dot" style="background:${col}"></span>
+      Lap ${l.lap} — ${fmtLap(l.time_s)}${l.is_best ? ' ⬤' : ''}
+    </span>`;
+  }).join('');
+
+  return `<div class="section-label">Driver inputs — Top ${st.laps.length} laps</div>
+<div class="input-trace-wrap">
+  <svg viewBox="0 0 ${W} ${totalH}" style="width:100%;display:block">${svgContent}</svg>
+  <div class="it-legend">${legendItems}</div>
+</div>`;
+}
+
+// ── Sector Splits ─────────────────────────────────────────────────────────────
+function renderSectorSplits(st) {
+  if (!st || !st.laps || !st.laps.length || !st.sectors) return '';
+  const sectors  = st.sectors;
+  const nSec     = sectors.length;
+  const bestSpl  = st.best_splits || [];
+  const colTpl   = `52px repeat(${nSec}, 1fr) 90px`;
+
+  const headerCells = sectors.map((s, i) =>
+    `<div>${s.name.replace(/ —.*/, '').trim()}</div>`
+  ).join('');
+
+  const rows = st.laps.map(l => {
+    const splits = l.splits || [];
+    const cells = splits.map((s, i) => {
+      const best  = bestSpl[i];
+      const isBst = best != null && Math.abs(s - best) < 0.001;
+      const delta = best != null ? s - best : null;
+      const dStr  = isBst ? '' : (delta != null ? `+${delta.toFixed(3)}` : '');
+      const dCls  = delta == null ? '' : delta < 0.1 ? 'fast' : delta < 0.4 ? 'med' : 'slow';
+      return `<div>
+        <span class="${isBst ? 'ss-best' : ''}">${fmtLap(s)}</span>
+        ${dStr ? `<span class="ss-delta ${dCls}"> ${dStr}</span>` : ''}
+      </div>`;
+    }).join('');
+    return `<div class="ss-row" style="grid-template-columns:${colTpl}">
+      <div style="color:#666">${l.lap}</div>
+      ${cells}
+      <div style="color:#aaa;font-weight:600">${fmtLap(l.total_s)}</div>
+    </div>`;
+  }).join('');
+
+  const bestRow = `<div class="ss-row" style="grid-template-columns:${colTpl};background:#140a24">
+    <div style="color:#a855f7;font-size:10px;font-weight:700">BEST</div>
+    ${bestSpl.map(b => `<div class="ss-best">${b != null ? fmtLap(b) : '—'}</div>`).join('')}
+    <div class="ss-best">${fmtLap(bestSpl.filter(b => b != null).reduce((a, b) => a + b, 0))}</div>
+  </div>`;
+
+  return `<div class="section-label">Sector split times</div>
+<div class="sector-splits-table">
+  <div class="ss-row ss-header" style="grid-template-columns:${colTpl}">
+    <div>Lap</div>${headerCells}<div>Total</div>
+  </div>
+  ${bestRow}
+  ${rows}
+</div>`;
+}
+
+// ── Tyre Trend ────────────────────────────────────────────────────────────────
+function renderTyreTrend(trend) {
+  if (!trend || !trend.laps || trend.laps.length < 3) return '';
+  const laps = trend.laps;
+  const corners = ['LF','RF','LR','RR'];
+  const cols    = {LF:'#64b5f6', RF:'#4caf50', LR:'#ff9800', RR:'#f44336'};
+  const W = 600, PL = 44, PR = 12, PT = 10, PB = 24, H = 130;
+  const IW = W - PL - PR, IH = H - PT - PB;
+
+  // Find temp range across all corners and laps
+  let minT = Infinity, maxT = -Infinity;
+  laps.forEach(l => corners.forEach(c => {
+    if (l[c] != null) { if (l[c] < minT) minT = l[c]; if (l[c] > maxT) maxT = l[c]; }
+  }));
+  if (minT === Infinity) return '';
+  const pad = 5;
+  minT = Math.floor(minT - pad);
+  maxT = Math.ceil(maxT + pad);
+  const tRange = maxT - minT || 1;
+
+  const lapNums = laps.map(l => l.lap);
+  const nLaps = lapNums.length;
+
+  let svg = `<rect x="${PL}" y="${PT}" width="${IW}" height="${IH}" fill="#111" rx="3"/>`;
+
+  // Gridlines
+  for (let g = 0; g <= 1; g += 0.5) {
+    const gy = (PT + IH - g * IH).toFixed(1);
+    const tv = Math.round(minT + g * tRange);
+    svg += `<line x1="${PL}" y1="${gy}" x2="${W-PR}" y2="${gy}" stroke="#222" stroke-width="1"/>`;
+    svg += `<text x="${PL-4}" y="${parseFloat(gy)+4}" text-anchor="end" fill="#444" font-size="9">${tv}°F</text>`;
+  }
+
+  // X axis labels
+  svg += `<text x="${PL}" y="${H-4}" fill="#444" font-size="9">Lap ${lapNums[0]}</text>`;
+  svg += `<text x="${W-PR}" y="${H-4}" text-anchor="end" fill="#444" font-size="9">Lap ${lapNums[nLaps-1]}</text>`;
+
+  // Lines per corner
+  corners.forEach(c => {
+    const pts = laps.map((l, i) => {
+      if (l[c] == null) return null;
+      const x = PL + (i / Math.max(nLaps - 1, 1)) * IW;
+      const y = PT + IH - ((l[c] - minT) / tRange) * IH;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).filter(Boolean);
+    if (pts.length < 2) return;
+    svg += `<polyline points="${pts.join(' ')}" fill="none" stroke="${cols[c]}" stroke-width="1.8"/>`;
+  });
+
+  const legend = corners.map(c =>
+    `<span class="tt-legend-item"><span class="tt-legend-dot" style="background:${cols[c]}"></span>${c}</span>`
+  ).join('');
+
+  return `<div class="section-label">Tyre temperature trend</div>
+<div class="tyre-trend-wrap">
+  <svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">${svg}</svg>
+  <div class="tt-legend">${legend}</div>
+</div>`;
+}
+
+// ── Speed Trace ───────────────────────────────────────────────────────────────
+function renderSpeedTrace(st) {
+  if (!st || !st.laps || !st.laps.length) return '';
+  const W = 600, H = 160, PL = 40, PR = 12, PT = 10, PB = 24;
+  const IW = W - PL - PR, IH = H - PT - PB;
+  let allSpds = [];
+  st.laps.forEach(l => l.points.forEach(p => allSpds.push(p.spd)));
+  const maxSpd = Math.max(...allSpds) || 1;
+  const colors = ['#c084fc','#64b5f6','#81c784','#ffb74d','#f06292'];
+  let svgLines = '';
+  // Draw non-best laps first (dimmed)
+  st.laps.filter(l => !l.is_best).forEach((l, li) => {
+    const pts = l.points.map(p =>
+      `${(PL + p.pct * IW).toFixed(1)},${(PT + IH - (p.spd / maxSpd) * IH).toFixed(1)}`
+    ).join(' ');
+    svgLines += `<polyline points="${pts}" fill="none" stroke="${colors[(li+1)%colors.length]}" stroke-width="1" opacity="0.4"/>`;
+  });
+  // Draw best lap on top
+  st.laps.filter(l => l.is_best).forEach(l => {
+    const pts = l.points.map(p =>
+      `${(PL + p.pct * IW).toFixed(1)},${(PT + IH - (p.spd / maxSpd) * IH).toFixed(1)}`
+    ).join(' ');
+    svgLines += `<polyline points="${pts}" fill="none" stroke="#c084fc" stroke-width="2"/>`;
+  });
+  // Y-axis gridlines
+  let gridLines = '';
+  for (let g = 25; g <= 75; g += 25) {
+    const y = (PT + IH - (g / 100) * IH).toFixed(1);
+    const spd = Math.round(maxSpd * g / 100);
+    gridLines += `<line x1="${PL}" y1="${y}" x2="${W - PR}" y2="${y}" stroke="#222" stroke-width="1"/>`;
+    gridLines += `<text x="${PL - 4}" y="${parseFloat(y)+4}" text-anchor="end" fill="#444" font-size="9">${spd}</text>`;
+  }
+  // X-axis label
+  gridLines += `<text x="${PL}" y="${H - 2}" fill="#444" font-size="9">0%</text>`;
+  gridLines += `<text x="${W - PR}" y="${H - 2}" text-anchor="end" fill="#444" font-size="9">100% lap</text>`;
+  // Legend
+  const legendItems = st.laps.map((l, i) => {
+    const col = l.is_best ? '#c084fc' : colors[(i) % colors.length];
+    const opacity = l.is_best ? '1' : '0.5';
+    return `<span class="st-legend-item" style="opacity:${opacity}">
+      <span class="st-legend-dot" style="background:${col}"></span>
+      Lap ${l.lap} — ${fmtLap(l.time_s)}${l.is_best ? ' ⬤' : ''}
+    </span>`;
+  }).join('');
+  return `<div class="section-label">Speed trace — Top ${st.laps.length} laps</div>
+<div class="speed-trace-wrap">
+  <svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">
+    <rect x="${PL}" y="${PT}" width="${IW}" height="${IH}" fill="#111" rx="4"/>
+    ${gridLines}
+    ${svgLines}
+  </svg>
+  <div class="st-legend">${legendItems}</div>
+</div>`;
+}
+
+// ── Stints ─────────────────────────────────────────────────────────────────────
+function renderStints(stints) {
+  if (!stints || stints.length < 2) return '';
+  const rows = stints.map(s => `
+    <div class="stint-row">
+      <div style="font-weight:700;color:#aaa">Stint ${s.stint}</div>
+      <div>L${s.start_lap}–${s.end_lap}</div>
+      <div>${s.lap_count} laps</div>
+      <div>${fmtLap(s.avg_lap_s) || '—'}</div>
+      <div style="color:#c084fc">${fmtLap(s.best_lap_s) || '—'}</div>
+      <div>${s.fuel_used_gal != null ? s.fuel_used_gal.toFixed(2) + ' gal' : '—'}</div>
+    </div>`).join('');
+  return `<div class="section-label">Stint analysis</div>
+<div class="stint-table">
+  <div class="stint-row stint-header">
+    <div>Stint</div><div>Laps</div><div>Count</div><div>Avg time</div><div>Best time</div><div>Fuel used</div>
+  </div>
+  ${rows}
+</div>`;
+}
+
+// ── Compare ───────────────────────────────────────────────────────────────────
+function toggleCompare() {
+  const wrap = document.getElementById('compare-wrap');
+  wrap.classList.toggle('visible');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['a','b'].forEach(id => {
+    const fi = document.getElementById(`cmp-fi-${id}`);
+    const btn = document.getElementById(`cmp-btn-${id}`);
+    if (!fi || !btn) return;
+    fi.addEventListener('change', () => {
+      if (fi.files[0]) {
+        btn.textContent = fi.files[0].name;
+        btn.classList.add('has-file');
+      }
+      const fa = document.getElementById('cmp-fi-a').files[0];
+      const fb = document.getElementById('cmp-fi-b').files[0];
+      document.getElementById('btn-cmp-go').disabled = !(fa && fb);
+    });
+  });
+});
+
+async function runCompare() {
+  const fa = document.getElementById('cmp-fi-a').files[0];
+  const fb = document.getElementById('cmp-fi-b').files[0];
+  if (!fa || !fb) return;
+  const btn = document.getElementById('btn-cmp-go');
+  btn.disabled = true; btn.textContent = 'Comparing…';
+  const form = new FormData();
+  form.append('file_a', fa);
+  form.append('file_b', fb);
+  try {
+    const res  = await fetch('/api/compare', {method: 'POST', body: form});
+    const data = await res.json();
+    if (data.error) { document.getElementById('compare-results').innerHTML = `<p style="color:#f44336">${data.error}</p>`; return; }
+    document.getElementById('compare-results').innerHTML = renderComparison(data.a, data.b);
+  } catch(e) {
+    document.getElementById('compare-results').innerHTML = `<p style="color:#f44336">${e.message}</p>`;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Compare →';
+  }
+}
+
+function renderComparison(a, b) {
+  function statRow(label, aVal, bVal, lowerIsBetter = false) {
+    if (aVal == null && bVal == null) return '';
+    const aStr = aVal != null ? aVal : '—';
+    const bStr = bVal != null ? bVal : '—';
+    let aCls = '', bCls = '';
+    if (aVal != null && bVal != null && aVal !== bVal) {
+      const aWins = lowerIsBetter ? aVal < bVal : aVal > bVal;
+      aCls = aWins ? 'compare-better' : 'compare-worse';
+      bCls = aWins ? 'compare-worse'  : 'compare-better';
+    }
+    return `<div class="compare-stat-row">
+      <span class="compare-stat-label">${label}</span>
+      <span class="compare-stat-val ${aCls}">${aStr}</span>
+      <span class="compare-stat-val ${bCls}">${bStr}</span>
+    </div>`;
+  }
+  const sa = a.summary || {}, sb = b.summary || {};
+  const ma = a.meta    || {}, mb = b.meta    || {};
+  const statsHtml = `
+    <div class="compare-stat-row" style="background:#111;border-radius:4px;padding:4px 0">
+      <span class="compare-stat-label" style="font-size:10px;color:#444;text-transform:uppercase">Metric</span>
+      <span style="font-size:10px;color:#2196F3;font-weight:700">A: ${ma.filename || '?'}</span>
+      <span style="font-size:10px;color:#ff9800;font-weight:700">B: ${mb.filename || '?'}</span>
+    </div>
+    ${statRow('Best lap', sa.best_lap_s ? fmtLap(sa.best_lap_s) : null, sb.best_lap_s ? fmtLap(sb.best_lap_s) : null, true)}
+    ${statRow('Avg lap',  sa.avg_lap_s  ? fmtLap(sa.avg_lap_s)  : null, sb.avg_lap_s  ? fmtLap(sb.avg_lap_s)  : null, true)}
+    ${statRow('Consistency', sa.lap_consistency_s ? '±'+sa.lap_consistency_s+'s' : null, sb.lap_consistency_s ? '±'+sb.lap_consistency_s+'s' : null, true)}
+    ${statRow('Top speed', sa.max_speed_mph ? sa.max_speed_mph+' mph' : null, sb.max_speed_mph ? sb.max_speed_mph+' mph' : null)}
+    ${statRow('Fuel/lap',  sa.fuel_per_lap_gal ? sa.fuel_per_lap_gal+' gal' : null, sb.fuel_per_lap_gal ? sb.fuel_per_lap_gal+' gal' : null, true)}
+    ${statRow('Peak lat G', sa.peak_lat_g ? sa.peak_lat_g+'g' : null, sb.peak_lat_g ? sb.peak_lat_g+'g' : null)}
+  `;
+  // Sector handling comparison
+  const ha = a.handling || {}, hb = b.handling || {};
+  const sectorNames = [...new Set([...Object.keys(ha), ...Object.keys(hb)])];
+  const sectorRows = sectorNames.map(name => {
+    const da = ha[name] || {}, db = hb[name] || {};
+    const ta = da.tendency || '—', tb = db.tendency || '—';
+    const clsA = ta === 'understeer' ? '#2196F3' : ta === 'oversteer' ? '#f44336' : '#4caf50';
+    const clsB = tb === 'understeer' ? '#2196F3' : tb === 'oversteer' ? '#f44336' : '#4caf50';
+    return `<div class="compare-stat-row">
+      <span class="compare-stat-label" style="font-size:11px">${name.replace(/ \(.*\)/,'')}</span>
+      <span style="color:${clsA};font-size:11px;font-weight:700">${ta}</span>
+      <span style="color:${clsB};font-size:11px;font-weight:700">${tb}</span>
+    </div>`;
+  }).join('');
+  return `<div style="margin-top:16px">
+  <div class="section-label" style="margin-top:0">Summary comparison</div>
+  <div style="background:#181818;border-radius:10px;padding:14px 18px">${statsHtml}</div>
+  ${sectorRows.length ? `<div class="section-label">Handling by sector</div>
+  <div style="background:#181818;border-radius:10px;padding:14px 18px">${sectorRows}</div>` : ''}
+</div>`;
+}
+
+function renderRideHeights(rh) {
+  if (!rh) return '';
+  const corners = ['LF','RF','LR','RR'];
+  const vals = corners.map(c => rh[c]);
+  if (vals.every(v => v == null)) return '';
+  const cells = corners.map(c => {
+    const v = rh[c];
+    if (v == null) return `<div style="text-align:center"><div style="font-size:11px;color:#555">${c}</div><div style="color:#444">—</div></div>`;
+    const col = v < 15 ? '#f44336' : v < 25 ? '#ff9800' : '#86efac';
+    return `<div style="text-align:center"><div style="font-size:11px;color:#777">${c}</div><div style="font-size:18px;font-weight:700;color:${col}">${v.toFixed(1)}</div><div style="font-size:10px;color:#555">mm</div></div>`;
+  }).join('');
+  return `<div class="section-label">Ride heights</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#181818;border-radius:10px;padding:14px 18px;margin-bottom:12px">${cells}</div>`;
+}
+
+function renderConfidence(conf, sigWarnings) {
+  const warns = (sigWarnings || []).concat((conf && conf.issues) || []);
+  if (!conf && !warns.length) return '';
+  const dq = conf ? conf.data_quality : 1;
+  const laps = conf ? conf.flying_laps : '?';
+  const barCol = dq >= 0.8 ? '#4caf50' : dq >= 0.6 ? '#ff9800' : '#f44336';
+  const labelCol = dq >= 0.8 ? '#86efac' : dq >= 0.6 ? '#fbbf24' : '#fca5a5';
+  const label = dq >= 0.8 ? 'Good' : dq >= 0.6 ? 'Fair' : 'Low';
+  const pct = Math.round(dq * 100);
+  const warnHtml = warns.length
+    ? `<ul style="margin:6px 0 0 0;padding-left:18px;color:#aaa;font-size:12px">${warns.map(w=>`<li>${w}</li>`).join('')}</ul>`
+    : '';
+  return `<div style="background:#181818;border-radius:10px;padding:12px 18px;margin-bottom:12px;border-left:3px solid ${barCol}">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <span style="font-size:12px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px">Data confidence</span>
+    <span style="color:${labelCol};font-weight:700">${label} (${pct}%)</span>
+    <span style="flex:1;height:4px;background:#222;border-radius:2px;min-width:60px">
+      <span style="display:block;height:4px;background:${barCol};border-radius:2px;width:${pct}%"></span>
+    </span>
+    <span style="color:#555;font-size:12px">${laps} flying lap${laps===1?'':'s'}</span>
+  </div>
+  ${warnHtml}
+</div>`;
+}
+
 function renderLapTimes(lapTimes) {
   if (!lapTimes || !lapTimes.length) return '';
   const best = Math.min(...lapTimes.map(l => l.time_s));
@@ -1193,7 +1816,7 @@ function renderLapTimes(lapTimes) {
     const isBest   = l.time_s === best;
     const delta    = l.time_s - best;
     const deltaStr = isBest ? '⬤ Fastest' : '+' + delta.toFixed(3) + 's';
-    return `<div class="lap-row${isBest ? ' lap-fastest' : ''}">
+    return `<div class="lap-row${isBest ? ' lap-fastest' : ''}" data-lap="${l.lap}" onclick="selectLap(${l.lap})" style="cursor:pointer">
       <div class="lap-num">${l.lap}</div>
       <div class="lap-time">${fmtLap(l.time_s)}</div>
       <div class="lap-delta">${deltaStr}</div>
@@ -1221,6 +1844,35 @@ function renderLapTimes(lapTimes) {
 </div>`;
 }
 
+function renderLapDelta(lapTimes) {
+  if (!lapTimes || lapTimes.length < 2) return '';
+  const best = Math.min(...lapTimes.map(l => l.time_s));
+  const deltas = lapTimes.map(l => l.time_s - best);
+  const maxD = Math.max(...deltas, 0.001);
+  const W = 500, H = 80, PL = 36, PR = 8, PT = 8, PB = 18;
+  const iW = W - PL - PR, iH = H - PT - PB;
+  const n = lapTimes.length;
+  const xScale = i => PL + (i / Math.max(n - 1, 1)) * iW;
+  const yScale = d => PT + iH - (d / maxD) * iH;
+  let svg = `<line x1="${PL}" y1="${PT+iH}" x2="${PL+iW}" y2="${PT+iH}" stroke="#333" stroke-width="1"/>`;
+  svg += `<text x="${PL-2}" y="${PT+4}" fill="#555" font-size="9" text-anchor="end">+${maxD.toFixed(1)}s</text>`;
+  svg += `<text x="${PL-2}" y="${PT+iH+4}" fill="#555" font-size="9" text-anchor="end">±0</text>`;
+  for (let i = 1; i < n; i++) {
+    const x1 = xScale(i-1), y1 = yScale(deltas[i-1]);
+    const x2 = xScale(i),   y2 = yScale(deltas[i]);
+    svg += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#444" stroke-width="1.5"/>`;
+  }
+  lapTimes.forEach((l, i) => {
+    const d = deltas[i];
+    const col = d < 0.001 ? '#4caf50' : d < 0.3 ? '#4caf50' : d < 1.5 ? '#ff9800' : '#f44336';
+    const cx = xScale(i).toFixed(1), cy = yScale(d).toFixed(1);
+    svg += `<circle cx="${cx}" cy="${cy}" r="4" fill="${col}" stroke="#111" stroke-width="1" data-lap-dot="${l.lap}"/>`;
+    svg += `<text x="${cx}" y="${(PT+iH+12).toFixed(0)}" fill="#555" font-size="9" text-anchor="middle">${l.lap}</text>`;
+  });
+  return `<div class="section-label">Lap delta vs best</div>
+<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;display:block;background:#111;border-radius:6px;margin-bottom:12px">${svg}</svg>`;
+}
+
 function renderRecs(recs) {
   if (!recs || !recs.length)
     return `<p style="color:#444;font-size:13px">No issues flagged — data looks good, or insufficient data to analyse.</p>`;
@@ -1235,7 +1887,27 @@ function renderRecs(recs) {
 </div>`).join('');
 }
 
+function exportJSON() {
+  if (!window._analysisData) return;
+  const blob = new Blob([JSON.stringify(window._analysisData, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = (window._analysisData.meta?.filename || 'telemetry').replace(/\.ibt$/i,'') + '_analysis.json';
+  a.click();
+}
+function exportCSV() {
+  if (!window._analysisData) return;
+  const laps = (window._analysisData.lap_times || []);
+  if (!laps.length) return;
+  const best = Math.min(...laps.map(l => l.time_s));
+  const rows = [['lap','time_s','delta_s'], ...laps.map(l => [l.lap, l.time_s.toFixed(3), (l.time_s - best).toFixed(3)])];
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = (window._analysisData.meta?.filename || 'telemetry').replace(/\.ibt$/i,'') + '_laps.csv';
+  a.click();
+}
 function render(data) {
+  window._analysisData = data;
   const t = data.tyre_temps     || {};
   const p = data.tyre_pressures || {};
   const m = data.meta           || {};
@@ -1281,6 +1953,7 @@ function render(data) {
     <div style="display:flex;align-items:center;gap:8px"><b>${m.filename || ''}</b> ${sessionBadge}</div>
     <div class="meta-car-track">${carLabel} &nbsp;·&nbsp; ${trackLabel}</div>
     ${m.ambient_temp_f ? `<div>Air temp: <b>${m.ambient_temp_f} °F</b></div>` : ''}
+    ${m.track_temp_f   ? `<div>Track temp: <b>${m.track_temp_f} °F</b></div>` : ''}
     ${laps ? `<div>Laps: <b>${laps}</b></div>` : ''}
     ${dur  ? `<div>Duration: <b>${Math.floor(dur/60)}m ${dur%60}s</b></div>` : ''}
     ${topv ? `<div>Top speed: <b>${topv} mph</b></div>` : ''}
@@ -1293,8 +1966,11 @@ function render(data) {
     ${s.peak_brake_g ? `<div>Peak brake G: <b>${s.peak_brake_g}g</b></div>` : ''}
     <div>Sample rate: <b>${m.tick_rate || '?'} Hz</b></div>
     <button class="btn-reset" onclick="reset()">&#8592; Analyse another file</button>
+    <button class="btn-reset" onclick="exportJSON()" style="background:#1a2a3a;border-color:#2196F3;color:#64b5f6">&#8595; JSON</button>
+    <button class="btn-reset" onclick="exportCSV()" style="background:#1a2a1a;border-color:#4caf50;color:#86efac">&#8595; CSV</button>
   </div>
   <div class="page">
+    ${renderConfidence(data.confidence, data.signal_warnings)}
     <div class="section-label">Tyre temperatures &amp; hot pressures</div>
     <div class="tyre-grid">
       ${tyreCard('LF — Left Front',  t.LF, p.LF)}
@@ -1302,11 +1978,18 @@ function render(data) {
       ${tyreCard('LR — Left Rear',   t.LR, p.LR)}
       ${tyreCard('RR — Right Rear',  t.RR, p.RR)}
     </div>
+    ${renderRideHeights(data.ride_heights)}
     ${renderBalance(data.balance)}
+    ${renderTyreTrend(data.tyre_trend)}
     ${renderTrackMap(data.track_map)}
+    ${renderInputTrace(data.speed_trace)}
+    ${renderSpeedTrace(data.speed_trace)}
     ${renderHandling(data.handling)}
     ${renderBrake(data.brake)}
     ${renderOverlap(data.throttle_overlap)}
+    ${renderStints(data.stints)}
+    ${renderSectorSplits(data.sector_times)}
+    ${renderLapDelta(data.lap_times)}
     ${renderLapTimes(data.lap_times)}
     ${renderSetupCard(data.setup_card, data.car, data.track)}
     <div class="section-label">Full recommendations</div>
@@ -1317,7 +2000,7 @@ function render(data) {
   resultsEl.innerHTML = html;
   resultsEl.style.display = 'block';
   document.getElementById('upload-wrap').style.display = 'none';
-  if (window._trackMapData) setTimeout(() => drawTrackMap('speed'), 20);
+  if (window._trackMapData) setTimeout(() => drawTrackMap(localStorage.getItem('iracing-tm-mode') || 'speed'), 20);
 }
 </script>
 </body>

@@ -1,0 +1,10 @@
+{
+  "name": "KTM X-Bow GT2",
+  "class": "GT2",
+  "iracing_car_path": ["ktm_xbow_gt2", "ktmxbowgt2"],
+  "target_hot_psi": { "LF": 30.0, "RF": 30.0, "LR": 29.0, "RR": 29.0 },
+  "temp_min": 80,
+  "temp_max": 105,
+  "rear_weight_bias_c": 4.0,
+  "notes": "Mid/rear-engine layout — aggressive aero generates high rear tyre loads"
+}

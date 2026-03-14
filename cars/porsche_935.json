@@ -1,0 +1,10 @@
+{
+  "name": "Porsche 935",
+  "class": "GTO",
+  "iracing_car_path": ["porsche935", "porsche_935"],
+  "target_hot_psi": { "LF": 29.0, "RF": 29.0, "LR": 31.0, "RR": 31.0 },
+  "temp_min": 80,
+  "temp_max": 100,
+  "rear_weight_bias_c": 5.0,
+  "notes": "Rear-engine RWD — iconic flat-6 turbo layout pushes significant load onto rear tyres"
+}

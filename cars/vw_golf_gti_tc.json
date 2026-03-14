@@ -1,0 +1,10 @@
+{
+  "name": "Volkswagen Golf GTI TCR",
+  "class": "TCR",
+  "iracing_car_path": ["vw_golf_gti_tcr", "vwgolfgtitcr", "golf_gti_tcr"],
+  "target_hot_psi": { "LF": 33.5, "RF": 33.5, "LR": 28.5, "RR": 28.5 },
+  "temp_min": 75,
+  "temp_max": 95,
+  "rear_weight_bias_c": -4.0,
+  "notes": "FF touring car — significant front tyre load bias; rear temps naturally lower"
+}

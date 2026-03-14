@@ -1,0 +1,11 @@
+{
+  "name": "Fuji International Speedway",
+  "short": "Fuji",
+  "country": "Japan",
+  "sectors": [
+    {"name": "S1 — Start to 100R", "start": 0.0, "end": 0.30},
+    {"name": "S2 — Netz Corner to Coca Cola", "start": 0.30, "end": 0.65},
+    {"name": "S3 — Dunlop to Finish", "start": 0.65, "end": 1.0}
+  ],
+  "iracing_track_name": ["fuji international speedway", "fuji speedway", "fuji", "fuji international"]
+}

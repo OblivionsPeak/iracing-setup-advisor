@@ -1,0 +1,10 @@
+{
+  "name": "Audi RS3 LMS TCR",
+  "class": "TCR",
+  "iracing_car_path": ["audi_rs3_lms_tcr", "audirs3lms", "rs3_lms_tcr"],
+  "target_hot_psi": { "LF": 33.0, "RF": 33.0, "LR": 29.0, "RR": 29.0 },
+  "temp_min": 75,
+  "temp_max": 95,
+  "rear_weight_bias_c": -4.0,
+  "notes": "FF touring car — similar to Golf GTI TCR in layout and thermal characteristics"
+}

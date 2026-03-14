@@ -1,0 +1,11 @@
+{
+  "name": "Autodromo José Carlos Pace",
+  "short": "Interlagos",
+  "country": "Brazil",
+  "sectors": [
+    {"name": "S1 — Senna S to Curva do Lago", "start": 0.0, "end": 0.27},
+    {"name": "S2 — Ferradura to Mergulho", "start": 0.27, "end": 0.58},
+    {"name": "S3 — Junção to Pinheirinho", "start": 0.58, "end": 1.0}
+  ],
+  "iracing_track_name": ["autodromo jose carlos pace", "interlagos", "sao paulo", "autodromo de interlagos"]
+}

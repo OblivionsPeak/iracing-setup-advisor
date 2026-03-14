@@ -1,0 +1,10 @@
+{
+  "name": "NASCAR Xfinity Ford Mustang",
+  "class": "NASCAR Xfinity",
+  "iracing_car_path": ["nascarnextgen_xfinity_ford", "xfinity_ford", "nascar_xfinity_ford"],
+  "target_hot_psi": { "LF": 22.0, "RF": 23.0, "LR": 22.0, "RR": 23.0 },
+  "temp_min": 80,
+  "temp_max": 108,
+  "rear_weight_bias_c": 1.0,
+  "notes": "Oval-spec RWD — same tyre targets as other Xfinity models; manufacturer cosmetic only"
+}

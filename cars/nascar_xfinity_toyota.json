@@ -1,0 +1,10 @@
+{
+  "name": "NASCAR Xfinity Toyota Supra",
+  "class": "NASCAR Xfinity",
+  "iracing_car_path": ["nascarnextgen_xfinity_toyota", "xfinity_toyota", "nascar_xfinity_toyota"],
+  "target_hot_psi": { "LF": 22.0, "RF": 23.0, "LR": 22.0, "RR": 23.0 },
+  "temp_min": 80,
+  "temp_max": 108,
+  "rear_weight_bias_c": 1.0,
+  "notes": "Oval-spec RWD — identical spec to other Xfinity models"
+}

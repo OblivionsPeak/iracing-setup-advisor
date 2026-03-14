@@ -1,0 +1,10 @@
+{
+  "name": "BMW M8 GTE",
+  "class": "GTE",
+  "iracing_car_path": ["bmw_m8_gte", "bmwm8gte"],
+  "target_hot_psi": { "LF": 27.5, "RF": 27.5, "LR": 26.5, "RR": 26.5 },
+  "temp_min": 80,
+  "temp_max": 100,
+  "rear_weight_bias_c": 2.0,
+  "notes": "FR layout GTE — wide front track, moderate rear bias typical of BMW GT cars"
+}
