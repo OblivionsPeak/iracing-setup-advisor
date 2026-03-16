@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>iRacing Setup Advisor</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+     background:#0f0f0f;color:#e0e0e0;min-height:100vh}
+
+.header{background:#181818;border-bottom:1px solid #2a2a2a;
+        padding:14px 28px;display:flex;align-items:center;gap:12px}
+.header h1{font-size:17px;font-weight:700}
+.header .sub{font-size:12px;color:#555;margin-left:6px}
+
+/* ── Config selectors ── */
+.config-bar{background:#141414;border-bottom:1px solid #222;
+            padding:16px 28px;display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end}
+.config-group{display:flex;flex-direction:column;gap:6px;flex:1;min-width:220px}
+.config-group label{font-size:11px;font-weight:700;text-transform:uppercase;
+                     letter-spacing:.5px;color:#555}
+.config-group select{background:#1e1e1e;border:1px solid #333;color:#e0e0e0;
+                      padding:8px 12px;border-radius:6px;font-size:13px;cursor:pointer}
+.config-group select:focus{outline:none;border-color:#2196F3}
+.config-hint{font-size:12px;color:#444;padding-top:6px}
+
+/* ── Preview panel ── */
+.preview-bar{background:#111;border-bottom:1px solid #1e1e1e;
+             padding:0 28px;display:none;gap:24px;align-items:stretch;min-height:0;
+             transition:all .2s}
+.preview-bar.visible{display:flex;padding:16px 28px}
+.preview-card{background:#181818;border-radius:10px;overflow:hidden;
+              display:flex;align-items:center;gap:0;flex:1;max-width:460px;min-height:110px}
+.preview-card.hidden{display:none}
+.preview-img{width:200px;height:120px;object-fit:cover;flex-shrink:0;
+             background:#111;display:block}
+.preview-img.map{object-fit:contain;background:#1a1a1a;padding:6px}
+.preview-info{padding:12px 16px;flex:1}
+.preview-label{font-size:10px;font-weight:700;text-transform:uppercase;
+               letter-spacing:.5px;color:#555;margin-bottom:4px}
+.preview-name{font-size:14px;font-weight:600;color:#e0e0e0;line-height:1.3}
+.preview-sub{font-size:12px;color:#555;margin-top:3px}
+.preview-no-img{width:200px;height:120px;flex-shrink:0;background:#151515;
+                display:flex;align-items:center;justify-content:center;
+                font-size:32px;color:#2a2a2a}
+
+/* ── Drop zone ── */
+.drop-wrap{display:flex;justify-content:center;padding:40px 24px}
+.drop-zone{background:#181818;border:2px dashed #2a2a2a;border-radius:14px;
+           padding:48px 40px;text-align:center;cursor:pointer;
+           transition:border-color .2s,background .2s;max-width:520px;width:100%}
+.drop-zone:hover,.drop-zone.over{border-color:#2196F3;background:#0d1f2e}
+.drop-icon{font-size:48px;margin-bottom:14px}
+.drop-zone h2{font-size:16px;margin-bottom:8px}
+.drop-zone p{font-size:13px;color:#555}
+
+/* ── Status ── */
+#status{text-align:center;padding:14px;font-size:13px;color:#888}
+
+/* ── Meta bar ── */
+.meta-bar{background:#161616;border-top:1px solid #222;border-bottom:1px solid #222;
+          padding:9px 28px;font-size:12px;color:#555;display:flex;gap:24px;flex-wrap:wrap;align-items:center}
+.meta-bar b{color:#999}
+.meta-car-track{font-size:12px;color:#2196F3;font-weight:600}
+.btn-reset{margin-left:auto;background:#2a2a2a;border:1px solid #3a3a3a;color:#ccc;
+           padding:5px 14px;border-radius:6px;font-size:12px;cursor:pointer}
+.btn-reset:hover{background:#333;color:#fff}
+.auto-badge{background:#0d2a40;color:#64b5f6;font-size:10px;font-weight:700;
+            padding:2px 7px;border-radius:8px;letter-spacing:.3px;margin-left:5px;
+            text-transform:uppercase}
+
+/* ── Page layout ── */
+.page{max-width:980px;margin:0 auto;padding:24px 28px}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;
+               letter-spacing:.8px;color:#555;margin:28px 0 14px}
+
+/* ── Tyre grid ── */
+.tyre-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tyre-card{background:#181818;border-radius:10px;padding:16px 18px}
+.tyre-card h3{font-size:12px;font-weight:700;text-transform:uppercase;
+              letter-spacing:.5px;color:#666;margin-bottom:14px}
+.temp-bars{display:flex;gap:6px;margin-bottom:12px}
+.temp-col{flex:1;text-align:center}
+.temp-col .lbl{font-size:10px;color:#444;text-transform:uppercase;margin-bottom:4px}
+.temp-box{border-radius:5px;padding:11px 2px;font-size:14px;font-weight:700;color:#fff}
+.tc-cold{background:#0d47a1}.tc-ok{background:#1b5e20}
+.tc-warm{background:#e65100}.tc-hot{background:#b71c1c}
+.tyre-meta{display:flex;justify-content:space-between;font-size:12px;color:#555;margin-top:6px}
+.tyre-meta em{color:#aaa;font-style:normal;font-weight:600}
+
+/* ── Balance row ── */
+.balance-row{display:flex;gap:20px;background:#181818;border-radius:8px;
+             padding:12px 18px;font-size:12px;color:#777;flex-wrap:wrap}
+.balance-item{display:flex;flex-direction:column;gap:3px}
+.balance-item .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#444}
+.balance-item .val{font-size:14px;font-weight:700;color:#ccc}
+.balance-diff{font-size:11px;color:#888}
+
+/* ── Sector handling ── */
+.sector-table{background:#181818;border-radius:10px;overflow:hidden}
+.sector-row{display:flex;align-items:center;gap:14px;padding:11px 18px;
+            border-bottom:1px solid #222}
+.sector-row:last-child{border-bottom:none}
+.s-name{font-size:12px;color:#777;flex:1}
+.badge{padding:3px 12px;border-radius:10px;font-size:11px;font-weight:700;
+       text-transform:uppercase;letter-spacing:.3px}
+.b-us{background:#0d47a1}.b-neu{background:#1b5e20}
+.b-os{background:#b71c1c}.b-nd{background:#2a2a2a;color:#444}
+
+/* ── Brake analysis ── */
+.brake-row{display:flex;gap:16px;background:#181818;border-radius:8px;
+           padding:12px 18px;font-size:12px;color:#777;flex-wrap:wrap}
+.brake-item{display:flex;flex-direction:column;gap:3px;flex:1;min-width:130px}
+.brake-item .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#444}
+.brake-item .val{font-size:14px;font-weight:700;color:#ccc}
+.brake-item .sub{font-size:11px;color:#555}
+.consistency-bar{height:8px;border-radius:4px;background:#1e1e1e;overflow:hidden;margin-top:4px;width:100%}
+.consistency-fill{height:100%;border-radius:4px;transition:width .3s}
+
+/* ── Throttle overlap ── */
+.overlap-summary{background:#181818;border-radius:8px;padding:14px 18px;
+                 display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.overlap-pct-big{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+                 font-size:2.2rem;font-weight:700;line-height:1}
+.overlap-desc{font-size:12px;color:#666;max-width:320px;line-height:1.5}
+.overlap-sectors{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.overlap-sector-row{display:flex;align-items:center;gap:12px}
+.overlap-sec-name{font-size:11px;color:#666;width:120px;flex-shrink:0}
+.overlap-bar-wrap{flex:1;background:#1e1e1e;border-radius:4px;height:10px;overflow:hidden}
+.overlap-bar-fill{height:100%;border-radius:4px}
+.overlap-sec-pct{font-size:11px;font-weight:700;color:#ccc;width:36px;text-align:right;flex-shrink:0}
+
+/* ── Recommendations ── */
+.rec-list{display:flex;flex-direction:column;gap:10px}
+.rec{background:#181818;border-radius:8px;padding:14px 18px;border-left:4px solid #333}
+.rec.high{border-left-color:#f44336}
+.rec.medium{border-left-color:#ff9800}
+.rec.low{border-left-color:#4caf50}
+.rec-head{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.rec-cat{font-size:10px;font-weight:700;text-transform:uppercase;
+         letter-spacing:.5px;color:#666}
+.rec-corner{font-size:11px;font-weight:700;color:#2196F3;
+            background:#0d2a40;padding:2px 10px;border-radius:10px}
+.rec-issue{font-size:13px;color:#ccc;margin-bottom:5px}
+.rec-action{font-size:13px;color:#66bb6a;font-style:italic}
+
+/* ── Setup card ── */
+.setup-card{background:#141414;border:1px solid #222;border-radius:12px;overflow:hidden;margin-bottom:8px}
+.sc-header{background:#181818;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222}
+.sc-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#777}
+.btn-print{background:#1e1e1e;border:1px solid #333;color:#888;padding:5px 14px;border-radius:6px;
+           font-size:11px;cursor:pointer;font-weight:600;letter-spacing:.4px}
+.btn-print:hover{background:#252525;color:#ccc}
+.sc-section{padding:14px 20px;border-bottom:1px solid #1a1a1a}
+.sc-section:last-child{border-bottom:none}
+.sc-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#444;margin-bottom:10px}
+/* Tyre pressure grid */
+.sc-psi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sc-psi-cell{background:#181818;border-radius:8px;padding:10px 12px;text-align:center}
+.sc-psi-corner{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555;margin-bottom:5px}
+.sc-psi-hot{font-size:16px;font-weight:700;line-height:1}
+.sc-psi-hot.psi-over{color:#f44336}.sc-psi-hot.psi-under{color:#2196F3}.sc-psi-hot.psi-ok{color:#4caf50}
+.sc-psi-target{font-size:11px;color:#444;margin-top:3px}
+.sc-psi-adj{font-size:12px;font-weight:700;margin-top:6px;padding:3px 0;border-radius:4px}
+.sc-psi-adj.adj-over{color:#ff6b6b;background:#1a0505}
+.sc-psi-adj.adj-under{color:#64b5f6;background:#0a1520}
+.sc-psi-adj.adj-ok{color:#4caf50;background:#0a1a0a}
+/* Camber */
+.sc-camber-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #1a1a1a}
+.sc-camber-row:last-child{border-bottom:none}
+.sc-camber-corner{font-size:11px;font-weight:700;color:#888;width:32px}
+.sc-camber-action{font-size:13px;color:#ccc;flex:1}
+.sc-camber-detail{font-size:11px;color:#555}
+/* Suspension items */
+.sc-susp-item{padding:10px 0;border-bottom:1px solid #1a1a1a}
+.sc-susp-item:last-child{border-bottom:none}
+.sc-susp-label{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sc-susp-name{font-size:13px;font-weight:600;color:#ccc}
+.sc-priority-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;
+                   padding:2px 8px;border-radius:8px}
+.sc-priority-badge.high{background:#2d0a0a;color:#f44336}
+.sc-priority-badge.medium{background:#1a1000;color:#ff9800}
+.sc-options{display:flex;flex-direction:column;gap:4px}
+.sc-option{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#888}
+.sc-opt-num{color:#c084fc;font-weight:700;flex-shrink:0;width:16px}
+.sc-opt-text{flex:1}
+
+/* ── Track map ── */
+.tm-controls{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.tm-btn{background:#1e1e1e;border:1px solid #333;color:#666;padding:5px 14px;
+        border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;
+        text-transform:uppercase;letter-spacing:.3px;transition:background .15s,color .15s}
+.tm-btn:hover{background:#252525;color:#aaa}
+.tm-btn.active{background:#0d2a40;border-color:#2196F3;color:#64b5f6}
+
+/* ── Track map tooltip ── */
+#tm-tooltip{position:fixed;background:#1a1a1a;border:1px solid #2a2a2a;color:#e0e0e0;
+            padding:8px 12px;border-radius:6px;font-size:11px;pointer-events:none;
+            display:none;z-index:1000;line-height:1.7;min-width:100px;
+            box-shadow:0 4px 12px rgba(0,0,0,.5)}
+
+/* ── Input trace (3-panel) ── */
+.input-trace-wrap{background:#181818;border-radius:10px;padding:16px 18px}
+.it-panel-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+                color:#555;margin:8px 0 2px}
+.it-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px}
+.it-legend-item{display:flex;align-items:center;gap:5px}
+.it-legend-dot{width:18px;height:3px;border-radius:2px}
+
+/* ── Sector splits ── */
+.sector-splits-table{background:#181818;border-radius:10px;overflow:hidden}
+.ss-row{display:grid;align-items:center;padding:9px 18px;border-bottom:1px solid #222;
+        font-size:12px;color:#777}
+.ss-row:last-child{border-bottom:none}
+.ss-header{background:#111;position:sticky;top:0}
+.ss-header div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
+.ss-best{color:#c084fc;font-weight:700}
+.ss-delta{font-size:11px}
+.ss-delta.fast{color:#4caf50}.ss-delta.med{color:#ff9800}.ss-delta.slow{color:#f44336}
+
+/* ── Tyre trend ── */
+.tyre-trend-wrap{background:#181818;border-radius:10px;padding:16px 18px}
+.tt-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px}
+.tt-legend-item{display:flex;align-items:center;gap:5px}
+.tt-legend-dot{width:14px;height:3px;border-radius:2px}
+
+/* ── Speed trace ── */
+.speed-trace-wrap{background:#181818;border-radius:10px;padding:16px 18px}
+.st-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px}
+.st-legend-item{display:flex;align-items:center;gap:5px}
+.st-legend-dot{width:18px;height:3px;border-radius:2px}
+
+/* ── Stints ── */
+.stint-table{background:#181818;border-radius:10px;overflow:hidden}
+.stint-row{display:grid;grid-template-columns:52px 80px 50px 90px 90px 80px;
+           align-items:center;padding:9px 18px;border-bottom:1px solid #222;
+           font-size:12px;color:#777}
+.stint-row:last-child{border-bottom:none}
+.stint-header{background:#111;position:sticky;top:0}
+.stint-header div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
+
+/* ── Compare ── */
+.compare-wrap{background:#181818;border:2px dashed #2a2a2a;border-radius:14px;padding:28px;margin-top:16px;display:none}
+.compare-wrap.visible{display:block}
+.compare-inputs{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px}
+.compare-file-group{flex:1;min-width:200px;display:flex;flex-direction:column;gap:6px}
+.compare-file-group label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
+.compare-file-btn{background:#1e1e1e;border:1px solid #333;color:#777;padding:8px 14px;
+                  border-radius:6px;font-size:12px;cursor:pointer;text-align:left}
+.compare-file-btn.has-file{border-color:#2196F3;color:#64b5f6}
+.btn-compare-go{background:#0d2a40;border:1px solid #2196F3;color:#64b5f6;padding:8px 20px;
+                border-radius:6px;font-size:13px;font-weight:700;cursor:pointer}
+.btn-compare-go:disabled{opacity:.4;cursor:default}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.compare-col{background:#141414;border-radius:8px;padding:14px 18px}
+.compare-col-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+                   color:#2196F3;margin-bottom:10px}
+.compare-stat-row{display:flex;justify-content:space-between;align-items:center;
+                  padding:5px 0;border-bottom:1px solid #1e1e1e;font-size:12px;color:#888}
+.compare-stat-row:last-child{border-bottom:none}
+.compare-stat-label{color:#555}
+.compare-stat-val{font-weight:600;color:#ccc}
+.compare-better{color:#4caf50}
+.compare-worse{color:#f44336}
+
+/* ── Lap times ── */
+.lap-table{background:#181818;border-radius:10px;overflow:hidden;max-height:420px;overflow-y:auto}
+.lap-row{display:grid;grid-template-columns:56px 1fr 1fr;align-items:center;
+         padding:9px 18px;border-bottom:1px solid #222}
+.lap-row:last-child{border-bottom:none}
+.lap-header{background:#111;position:sticky;top:0}
+.lap-header div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
+.lap-num{font-size:12px;color:#666}
+.lap-time{font-size:13px;font-weight:600;color:#ccc;font-variant-numeric:tabular-nums}
+.lap-delta{font-size:12px;color:#555}
+.lap-fastest{background:#1e0a3c}
+.lap-fastest .lap-num{color:#c084fc}
+.lap-fastest .lap-time{color:#c084fc;font-weight:700}
+.lap-fastest .lap-delta{color:#a855f7;font-weight:700}
+</style>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js"></script>
+  <script src="cars_data.js"></script>
+  <script src="tracks_data.js"></script>
+</head>
+<body>
+<div id="py-loading" style="position:fixed;inset:0;background:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:20px">
+  <div style="color:#e2e8f0;font-family:sans-serif;font-size:1.2rem;font-weight:600">iRacing Setup Advisor</div>
+  <div style="color:#94a3b8;font-family:sans-serif;font-size:.95rem">Loading Python runtime…</div>
+  <div id="py-progress" style="color:#64748b;font-family:monospace;font-size:.8rem;max-width:400px;text-align:center"></div>
+  <div style="width:300px;height:4px;background:#1e293b;border-radius:2px;overflow:hidden">
+    <div id="py-bar" style="height:100%;width:0%;background:#3b82f6;transition:width .3s ease;border-radius:2px"></div>
+  </div>
+</div>
+
+<div class="header">
+  <h1>iRacing Setup Advisor</h1>
+  <span class="sub">v1.9.0</span>
+</div>
+
+<!-- Car & Track selection -->
+<div class="config-bar">
+  <div class="config-group">
+    <label>Car</label>
+    <select id="car-select"><option value="">— Any / Generic —</option></select>
+  </div>
+  <div class="config-group">
+    <label>Track</label>
+    <select id="track-select"><option value="">— Any / Generic —</option></select>
+  </div>
+  <div class="config-group" style="flex:0;min-width:120px">
+    <label>Air Temp</label>
+    <div style="display:flex;align-items:center;gap:6px">
+      <input type="number" id="air-temp" placeholder="—" min="0" max="130" step="1"
+             style="background:#1e1e1e;border:1px solid #333;color:#e0e0e0;padding:8px 10px;
+                    border-radius:6px;font-size:13px;width:70px">
+      <span style="font-size:13px;color:#555">°F</span>
+    </div>
+  </div>
+  <div class="config-hint">Select your car and track, then drop your .ibt file below</div>
+</div>
+
+<!-- Preview panel -->
+<div class="preview-bar" id="preview-bar">
+  <div class="preview-card hidden" id="car-preview">
+    <div class="preview-no-img" id="car-no-img">🚗</div>
+    <img class="preview-img" id="car-img" src="" alt="" onerror="this.style.display='none';document.getElementById('car-no-img').style.display='flex'">
+    <div class="preview-info">
+      <div class="preview-label">Car</div>
+      <div class="preview-name" id="car-preview-name"></div>
+      <div class="preview-sub" id="car-preview-class"></div>
+    </div>
+  </div>
+  <div class="preview-card hidden" id="track-preview">
+    <div class="preview-no-img" id="track-no-img">🗺</div>
+    <img class="preview-img map" id="track-img" src="" alt="" onerror="this.style.display='none';document.getElementById('track-no-img').style.display='flex'">
+    <div class="preview-info">
+      <div class="preview-label">Track</div>
+      <div class="preview-name" id="track-preview-name"></div>
+      <div class="preview-sub" id="track-preview-country"></div>
+    </div>
+  </div>
+</div>
+
+<div id="upload-wrap">
+  <div class="drop-wrap">
+    <div class="drop-zone" id="dz" onclick="document.getElementById('fi').click()">
+      <div class="drop-icon">🏁</div>
+      <h2>Drop your .ibt telemetry file here</h2>
+      <p>Or click to browse &nbsp;·&nbsp; Processed locally — never sent to the internet</p>
+      <input type="file" id="fi" accept=".ibt" style="display:none">
+    </div>
+  </div>
+</div>
+
+<div id="status"></div>
+<div style="text-align:center;padding:0 24px 8px">
+  <button onclick="toggleCompare()" id="btn-compare-toggle"
+          style="background:none;border:1px solid #333;color:#555;padding:5px 16px;
+                 border-radius:6px;font-size:12px;cursor:pointer">
+    ⚖ Compare two files
+  </button>
+</div>
+<div class="compare-wrap" id="compare-wrap">
+  <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:14px">Compare two .ibt files</div>
+  <div class="compare-inputs">
+    <div class="compare-file-group">
+      <label>File A</label>
+      <button class="compare-file-btn" id="cmp-btn-a" onclick="document.getElementById('cmp-fi-a').click()">Choose .ibt file…</button>
+      <input type="file" id="cmp-fi-a" accept=".ibt" style="display:none">
+    </div>
+    <div class="compare-file-group">
+      <label>File B</label>
+      <button class="compare-file-btn" id="cmp-btn-b" onclick="document.getElementById('cmp-fi-b').click()">Choose .ibt file…</button>
+      <input type="file" id="cmp-fi-b" accept=".ibt" style="display:none">
+    </div>
+    <div style="display:flex;align-items:flex-end">
+      <button class="btn-compare-go" id="btn-cmp-go" onclick="runCompare()" disabled>Compare →</button>
+    </div>
+  </div>
+  <div id="compare-results"></div>
+</div>
+<div id="tm-tooltip"></div>
+<div id="results" style="display:none"></div>
+
+<script>
+// ── Populate dropdowns & preview lookups ─────────────────────────────────────
+const carData   = {};   // id → {name, class, image_url}
+const trackData = {};   // id → {name, country, map_url}
+
+function loadOptions() {
+  const carSel   = document.getElementById('car-select');
+  const trackSel = document.getElementById('track-select');
+
+  // Cars
+  const cars = Object.entries(window.CARS_DATA)
+    .sort((a, b) => (a[1].name || a[0]).localeCompare(b[1].name || b[0]));
+  cars.forEach(([id, c]) => {
+    const o = document.createElement('option');
+    o.value = id;
+    o.textContent = c.name + (c.class ? ' (' + c.class + ')' : '');
+    carSel.appendChild(o);
+  });
+
+  // Tracks
+  const tracks = Object.entries(window.TRACKS_DATA)
+    .sort((a, b) => (a[1].name || a[0]).localeCompare(b[1].name || b[0]));
+  tracks.forEach(([id, t]) => {
+    const o = document.createElement('option');
+    o.value = id;
+    o.textContent = t.name + (t.country ? ' — ' + t.country : '');
+    trackSel.appendChild(o);
+  });
+
+  // Restore localStorage selections
+  const savedCar   = localStorage.getItem('iracing-car');
+  const savedTrack = localStorage.getItem('iracing-track');
+  if (savedCar   && carSel.querySelector(`option[value="${savedCar}"]`))   carSel.value   = savedCar;
+  if (savedTrack && trackSel.querySelector(`option[value="${savedTrack}"]`)) trackSel.value = savedTrack;
+
+  updatePreview();
+}
+
+// ── Preview panel ─────────────────────────────────────────────────────────────
+function updatePreview() {
+  const carId   = document.getElementById('car-select').value;
+  const trackId = document.getElementById('track-select').value;
+  if (carId)   localStorage.setItem('iracing-car',   carId);
+  if (trackId) localStorage.setItem('iracing-track', trackId);
+  const bar     = document.getElementById('preview-bar');
+
+  const carCard   = document.getElementById('car-preview');
+  const trackCard = document.getElementById('track-preview');
+
+  if (carId && carData[carId]) {
+    const c = carData[carId];
+    document.getElementById('car-preview-name').textContent  = c.name;
+    document.getElementById('car-preview-class').textContent = c.class || '';
+    const img   = document.getElementById('car-img');
+    const noImg = document.getElementById('car-no-img');
+    if (c.image_url) {
+      img.src = c.image_url;
+      img.style.display    = 'block';
+      noImg.style.display  = 'none';
+    } else {
+      img.style.display    = 'none';
+      noImg.style.display  = 'flex';
+    }
+    carCard.classList.remove('hidden');
+  } else {
+    carCard.classList.add('hidden');
+  }
+
+  if (trackId && trackData[trackId]) {
+    const t = trackData[trackId];
+    document.getElementById('track-preview-name').textContent    = t.name;
+    document.getElementById('track-preview-country').textContent = t.country || '';
+    const img   = document.getElementById('track-img');
+    const noImg = document.getElementById('track-no-img');
+    if (t.map_url) {
+      img.src = t.map_url;
+      img.style.display    = 'block';
+      noImg.style.display  = 'none';
+    } else {
+      img.style.display    = 'none';
+      noImg.style.display  = 'flex';
+    }
+    trackCard.classList.remove('hidden');
+  } else {
+    trackCard.classList.add('hidden');
+  }
+
+  const anyVisible = (carId && carData[carId]) || (trackId && trackData[trackId]);
+  bar.classList.toggle('visible', !!anyVisible);
+}
+
+document.getElementById('car-select').addEventListener('change', updatePreview);
+document.getElementById('track-select').addEventListener('change', updatePreview);
+
+// ── File handling ─────────────────────────────────────────────────────────────
+const dz = document.getElementById('dz');
+const fi = document.getElementById('fi');
+
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('over');
+  if (e.dataTransfer.files[0]) { window._ibtFile = e.dataTransfer.files[0]; go(); }
+});
+fi.addEventListener('change', () => { if (fi.files[0]) { window._ibtFile = fi.files[0]; go(); } });
+
+async function go() {
+  const file = window._ibtFile;
+  if (!file) { alert('Drop an .ibt file first.'); return; }
+
+  const carId    = document.getElementById('car-select').value;
+  const trackId  = document.getElementById('track-select').value;
+  const airTempRaw = document.getElementById('air-temp') ? document.getElementById('air-temp').value : '';
+
+  const carCfg   = window.CARS_DATA[carId]   || null;
+  const trackCfg = window.TRACKS_DATA[trackId] || null;
+
+  setStatus('Analyzing…', 'info');
+  document.getElementById('results').innerHTML = '';
+
+  try {
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const py = window._pyodide;
+
+    py.globals.set('_ibt_bytes',       bytes);
+    py.globals.set('_car_cfg_json',    JSON.stringify(carCfg));
+    py.globals.set('_track_cfg_json',  JSON.stringify(trackCfg));
+    py.globals.set('_tracks_dict_json', JSON.stringify(window.TRACKS_DATA));
+    py.globals.set('_cars_dict_json',   JSON.stringify(window.CARS_DATA));
+    py.globals.set('_air_temp_raw',    airTempRaw);
+
+    const resultJson = await py.runPythonAsync(`
+import json
+_car   = json.loads(_car_cfg_json)
+_trk   = json.loads(_track_cfg_json)
+_cars  = json.loads(_cars_dict_json)
+_trks  = json.loads(_tracks_dict_json)
+_amb   = float(_air_temp_raw) if _air_temp_raw else None
+json.dumps(analyzer.analyze_ibt(bytes(_ibt_bytes), _car, _trk, _amb, _cars, _trks))
+`);
+
+    const data = JSON.parse(resultJson);
+
+    // Auto-update dropdowns if car/track was detected
+    if (data.detected) {
+      const d = data.detected;
+      if (d.auto_detected_car   && d.car_id)   document.getElementById('car-select').value   = d.car_id;
+      if (d.auto_detected_track && d.track_id) document.getElementById('track-select').value = d.track_id;
+    }
+
+    render(data);
+    setStatus('Analysis complete', 'ok');
+  } catch (e) {
+    setStatus('Error: ' + e.message, 'error');
+    console.error(e);
+  }
+}
+
+function setStatus(msg) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+}
+
+window._selectedLap = null;
+function selectLap(lapNum) {
+  window._selectedLap = (window._selectedLap === lapNum) ? null : lapNum;
+  // Highlight lap row
+  document.querySelectorAll('.lap-row[data-lap]').forEach(el => {
+    el.style.outline = (parseInt(el.dataset.lap) === window._selectedLap) ? '2px solid #2196F3' : '';
+    el.style.background = (parseInt(el.dataset.lap) === window._selectedLap) ? '#0d2a40' : '';
+  });
+  // Highlight tyre trend row
+  document.querySelectorAll('.tt-row[data-lap]').forEach(el => {
+    el.style.outline = (parseInt(el.dataset.lap) === window._selectedLap) ? '2px solid #2196F3' : '';
+    el.style.background = (parseInt(el.dataset.lap) === window._selectedLap) ? '#0d2a40' : '';
+  });
+  // Highlight lap delta dot
+  document.querySelectorAll('[data-lap-dot]').forEach(el => {
+    const isSelected = parseInt(el.dataset.lapDot) === window._selectedLap;
+    el.setAttribute('r', isSelected ? '7' : '4');
+    el.setAttribute('stroke-width', isSelected ? '2.5' : '1');
+  });
+}
+
+function reset() {
+  document.getElementById('results').style.display     = 'none';
+  document.getElementById('upload-wrap').style.display = '';
+  document.getElementById('fi').value = '';
+  setStatus('');
+  window._trackMapData = null;
+  updatePreview();
+}
+
+// ── Rendering ─────────────────────────────────────────────────────────────────
+function tempClass(t) {
+  return t < 167 ? 'tc-cold' : t < 203 ? 'tc-ok' : t < 230 ? 'tc-warm' : 'tc-hot';
+}
+
+function fmtLap(s) {
+  if (!s) return null;
+  const m = Math.floor(s / 60);
+  const r = (s % 60).toFixed(3).padStart(6, '0');
+  return m + ':' + r;
+}
+
+function tyreCard(label, td, psi) {
+  if (!td) return `<div class="tyre-card"><h3>${label}</h3>
+    <p style="color:#444;font-size:12px">No data in telemetry</p></div>`;
+  const sStr = (td.spread >= 0 ? '+' : '') + td.spread.toFixed(1) + ' °F';
+  const pStr = psi != null ? psi.toFixed(1) + ' psi' : '—';
+  return `
+<div class="tyre-card"><h3>${label}</h3>
+  <div class="temp-bars">
+    ${['inner','mid','outer'].map(k => `
+    <div class="temp-col">
+      <div class="lbl">${k}</div>
+      <div class="temp-box ${tempClass(td[k])}">${td[k].toFixed(0)}°F</div>
+    </div>`).join('')}
+  </div>
+  <div class="tyre-meta">
+    <div>Avg <em>${td.avg.toFixed(0)} °F</em></div>
+    <div>Spread <em>${sStr}</em></div>
+    <div>Hot <em>${pStr}</em></div>
+  </div>
+</div>`;
+}
+
+function renderBalance(b) {
+  if (!b || (!b.front_avg && !b.left_avg)) return '';
+  const frd = b.front_rear_diff;
+  const lrd = b.left_right_diff;
+  const items = [];
+  if (b.front_avg != null && b.rear_avg != null) {
+    const diff = frd > 0 ? `+${frd.toFixed(1)} rear` : `${(-frd).toFixed(1)} front`;
+    items.push(`<div class="balance-item">
+        <div class="lbl">Front / Rear</div>
+        <div class="val">${b.front_avg}°F / ${b.rear_avg}°F</div>
+        <div class="balance-diff">${diff} hotter</div></div>`);
+  }
+  if (b.left_avg != null && b.right_avg != null) {
+    const diff2 = lrd > 0 ? `+${lrd.toFixed(1)} right` : `${(-lrd).toFixed(1)} left`;
+    items.push(`<div class="balance-item">
+        <div class="lbl">Left / Right</div>
+        <div class="val">${b.left_avg}°F / ${b.right_avg}°F</div>
+        <div class="balance-diff">${diff2} hotter</div></div>`);
+  }
+  if (!items.length) return '';
+  return `<div class="section-label">Tyre balance</div>
+<div class="balance-row">${items.join('')}</div>`;
+}
+
+function renderHandling(h) {
+  if (!h || !Object.keys(h).length) return '';
+  const rows = Object.entries(h).map(([name, d]) => {
+    const t   = d.tendency || 'no data';
+    const cls = t === 'understeer' ? 'b-us' : t === 'neutral' ? 'b-neu'
+              : t === 'oversteer'  ? 'b-os' : 'b-nd';
+    return `<div class="sector-row">
+      <div class="s-name">${name}</div>
+      <span class="badge ${cls}">${t}</span>
+    </div>`;
+  }).join('');
+  return `<div class="section-label">Handling balance by sector</div>
+<div class="sector-table">${rows}</div>`;
+}
+
+function renderBrake(b) {
+  if (!b || !Object.keys(b).length) return '';
+  const items = [];
+
+  if (b.avg_bias_front_pct != null) {
+    const rear = (100 - b.avg_bias_front_pct).toFixed(1);
+    items.push(`<div class="brake-item">
+      <div class="lbl">Bias Setting</div>
+      <div class="val">${b.avg_bias_front_pct.toFixed(1)}% Front</div>
+      <div class="sub">${rear}% Rear</div>
+    </div>`);
+  }
+  if (b.actual_front_bias_pct != null) {
+    items.push(`<div class="brake-item">
+      <div class="lbl">Actual Split</div>
+      <div class="val">${b.actual_front_bias_pct.toFixed(1)}% Front</div>
+      <div class="sub">from line pressures</div>
+    </div>`);
+  }
+  if (b.peak_brake_press_psi != null) {
+    items.push(`<div class="brake-item">
+      <div class="lbl">Peak Pressure</div>
+      <div class="val">${b.peak_brake_press_psi} psi</div>
+    </div>`);
+  }
+  if (b.brake_events != null) {
+    items.push(`<div class="brake-item">
+      <div class="lbl">Brake Events</div>
+      <div class="val">${b.brake_events}</div>
+    </div>`);
+  }
+  if (b.avg_peak_brake_pct != null) {
+    items.push(`<div class="brake-item">
+      <div class="lbl">Avg Peak Input</div>
+      <div class="val">${b.avg_peak_brake_pct}%</div>
+    </div>`);
+  }
+  if (b.brake_consistency != null) {
+    const pct   = Math.min(b.brake_consistency * 3, 100);
+    const color = b.brake_consistency < 5 ? '#4caf50' : b.brake_consistency < 12 ? '#ff9800' : '#f44336';
+    const label = b.brake_consistency < 5 ? 'Consistent' : b.brake_consistency < 12 ? 'Moderate' : 'Inconsistent';
+    items.push(`<div class="brake-item">
+      <div class="lbl">Consistency (σ)</div>
+      <div class="val">${label} <span style="color:${color};font-size:12px">±${b.brake_consistency}%</span></div>
+      <div class="consistency-bar"><div class="consistency-fill" style="width:${pct}%;background:${color}"></div></div>
+    </div>`);
+  }
+  if (!items.length) return '';
+  return `<div class="section-label">Brake analysis</div>
+<div class="brake-row">${items.join('')}</div>`;
+}
+
+function renderOverlap(o) {
+  if (!o) return '';
+  const pct = o.overall_pct;
+  const color = pct < 3 ? '#4caf50' : pct < 8 ? '#ff9800' : '#f44336';
+  const desc  = pct < 3
+    ? 'Minimal overlap — clean pedal separation.'
+    : pct < 8
+    ? 'Moderate overlap — likely intentional trail braking. Check sector breakdown.'
+    : 'High overlap — review technique. May indicate unintentional input or a setup balance issue.';
+
+  let sectorHtml = '';
+  if (o.by_sector) {
+    const rows = Object.entries(o.by_sector).map(([name, p]) => {
+      const w     = Math.min(p * 5, 100);
+      const c     = p < 3 ? '#4caf50' : p < 8 ? '#ff9800' : '#f44336';
+      return `<div class="overlap-sector-row">
+        <div class="overlap-sec-name">${name}</div>
+        <div class="overlap-bar-wrap"><div class="overlap-bar-fill" style="width:${w}%;background:${c}"></div></div>
+        <div class="overlap-sec-pct">${p}%</div>
+      </div>`;
+    }).join('');
+    sectorHtml = `<div class="overlap-sectors">${rows}</div>`;
+  }
+
+  return `<div class="section-label">Throttle / brake overlap</div>
+<div class="overlap-summary">
+  <div class="overlap-pct-big" style="color:${color}">${pct}%</div>
+  <div class="overlap-desc">${desc}</div>
+</div>
+${sectorHtml}`;
+}
+
+function renderSetupCard(sc, car, track) {
+  if (!sc) return '';
+  const t = sc.tyres || {};
+  const pressures = t.pressures || [];
+  const cambers   = t.camber   || [];
+  const susp      = sc.suspension || [];
+
+  // ── Tyre pressure grid ───────────────────────────────────────────────────
+  const psiCells = pressures.map(p => {
+    if (p.status === 'no_data') return `
+      <div class="sc-psi-cell">
+        <div class="sc-psi-corner">${p.corner}</div>
+        <div class="sc-psi-hot psi-ok" style="font-size:13px;color:#333">No data</div>
+      </div>`;
+    const cls   = p.status === 'over' ? 'psi-over' : p.status === 'under' ? 'psi-under' : 'psi-ok';
+    const adjCls = p.status === 'over' ? 'adj-over' : p.status === 'under' ? 'adj-under' : 'adj-ok';
+    const adjStr = p.status === 'ok'
+      ? '✓ On target'
+      : (p.cold_adj > 0 ? `+${p.cold_adj}` : `${p.cold_adj}`) + ' psi cold';
+    return `
+      <div class="sc-psi-cell">
+        <div class="sc-psi-corner">${p.corner}</div>
+        <div class="sc-psi-hot ${cls}">${p.hot_psi} <span style="font-size:11px;font-weight:400">psi</span></div>
+        <div class="sc-psi-target">target ${p.target_hot_psi} psi hot</div>
+        <div class="sc-psi-adj ${adjCls}">${adjStr}</div>
+      </div>`;
+  }).join('');
+
+  // ── Camber ───────────────────────────────────────────────────────────────
+  let camberHtml = '';
+  if (cambers.length) {
+    const rows = cambers.map(c => {
+      const dir = c.direction === 'add' ? 'Add' : 'Reduce';
+      const why = c.direction === 'add'
+        ? `outer ${Math.abs(c.spread_f)}°F hotter — rolling onto outside edge`
+        : `inner ${Math.abs(c.spread_f)}°F hotter — too much negative camber`;
+      return `<div class="sc-camber-row">
+        <div class="sc-camber-corner">${c.corner}</div>
+        <div class="sc-camber-action">${dir} negative camber <b>${c.range}</b></div>
+        <div class="sc-camber-detail">${why}</div>
+      </div>`;
+    }).join('');
+    camberHtml = `<div class="sc-section">
+      <div class="sc-section-title">Camber</div>${rows}</div>`;
+  }
+
+  // ── Suspension ───────────────────────────────────────────────────────────
+  let suspHtml = '';
+  if (susp.length) {
+    const items = susp.map(s => {
+      const optItems = s.options.map((o, i) =>
+        `<div class="sc-option"><span class="sc-opt-num">${i+1}</span><span class="sc-opt-text">${o}</span></div>`
+      ).join('');
+      return `<div class="sc-susp-item">
+        <div class="sc-susp-label">
+          <span class="sc-susp-name">${s.label}</span>
+          <span class="sc-priority-badge ${s.priority}">${s.priority}</span>
+        </div>
+        <div class="sc-options">${optItems}</div>
+      </div>`;
+    }).join('');
+    suspHtml = `<div class="sc-section">
+      <div class="sc-section-title">Suspension</div>${items}</div>`;
+  }
+
+  if (!psiCells && !camberHtml && !suspHtml) return '';
+
+  return `<div class="section-label">Setup card
+    <button class="btn-print" onclick="printCard()" style="float:right;margin-top:-2px">&#128438; Print / Save PDF</button>
+  </div>
+  <div class="setup-card" id="setup-card-block">
+    <div class="sc-header">
+      <span class="sc-title">Garage adjustments — ${car || 'Car'} at ${track || 'Track'}</span>
+    </div>
+    <div class="sc-section">
+      <div class="sc-section-title">Tyre pressures — adjust cold to hit hot targets</div>
+      <div class="sc-psi-grid">${psiCells}</div>
+    </div>
+    ${camberHtml}
+    ${suspHtml}
+  </div>`;
+}
+
+function printCard() {
+  const card = document.getElementById('setup-card-block');
+  if (!card) return;
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Setup Card</title>
+  <style>
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#111;padding:24px;font-size:13px}
+    h2{font-size:16px;margin-bottom:16px}
+    .sc-psi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+    .sc-psi-cell{border:1px solid #ddd;border-radius:6px;padding:10px;text-align:center}
+    .sc-psi-corner{font-size:10px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px}
+    .sc-psi-hot{font-size:18px;font-weight:700}
+    .sc-psi-hot.psi-over{color:#c00}.sc-psi-hot.psi-under{color:#00c}.sc-psi-hot.psi-ok{color:#080}
+    .sc-psi-target{font-size:11px;color:#888;margin-top:2px}
+    .sc-psi-adj{font-size:12px;font-weight:700;margin-top:6px}
+    .adj-over{color:#c00}.adj-under{color:#00c}.adj-ok{color:#080}
+    .section{margin:16px 0}
+    .sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#999;margin-bottom:8px}
+    .camber-row{display:flex;gap:10px;padding:4px 0;border-bottom:1px solid #eee}
+    .susp-item{padding:8px 0;border-bottom:1px solid #eee}
+    .susp-label{font-weight:600;margin-bottom:4px}
+    .option{display:flex;gap:6px;font-size:12px;color:#444;margin:2px 0}
+    .opt-num{color:#7c3aed;font-weight:700;width:16px}
+    @media print{body{padding:0}}
+  </style></head><body>` + card.innerHTML + `</body></html>`);
+  win.document.close();
+  win.print();
+}
+
+function renderTrackMap(tm) {
+  if (!tm || !tm.points || tm.points.length < 20) return '';
+  window._trackMapData = tm;
+  return `<div class="section-label">Track map — Lap ${tm.lap || '?'} &nbsp;·&nbsp; ${tm.max_speed} mph top speed</div>
+<div style="background:#181818;border-radius:10px;padding:16px 18px">
+  <div class="tm-controls">
+    <button class="tm-btn active" data-mode="speed"    onclick="drawTrackMap('speed')">Speed</button>
+    <button class="tm-btn"        data-mode="throttle" onclick="drawTrackMap('throttle')">Throttle</button>
+    <button class="tm-btn"        data-mode="brake"    onclick="drawTrackMap('brake')">Brake</button>
+    <button class="tm-btn"        data-mode="gear"     onclick="drawTrackMap('gear')">Gear</button>
+    <button class="tm-btn"        data-mode="balance"  onclick="drawTrackMap('balance')">Balance</button>
+    <button class="tm-btn" onclick="saveTrackMapPNG()" style="margin-left:auto">&#8595; PNG</button>
+  </div>
+  <svg id="track-map-svg" style="width:100%;max-height:500px;display:block"></svg>
+  <div style="display:flex;gap:18px;margin-top:10px;font-size:11px;color:#444;flex-wrap:wrap;align-items:center">
+    <span id="tm-legend-bar"></span>
+    <span>&#9679; Sector split</span>
+    <span>&#9675; Start / Finish</span>
+  </div>
+</div>`;
+}
+
+function drawTrackMap(mode) {
+  if (mode) localStorage.setItem('iracing-tm-mode', mode);
+  const tm = window._trackMapData;
+  if (!tm) return;
+  const pts = tm.points;
+
+  document.querySelectorAll('.tm-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.mode === mode));
+
+  // Bounding box of Python-normalised coords (0–1000 range)
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  pts.forEach(p => {
+    if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x;
+    if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
+  });
+  const PAD = 36;
+  const VW  = (maxX - minX) + 2 * PAD;
+  const VH  = (maxY - minY) + 2 * PAD;
+  const ox  = -minX + PAD;
+  const oy  = -minY + PAD;
+
+  function valColor(v, m) {
+    const c = x => Math.max(0, Math.min(1, x));
+    const L = (a, b, t) => Math.round(a + (b - a) * c(t));
+    const lRGB = (c1, c2, t) => [L(c1[0],c2[0],t), L(c1[1],c2[1],t), L(c1[2],c2[2],t)];
+    if (m === 'speed') {
+      const stops = [[26,79,216],[0,188,212],[76,175,80],[255,235,59],[244,67,54]];
+      const t4 = c(v) * 4, i = Math.min(3, Math.floor(t4));
+      const [r,g,b] = lRGB(stops[i], stops[i+1], t4 - i);
+      return `rgb(${r},${g},${b})`;
+    }
+    if (m === 'throttle') {
+      const [r,g,b] = lRGB([26,26,26], [0,230,118], c(v));
+      return `rgb(${r},${g},${b})`;
+    }
+    if (m === 'gear') {
+      const gc = [[60,60,60],[244,67,54],[255,152,0],[255,235,59],[76,175,80],[0,188,212],[33,150,243],[124,77,255],[224,64,251]];
+      const [r,g,b] = gc[Math.min(8, Math.max(0, Math.round(v)))];
+      return `rgb(${r},${g},${b})`;
+    }
+    if (m === 'balance') {
+      // v is us_idx: <0.85 oversteer (red), ~1.0 neutral (gray), >1.15 understeer (blue)
+      const t = Math.max(0, Math.min(1, (v - 0.7) / 0.6));   // 0=OS, 0.5=neutral, 1=US
+      if (t < 0.5) { const [r,g,b] = lRGB([244,67,54],[80,80,80],t*2); return `rgb(${r},${g},${b})`; }
+      else          { const [r,g,b] = lRGB([80,80,80],[33,150,243],(t-0.5)*2); return `rgb(${r},${g},${b})`; }
+    }
+    const [r,g,b] = lRGB([26,26,26], [244,67,54], c(v));
+    return `rgb(${r},${g},${b})`;
+  }
+
+  const mx = tm.max_speed;
+  let svg = '';
+
+  // Coloured track path
+  for (let i = 1; i < pts.length; i++) {
+    const p0 = pts[i-1], p1 = pts[i];
+    const v = mode === 'speed'    ? ((p0.spd + p1.spd) / 2) / mx
+            : mode === 'throttle' ? (p0.thr + p1.thr) / 2
+            : mode === 'gear'     ? ((p0.gear || 0) + (p1.gear || 0)) / 2
+            : mode === 'balance'  ? ((p0.us  || 1) + (p1.us  || 1)) / 2
+            :                       (p0.brk + p1.brk) / 2;
+    const col = valColor(v, mode);
+    svg += `<line x1="${(p0.x+ox).toFixed(1)}" y1="${(p0.y+oy).toFixed(1)}" `
+         + `x2="${(p1.x+ox).toFixed(1)}" y2="${(p1.y+oy).toFixed(1)}" `
+         + `stroke="${col}" stroke-width="3.5" stroke-linecap="round"/>`;
+  }
+
+  // Sector boundary markers
+  (tm.sectors || []).forEach((s, si) => {
+    if (s.start <= 0.005) return;
+    let closest = 0, minD = Infinity;
+    pts.forEach((p, i) => { const d = Math.abs(p.pct - s.start); if (d < minD) { minD = d; closest = i; } });
+    const p = pts[closest];
+    svg += `<circle cx="${(p.x+ox).toFixed(1)}" cy="${(p.y+oy).toFixed(1)}" r="5" fill="#f59e0b" stroke="#111" stroke-width="1.5"/>`;
+    svg += `<text x="${(p.x+ox+8).toFixed(0)}" y="${(p.y+oy+4).toFixed(0)}" fill="#f59e0b" font-size="12" font-family="sans-serif" font-weight="700">S${si+1}</text>`;
+  });
+
+  // Start / finish ring
+  if (pts.length > 0) {
+    const sf = pts[0];
+    svg += `<circle cx="${(sf.x+ox).toFixed(1)}" cy="${(sf.y+oy).toFixed(1)}" r="6" fill="none" stroke="#fff" stroke-width="2.5"/>`;
+    svg += `<circle cx="${(sf.x+ox).toFixed(1)}" cy="${(sf.y+oy).toFixed(1)}" r="2.5" fill="#fff"/>`;
+  }
+
+  // Throttle application points (orange dots)
+  (tm.throttle_apps || []).forEach(ap => {
+    svg += `<circle cx="${(ap.x+ox).toFixed(1)}" cy="${(ap.y+oy).toFixed(1)}" r="4" fill="#f97316" stroke="#111" stroke-width="1" opacity="0.85"/>`;
+  });
+
+  // Corner minimum speed dots (cyan) with speed label
+  (tm.corner_mins || []).forEach(cm => {
+    svg += `<circle cx="${(cm.x+ox).toFixed(1)}" cy="${(cm.y+oy).toFixed(1)}" r="5" fill="#06b6d4" stroke="#111" stroke-width="1" opacity="0.9"/>`;
+    svg += `<text x="${(cm.x+ox+7).toFixed(0)}" y="${(cm.y+oy+4).toFixed(0)}" fill="#06b6d4" font-size="9" font-family="sans-serif" font-weight="600">${cm.spd.toFixed(0)}</text>`;
+  });
+
+  // Coast zone overlay — grey segments where throttle < 5% and brake < 5%
+  {
+    const _coastSegs = [];
+    let _cSeg = null;
+    pts.forEach(p => {
+      if (p.thr < 0.05 && p.brk < 0.05) {
+        if (!_cSeg) _cSeg = [];
+        _cSeg.push(p);
+      } else {
+        if (_cSeg && _cSeg.length > 1) _coastSegs.push(_cSeg);
+        _cSeg = null;
+      }
+    });
+    if (_cSeg && _cSeg.length > 1) _coastSegs.push(_cSeg);
+    _coastSegs.forEach(seg => {
+      const d = seg.map((p, i) => `${i===0?'M':'L'}${(p.x+ox).toFixed(1)},${(p.y+oy).toFixed(1)}`).join(' ');
+      svg += `<path d="${d}" fill="none" stroke="rgba(200,200,200,0.45)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    });
+  }
+
+  const svgEl = document.getElementById('track-map-svg');
+  if (svgEl) {
+    svgEl.setAttribute('viewBox', `0 0 ${VW.toFixed(0)} ${VH.toFixed(0)}`);
+    svgEl.innerHTML = svg;
+  }
+
+  // Update colour legend
+  const leg = document.getElementById('tm-legend-bar');
+  if (leg) {
+    const gradients = {
+      speed:    'linear-gradient(to right,rgb(26,79,216),rgb(0,188,212),rgb(76,175,80),rgb(255,235,59),rgb(244,67,54))',
+      throttle: 'linear-gradient(to right,rgb(26,26,26),rgb(0,230,118))',
+      brake:    'linear-gradient(to right,rgb(26,26,26),rgb(244,67,54))',
+      gear:     'linear-gradient(to right,rgb(244,67,54),rgb(255,152,0),rgb(255,235,59),rgb(76,175,80),rgb(0,188,212),rgb(33,150,243),rgb(124,77,255),rgb(224,64,251))',
+      balance:  'linear-gradient(to right,rgb(244,67,54),rgb(80,80,80),rgb(33,150,243))',
+    };
+    const labels = { speed: `Slow → ${mx} mph`, throttle: '0 → 100% throttle', brake: '0 → 100% brake', gear: '1st → 8th gear', balance: 'Oversteer ← Neutral → Understeer' };
+    leg.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px">
+      <span style="display:inline-block;width:80px;height:6px;border-radius:3px;background:${gradients[mode]}"></span>
+      <span>${labels[mode]}</span></span>
+      <span style="display:inline-flex;align-items:center;gap:4px;margin-left:12px;opacity:0.7">
+        <span style="display:inline-block;width:18px;height:4px;border-radius:2px;background:rgba(200,200,200,0.6)"></span>
+        <span style="font-size:11px">coast</span>
+      </span>`;
+  }
+
+  if (svgEl) {
+    if (svgEl._tmMousemove)  svgEl.removeEventListener('mousemove',  svgEl._tmMousemove);
+    if (svgEl._tmMouseleave) svgEl.removeEventListener('mouseleave', svgEl._tmMouseleave);
+    const tt = document.getElementById('tm-tooltip');
+    const _pts = pts, _ox = ox, _oy = oy;
+    svgEl._tmMousemove = function(e) {
+      const rect = svgEl.getBoundingClientRect();
+      const vb = svgEl.viewBox.baseVal;
+      if (!vb.width) return;
+      const mx = (e.clientX - rect.left) / rect.width * vb.width;
+      const my = (e.clientY - rect.top)  / rect.height * vb.height;
+      let bestIdx = 0, bestD = Infinity;
+      _pts.forEach((p, i) => {
+        const d = (p.x + _ox - mx) ** 2 + (p.y + _oy - my) ** 2;
+        if (d < bestD) { bestD = d; bestIdx = i; }
+      });
+      const bp = _pts[bestIdx];
+      const _thresh = (vb.width * 0.06) ** 2;
+      if (tt && bestD < _thresh) {
+        const gStr = bp.gear != null ? `<br>Gear: <b>${bp.gear || 'N'}</b>` : '';
+        tt.innerHTML = `<b>${bp.spd.toFixed(0)} mph</b><br>Throttle: ${(bp.thr*100).toFixed(0)}%<br>Brake: ${(bp.brk*100).toFixed(0)}%${gStr}<br><span style="color:#555">${(bp.pct*100).toFixed(1)}% lap</span>`;
+        tt.style.display = 'block';
+        tt.style.left = (e.clientX + 16) + 'px';
+        tt.style.top  = (e.clientY - 8)  + 'px';
+      } else if (tt) { tt.style.display = 'none'; }
+    };
+    svgEl._tmMouseleave = function() { if (tt) tt.style.display = 'none'; };
+    svgEl.addEventListener('mousemove',  svgEl._tmMousemove);
+    svgEl.addEventListener('mouseleave', svgEl._tmMouseleave);
+  }
+}
+
+function saveTrackMapPNG() {
+  const svgEl = document.getElementById('track-map-svg');
+  if (!svgEl) return;
+  const vb = svgEl.viewBox.baseVal;
+  if (!vb.width) return;
+  const scale = 2, w = Math.round(vb.width * scale), h = Math.round(vb.height * scale);
+  const svgData = new XMLSerializer().serializeToString(svgEl);
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#181818';
+  ctx.fillRect(0, 0, w, h);
+  const blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0, w, h);
+    URL.revokeObjectURL(url);
+    const a = document.createElement('a');
+    const tm = window._trackMapData;
+    a.download = tm ? `track-map-lap${tm.lap}.png` : 'track-map.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  };
+  img.src = url;
+}
+
+// ── Input Trace (3-panel speed / throttle / brake) ───────────────────────────
+function renderInputTrace(st) {
+  if (!st || !st.laps || !st.laps.length) return '';
+  const W = 600, PL = 44, PR = 12, PT = 6, PB = 18;
+  const panels = [
+    {key: 'spd', label: 'Speed (mph)', h: 100, color: '#c084fc', max: null},
+    {key: 'thr', label: 'Throttle %',  h: 60,  color: '#4caf50', max: 1},
+    {key: 'brk', label: 'Brake %',     h: 60,  color: '#f44336', max: 1},
+  ];
+
+  // Determine max speed across all laps
+  let maxSpd = 0;
+  st.laps.forEach(l => l.points.forEach(p => { if (p.spd > maxSpd) maxSpd = p.spd; }));
+  panels[0].max = maxSpd || 1;
+
+  const colors = ['#c084fc','#64b5f6','#81c784','#ffb74d','#f06292'];
+
+  let totalH = panels.reduce((s, p) => s + p.h + PT + PB, 0) + 10;
+  let svgContent = '';
+  let yOffset = 0;
+
+  panels.forEach((panel, pi) => {
+    const IW = W - PL - PR, IH = panel.h;
+    const yBase = yOffset + PT;
+
+    // Background
+    svgContent += `<rect x="${PL}" y="${yBase}" width="${IW}" height="${IH}" fill="#111" rx="3"/>`;
+
+    // Grid lines (25%, 50%, 75%)
+    for (let g = 25; g <= 75; g += 25) {
+      const gy = (yBase + IH - (g / 100) * IH).toFixed(1);
+      const val = panel.key === 'spd' ? Math.round(panel.max * g / 100) : g;
+      svgContent += `<line x1="${PL}" y1="${gy}" x2="${W - PR}" y2="${gy}" stroke="#222" stroke-width="1"/>`;
+      svgContent += `<text x="${PL - 4}" y="${parseFloat(gy) + 4}" text-anchor="end" fill="#444" font-size="9">${val}</text>`;
+    }
+
+    // Panel label
+    svgContent += `<text x="${PL}" y="${yBase - 2}" fill="#555" font-size="9" font-weight="700" text-transform="uppercase">${panel.label}</text>`;
+
+    // Draw non-best laps first (dimmed)
+    st.laps.filter(l => !l.is_best).forEach((l, li) => {
+      if (!l.points[0] || l.points[0][panel.key] == null) return;
+      const col = colors[(li + 1) % colors.length];
+      const pts = l.points.map(p => {
+        const v = panel.key === 'spd' ? p.spd / panel.max : (p[panel.key] || 0);
+        return `${(PL + p.pct * IW).toFixed(1)},${(yBase + IH - v * IH).toFixed(1)}`;
+      }).join(' ');
+      svgContent += `<polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1" opacity="0.35"/>`;
+    });
+
+    // Draw best lap on top
+    st.laps.filter(l => l.is_best).forEach(l => {
+      if (!l.points[0] || l.points[0][panel.key] == null) return;
+      const pts = l.points.map(p => {
+        const v = panel.key === 'spd' ? p.spd / panel.max : (p[panel.key] || 0);
+        return `${(PL + p.pct * IW).toFixed(1)},${(yBase + IH - v * IH).toFixed(1)}`;
+      }).join(' ');
+      svgContent += `<polyline points="${pts}" fill="none" stroke="${panel.color}" stroke-width="1.8"/>`;
+    });
+
+    // X-axis labels on last panel only
+    if (pi === panels.length - 1) {
+      svgContent += `<text x="${PL}" y="${yBase + IH + 12}" fill="#444" font-size="9">0%</text>`;
+      svgContent += `<text x="${W - PR}" y="${yBase + IH + 12}" text-anchor="end" fill="#444" font-size="9">100% lap</text>`;
+    }
+
+    yOffset += PT + IH + PB;
+  });
+
+  const legendItems = st.laps.map((l, i) => {
+    const col = l.is_best ? '#c084fc' : colors[i % colors.length];
+    const op  = l.is_best ? '1' : '0.5';
+    return `<span class="it-legend-item" style="opacity:${op}">
+      <span class="it-legend-dot" style="background:${col}"></span>
+      Lap ${l.lap} — ${fmtLap(l.time_s)}${l.is_best ? ' ⬤' : ''}
+    </span>`;
+  }).join('');
+
+  return `<div class="section-label">Driver inputs — Top ${st.laps.length} laps</div>
+<div class="input-trace-wrap">
+  <svg viewBox="0 0 ${W} ${totalH}" style="width:100%;display:block">${svgContent}</svg>
+  <div class="it-legend">${legendItems}</div>
+</div>`;
+}
+
+// ── Sector Splits ─────────────────────────────────────────────────────────────
+function renderSectorSplits(st) {
+  if (!st || !st.laps || !st.laps.length || !st.sectors) return '';
+  const sectors  = st.sectors;
+  const nSec     = sectors.length;
+  const bestSpl  = st.best_splits || [];
+  const colTpl   = `52px repeat(${nSec}, 1fr) 90px`;
+
+  const headerCells = sectors.map((s, i) =>
+    `<div>${s.name.replace(/ —.*/, '').trim()}</div>`
+  ).join('');
+
+  const rows = st.laps.map(l => {
+    const splits = l.splits || [];
+    const cells = splits.map((s, i) => {
+      const best  = bestSpl[i];
+      const isBst = best != null && Math.abs(s - best) < 0.001;
+      const delta = best != null ? s - best : null;
+      const dStr  = isBst ? '' : (delta != null ? `+${delta.toFixed(3)}` : '');
+      const dCls  = delta == null ? '' : delta < 0.1 ? 'fast' : delta < 0.4 ? 'med' : 'slow';
+      return `<div>
+        <span class="${isBst ? 'ss-best' : ''}">${fmtLap(s)}</span>
+        ${dStr ? `<span class="ss-delta ${dCls}"> ${dStr}</span>` : ''}
+      </div>`;
+    }).join('');
+    return `<div class="ss-row" style="grid-template-columns:${colTpl}">
+      <div style="color:#666">${l.lap}</div>
+      ${cells}
+      <div style="color:#aaa;font-weight:600">${fmtLap(l.total_s)}</div>
+    </div>`;
+  }).join('');
+
+  const bestRow = `<div class="ss-row" style="grid-template-columns:${colTpl};background:#140a24">
+    <div style="color:#a855f7;font-size:10px;font-weight:700">BEST</div>
+    ${bestSpl.map(b => `<div class="ss-best">${b != null ? fmtLap(b) : '—'}</div>`).join('')}
+    <div class="ss-best">${fmtLap(bestSpl.filter(b => b != null).reduce((a, b) => a + b, 0))}</div>
+  </div>`;
+
+  return `<div class="section-label">Sector split times</div>
+<div class="sector-splits-table">
+  <div class="ss-row ss-header" style="grid-template-columns:${colTpl}">
+    <div>Lap</div>${headerCells}<div>Total</div>
+  </div>
+  ${bestRow}
+  ${rows}
+</div>`;
+}
+
+// ── Tyre Trend ────────────────────────────────────────────────────────────────
+function renderTyreTrend(trend) {
+  if (!trend || !trend.laps || trend.laps.length < 3) return '';
+  const laps = trend.laps;
+  const corners = ['LF','RF','LR','RR'];
+  const cols    = {LF:'#64b5f6', RF:'#4caf50', LR:'#ff9800', RR:'#f44336'};
+  const W = 600, PL = 44, PR = 12, PT = 10, PB = 24, H = 130;
+  const IW = W - PL - PR, IH = H - PT - PB;
+
+  // Find temp range across all corners and laps
+  let minT = Infinity, maxT = -Infinity;
+  laps.forEach(l => corners.forEach(c => {
+    if (l[c] != null) { if (l[c] < minT) minT = l[c]; if (l[c] > maxT) maxT = l[c]; }
+  }));
+  if (minT === Infinity) return '';
+  const pad = 5;
+  minT = Math.floor(minT - pad);
+  maxT = Math.ceil(maxT + pad);
+  const tRange = maxT - minT || 1;
+
+  const lapNums = laps.map(l => l.lap);
+  const nLaps = lapNums.length;
+
+  let svg = `<rect x="${PL}" y="${PT}" width="${IW}" height="${IH}" fill="#111" rx="3"/>`;
+
+  // Gridlines
+  for (let g = 0; g <= 1; g += 0.5) {
+    const gy = (PT + IH - g * IH).toFixed(1);
+    const tv = Math.round(minT + g * tRange);
+    svg += `<line x1="${PL}" y1="${gy}" x2="${W-PR}" y2="${gy}" stroke="#222" stroke-width="1"/>`;
+    svg += `<text x="${PL-4}" y="${parseFloat(gy)+4}" text-anchor="end" fill="#444" font-size="9">${tv}°F</text>`;
+  }
+
+  // X axis labels
+  svg += `<text x="${PL}" y="${H-4}" fill="#444" font-size="9">Lap ${lapNums[0]}</text>`;
+  svg += `<text x="${W-PR}" y="${H-4}" text-anchor="end" fill="#444" font-size="9">Lap ${lapNums[nLaps-1]}</text>`;
+
+  // Lines per corner
+  corners.forEach(c => {
+    const pts = laps.map((l, i) => {
+      if (l[c] == null) return null;
+      const x = PL + (i / Math.max(nLaps - 1, 1)) * IW;
+      const y = PT + IH - ((l[c] - minT) / tRange) * IH;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).filter(Boolean);
+    if (pts.length < 2) return;
+    svg += `<polyline points="${pts.join(' ')}" fill="none" stroke="${cols[c]}" stroke-width="1.8"/>`;
+  });
+
+  const legend = corners.map(c =>
+    `<span class="tt-legend-item"><span class="tt-legend-dot" style="background:${cols[c]}"></span>${c}</span>`
+  ).join('');
+
+  return `<div class="section-label">Tyre temperature trend</div>
+<div class="tyre-trend-wrap">
+  <svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">${svg}</svg>
+  <div class="tt-legend">${legend}</div>
+</div>`;
+}
+
+// ── Speed Trace ───────────────────────────────────────────────────────────────
+function renderSpeedTrace(st) {
+  if (!st || !st.laps || !st.laps.length) return '';
+  const W = 600, H = 160, PL = 40, PR = 12, PT = 10, PB = 24;
+  const IW = W - PL - PR, IH = H - PT - PB;
+  let allSpds = [];
+  st.laps.forEach(l => l.points.forEach(p => allSpds.push(p.spd)));
+  const maxSpd = Math.max(...allSpds) || 1;
+  const colors = ['#c084fc','#64b5f6','#81c784','#ffb74d','#f06292'];
+  let svgLines = '';
+  // Draw non-best laps first (dimmed)
+  st.laps.filter(l => !l.is_best).forEach((l, li) => {
+    const pts = l.points.map(p =>
+      `${(PL + p.pct * IW).toFixed(1)},${(PT + IH - (p.spd / maxSpd) * IH).toFixed(1)}`
+    ).join(' ');
+    svgLines += `<polyline points="${pts}" fill="none" stroke="${colors[(li+1)%colors.length]}" stroke-width="1" opacity="0.4"/>`;
+  });
+  // Draw best lap on top
+  st.laps.filter(l => l.is_best).forEach(l => {
+    const pts = l.points.map(p =>
+      `${(PL + p.pct * IW).toFixed(1)},${(PT + IH - (p.spd / maxSpd) * IH).toFixed(1)}`
+    ).join(' ');
+    svgLines += `<polyline points="${pts}" fill="none" stroke="#c084fc" stroke-width="2"/>`;
+  });
+  // Y-axis gridlines
+  let gridLines = '';
+  for (let g = 25; g <= 75; g += 25) {
+    const y = (PT + IH - (g / 100) * IH).toFixed(1);
+    const spd = Math.round(maxSpd * g / 100);
+    gridLines += `<line x1="${PL}" y1="${y}" x2="${W - PR}" y2="${y}" stroke="#222" stroke-width="1"/>`;
+    gridLines += `<text x="${PL - 4}" y="${parseFloat(y)+4}" text-anchor="end" fill="#444" font-size="9">${spd}</text>`;
+  }
+  // X-axis label
+  gridLines += `<text x="${PL}" y="${H - 2}" fill="#444" font-size="9">0%</text>`;
+  gridLines += `<text x="${W - PR}" y="${H - 2}" text-anchor="end" fill="#444" font-size="9">100% lap</text>`;
+  // Legend
+  const legendItems = st.laps.map((l, i) => {
+    const col = l.is_best ? '#c084fc' : colors[(i) % colors.length];
+    const opacity = l.is_best ? '1' : '0.5';
+    return `<span class="st-legend-item" style="opacity:${opacity}">
+      <span class="st-legend-dot" style="background:${col}"></span>
+      Lap ${l.lap} — ${fmtLap(l.time_s)}${l.is_best ? ' ⬤' : ''}
+    </span>`;
+  }).join('');
+  return `<div class="section-label">Speed trace — Top ${st.laps.length} laps</div>
+<div class="speed-trace-wrap">
+  <svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">
+    <rect x="${PL}" y="${PT}" width="${IW}" height="${IH}" fill="#111" rx="4"/>
+    ${gridLines}
+    ${svgLines}
+  </svg>
+  <div class="st-legend">${legendItems}</div>
+</div>`;
+}
+
+// ── Stints ─────────────────────────────────────────────────────────────────────
+function renderStints(stints) {
+  if (!stints || stints.length < 2) return '';
+  const rows = stints.map(s => `
+    <div class="stint-row">
+      <div style="font-weight:700;color:#aaa">Stint ${s.stint}</div>
+      <div>L${s.start_lap}–${s.end_lap}</div>
+      <div>${s.lap_count} laps</div>
+      <div>${fmtLap(s.avg_lap_s) || '—'}</div>
+      <div style="color:#c084fc">${fmtLap(s.best_lap_s) || '—'}</div>
+      <div>${s.fuel_used_gal != null ? s.fuel_used_gal.toFixed(2) + ' gal' : '—'}</div>
+    </div>`).join('');
+  return `<div class="section-label">Stint analysis</div>
+<div class="stint-table">
+  <div class="stint-row stint-header">
+    <div>Stint</div><div>Laps</div><div>Count</div><div>Avg time</div><div>Best time</div><div>Fuel used</div>
+  </div>
+  ${rows}
+</div>`;
+}
+
+// ── Compare ───────────────────────────────────────────────────────────────────
+function toggleCompare() {
+  const wrap = document.getElementById('compare-wrap');
+  wrap.classList.toggle('visible');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['a','b'].forEach(id => {
+    const fi = document.getElementById(`cmp-fi-${id}`);
+    const btn = document.getElementById(`cmp-btn-${id}`);
+    if (!fi || !btn) return;
+    fi.addEventListener('change', () => {
+      if (fi.files[0]) {
+        btn.textContent = fi.files[0].name;
+        btn.classList.add('has-file');
+      }
+      const fa = document.getElementById('cmp-fi-a').files[0];
+      const fb = document.getElementById('cmp-fi-b').files[0];
+      document.getElementById('btn-cmp-go').disabled = !(fa && fb);
+    });
+  });
+});
+
+async function runCompare() {
+  const fa = window._compareFileA;
+  const fb = window._compareFileB;
+  if (!fa || !fb) { alert('Drop both files first.'); return; }
+
+  const carIdA  = document.getElementById('compare-car-a')?.value   || '';
+  const trackIdA = document.getElementById('compare-track-a')?.value || '';
+  const carIdB  = document.getElementById('compare-car-b')?.value   || '';
+  const trackIdB = document.getElementById('compare-track-b')?.value || '';
+
+  const cfgA = { car: window.CARS_DATA[carIdA] || null, track: window.TRACKS_DATA[trackIdA] || null };
+  const cfgB = { car: window.CARS_DATA[carIdB] || null, track: window.TRACKS_DATA[trackIdB] || null };
+
+  setStatus('Comparing…', 'info');
+
+  try {
+    const py   = window._pyodide;
+    const bA   = new Uint8Array(await fa.arrayBuffer());
+    const bB   = new Uint8Array(await fb.arrayBuffer());
+
+    py.globals.set('_cmp_bytes_a',   bA);
+    py.globals.set('_cmp_bytes_b',   bB);
+    py.globals.set('_cmp_cfg_a_json', JSON.stringify(cfgA));
+    py.globals.set('_cmp_cfg_b_json', JSON.stringify(cfgB));
+    py.globals.set('_cars_dict_json',  JSON.stringify(window.CARS_DATA));
+    py.globals.set('_tracks_dict_json', JSON.stringify(window.TRACKS_DATA));
+
+    const resultJson = await py.runPythonAsync(`
+import json
+_cfgA  = json.loads(_cmp_cfg_a_json)
+_cfgB  = json.loads(_cmp_cfg_b_json)
+_cars  = json.loads(_cars_dict_json)
+_trks  = json.loads(_tracks_dict_json)
+_a = analyzer.analyze_ibt(bytes(_cmp_bytes_a), _cfgA['car'], _cfgA['track'], None, _cars, _trks)
+_b = analyzer.analyze_ibt(bytes(_cmp_bytes_b), _cfgB['car'], _cfgB['track'], None, _cars, _trks)
+json.dumps({'a': _a, 'b': _b})
+`);
+
+    const data = JSON.parse(resultJson);
+    renderComparison(data.a, data.b);
+    setStatus('Comparison complete', 'ok');
+  } catch (e) {
+    setStatus('Error: ' + e.message, 'error');
+    console.error(e);
+  }
+}
+
+function renderComparison(a, b) {
+  function statRow(label, aVal, bVal, lowerIsBetter = false) {
+    if (aVal == null && bVal == null) return '';
+    const aStr = aVal != null ? aVal : '—';
+    const bStr = bVal != null ? bVal : '—';
+    let aCls = '', bCls = '';
+    if (aVal != null && bVal != null && aVal !== bVal) {
+      const aWins = lowerIsBetter ? aVal < bVal : aVal > bVal;
+      aCls = aWins ? 'compare-better' : 'compare-worse';
+      bCls = aWins ? 'compare-worse'  : 'compare-better';
+    }
+    return `<div class="compare-stat-row">
+      <span class="compare-stat-label">${label}</span>
+      <span class="compare-stat-val ${aCls}">${aStr}</span>
+      <span class="compare-stat-val ${bCls}">${bStr}</span>
+    </div>`;
+  }
+  const sa = a.summary || {}, sb = b.summary || {};
+  const ma = a.meta    || {}, mb = b.meta    || {};
+  const statsHtml = `
+    <div class="compare-stat-row" style="background:#111;border-radius:4px;padding:4px 0">
+      <span class="compare-stat-label" style="font-size:10px;color:#444;text-transform:uppercase">Metric</span>
+      <span style="font-size:10px;color:#2196F3;font-weight:700">A: ${ma.filename || '?'}</span>
+      <span style="font-size:10px;color:#ff9800;font-weight:700">B: ${mb.filename || '?'}</span>
+    </div>
+    ${statRow('Best lap', sa.best_lap_s ? fmtLap(sa.best_lap_s) : null, sb.best_lap_s ? fmtLap(sb.best_lap_s) : null, true)}
+    ${statRow('Avg lap',  sa.avg_lap_s  ? fmtLap(sa.avg_lap_s)  : null, sb.avg_lap_s  ? fmtLap(sb.avg_lap_s)  : null, true)}
+    ${statRow('Consistency', sa.lap_consistency_s ? '±'+sa.lap_consistency_s+'s' : null, sb.lap_consistency_s ? '±'+sb.lap_consistency_s+'s' : null, true)}
+    ${statRow('Top speed', sa.max_speed_mph ? sa.max_speed_mph+' mph' : null, sb.max_speed_mph ? sb.max_speed_mph+' mph' : null)}
+    ${statRow('Fuel/lap',  sa.fuel_per_lap_gal ? sa.fuel_per_lap_gal+' gal' : null, sb.fuel_per_lap_gal ? sb.fuel_per_lap_gal+' gal' : null, true)}
+    ${statRow('Peak lat G', sa.peak_lat_g ? sa.peak_lat_g+'g' : null, sb.peak_lat_g ? sb.peak_lat_g+'g' : null)}
+  `;
+  // Sector handling comparison
+  const ha = a.handling || {}, hb = b.handling || {};
+  const sectorNames = [...new Set([...Object.keys(ha), ...Object.keys(hb)])];
+  const sectorRows = sectorNames.map(name => {
+    const da = ha[name] || {}, db = hb[name] || {};
+    const ta = da.tendency || '—', tb = db.tendency || '—';
+    const clsA = ta === 'understeer' ? '#2196F3' : ta === 'oversteer' ? '#f44336' : '#4caf50';
+    const clsB = tb === 'understeer' ? '#2196F3' : tb === 'oversteer' ? '#f44336' : '#4caf50';
+    return `<div class="compare-stat-row">
+      <span class="compare-stat-label" style="font-size:11px">${name.replace(/ \(.*\)/,'')}</span>
+      <span style="color:${clsA};font-size:11px;font-weight:700">${ta}</span>
+      <span style="color:${clsB};font-size:11px;font-weight:700">${tb}</span>
+    </div>`;
+  }).join('');
+  return `<div style="margin-top:16px">
+  <div class="section-label" style="margin-top:0">Summary comparison</div>
+  <div style="background:#181818;border-radius:10px;padding:14px 18px">${statsHtml}</div>
+  ${sectorRows.length ? `<div class="section-label">Handling by sector</div>
+  <div style="background:#181818;border-radius:10px;padding:14px 18px">${sectorRows}</div>` : ''}
+</div>`;
+}
+
+function renderRideHeights(rh) {
+  if (!rh) return '';
+  const corners = ['LF','RF','LR','RR'];
+  const vals = corners.map(c => rh[c]);
+  if (vals.every(v => v == null)) return '';
+  const cells = corners.map(c => {
+    const v = rh[c];
+    if (v == null) return `<div style="text-align:center"><div style="font-size:11px;color:#555">${c}</div><div style="color:#444">—</div></div>`;
+    const col = v < 15 ? '#f44336' : v < 25 ? '#ff9800' : '#86efac';
+    return `<div style="text-align:center"><div style="font-size:11px;color:#777">${c}</div><div style="font-size:18px;font-weight:700;color:${col}">${v.toFixed(1)}</div><div style="font-size:10px;color:#555">mm</div></div>`;
+  }).join('');
+  return `<div class="section-label">Ride heights</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#181818;border-radius:10px;padding:14px 18px;margin-bottom:12px">${cells}</div>`;
+}
+
+function renderConfidence(conf, sigWarnings) {
+  const warns = (sigWarnings || []).concat((conf && conf.issues) || []);
+  if (!conf && !warns.length) return '';
+  const dq = conf ? conf.data_quality : 1;
+  const laps = conf ? conf.flying_laps : '?';
+  const barCol = dq >= 0.8 ? '#4caf50' : dq >= 0.6 ? '#ff9800' : '#f44336';
+  const labelCol = dq >= 0.8 ? '#86efac' : dq >= 0.6 ? '#fbbf24' : '#fca5a5';
+  const label = dq >= 0.8 ? 'Good' : dq >= 0.6 ? 'Fair' : 'Low';
+  const pct = Math.round(dq * 100);
+  const warnHtml = warns.length
+    ? `<ul style="margin:6px 0 0 0;padding-left:18px;color:#aaa;font-size:12px">${warns.map(w=>`<li>${w}</li>`).join('')}</ul>`
+    : '';
+  return `<div style="background:#181818;border-radius:10px;padding:12px 18px;margin-bottom:12px;border-left:3px solid ${barCol}">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <span style="font-size:12px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px">Data confidence</span>
+    <span style="color:${labelCol};font-weight:700">${label} (${pct}%)</span>
+    <span style="flex:1;height:4px;background:#222;border-radius:2px;min-width:60px">
+      <span style="display:block;height:4px;background:${barCol};border-radius:2px;width:${pct}%"></span>
+    </span>
+    <span style="color:#555;font-size:12px">${laps} flying lap${laps===1?'':'s'}</span>
+  </div>
+  ${warnHtml}
+</div>`;
+}
+
+function renderLapTimes(lapTimes) {
+  if (!lapTimes || !lapTimes.length) return '';
+  const best = Math.min(...lapTimes.map(l => l.time_s));
+  const rows = lapTimes.map(l => {
+    const isBest   = l.time_s === best;
+    const delta    = l.time_s - best;
+    const deltaStr = isBest ? '⬤ Fastest' : '+' + delta.toFixed(3) + 's';
+    return `<div class="lap-row${isBest ? ' lap-fastest' : ''}" data-lap="${l.lap}" onclick="selectLap(${l.lap})" style="cursor:pointer">
+      <div class="lap-num">${l.lap}</div>
+      <div class="lap-time">${fmtLap(l.time_s)}</div>
+      <div class="lap-delta">${deltaStr}</div>
+    </div>`;
+  }).join('');
+  const _mn = best, _mx2 = Math.max(...lapTimes.map(l => l.time_s)), _rng = _mx2 - _mn || 1;
+  const _SW = 400, _SH = 28, _SP = 3;
+  const _sparkSegs = lapTimes.map((l, i) => {
+    if (i === 0) return '';
+    const x1 = _SP + ((i-1)/(lapTimes.length-1))*(_SW-2*_SP);
+    const y1 = _SH - _SP - ((lapTimes[i-1].time_s - _mn)/_rng)*(_SH-2*_SP);
+    const x2 = _SP + (i/(lapTimes.length-1))*(_SW-2*_SP);
+    const y2 = _SH - _SP - ((l.time_s - _mn)/_rng)*(_SH-2*_SP);
+    const d = l.time_s - _mn;
+    const col = d < 0.3 ? '#4caf50' : d < 1.5 ? '#ff9800' : '#f44336';
+    return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${col}" stroke-width="2" stroke-linecap="round"/>`;
+  }).join('');
+  return `<div class="section-label">Lap times</div>
+<svg viewBox="0 0 400 28" style="width:100%;height:28px;display:block;margin-bottom:6px;background:#111;border-radius:6px">${_sparkSegs}</svg>
+<div class="lap-table">
+  <div class="lap-row lap-header">
+    <div>Lap</div><div>Time</div><div>Δ Best</div>
+  </div>
+  ${rows}
+</div>`;
+}
+
+function renderLapDelta(lapTimes) {
+  if (!lapTimes || lapTimes.length < 2) return '';
+  const best = Math.min(...lapTimes.map(l => l.time_s));
+  const deltas = lapTimes.map(l => l.time_s - best);
+  const maxD = Math.max(...deltas, 0.001);
+  const W = 500, H = 80, PL = 36, PR = 8, PT = 8, PB = 18;
+  const iW = W - PL - PR, iH = H - PT - PB;
+  const n = lapTimes.length;
+  const xScale = i => PL + (i / Math.max(n - 1, 1)) * iW;
+  const yScale = d => PT + iH - (d / maxD) * iH;
+  let svg = `<line x1="${PL}" y1="${PT+iH}" x2="${PL+iW}" y2="${PT+iH}" stroke="#333" stroke-width="1"/>`;
+  svg += `<text x="${PL-2}" y="${PT+4}" fill="#555" font-size="9" text-anchor="end">+${maxD.toFixed(1)}s</text>`;
+  svg += `<text x="${PL-2}" y="${PT+iH+4}" fill="#555" font-size="9" text-anchor="end">±0</text>`;
+  for (let i = 1; i < n; i++) {
+    const x1 = xScale(i-1), y1 = yScale(deltas[i-1]);
+    const x2 = xScale(i),   y2 = yScale(deltas[i]);
+    svg += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#444" stroke-width="1.5"/>`;
+  }
+  lapTimes.forEach((l, i) => {
+    const d = deltas[i];
+    const col = d < 0.001 ? '#4caf50' : d < 0.3 ? '#4caf50' : d < 1.5 ? '#ff9800' : '#f44336';
+    const cx = xScale(i).toFixed(1), cy = yScale(d).toFixed(1);
+    svg += `<circle cx="${cx}" cy="${cy}" r="4" fill="${col}" stroke="#111" stroke-width="1" data-lap-dot="${l.lap}"/>`;
+    svg += `<text x="${cx}" y="${(PT+iH+12).toFixed(0)}" fill="#555" font-size="9" text-anchor="middle">${l.lap}</text>`;
+  });
+  return `<div class="section-label">Lap delta vs best</div>
+<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;display:block;background:#111;border-radius:6px;margin-bottom:12px">${svg}</svg>`;
+}
+
+function renderRecs(recs) {
+  if (!recs || !recs.length)
+    return `<p style="color:#444;font-size:13px">No issues flagged — data looks good, or insufficient data to analyse.</p>`;
+  return recs.map(r => `
+<div class="rec ${r.priority}">
+  <div class="rec-head">
+    <span class="rec-cat">${r.category}</span>
+    <span class="rec-corner">${r.corner}</span>
+  </div>
+  <div class="rec-issue">${r.issue}</div>
+  <div class="rec-action">→ ${r.action}</div>
+</div>`).join('');
+}
+
+function exportJSON() {
+  if (!window._analysisData) return;
+  const blob = new Blob([JSON.stringify(window._analysisData, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = (window._analysisData.meta?.filename || 'telemetry').replace(/\.ibt$/i,'') + '_analysis.json';
+  a.click();
+}
+function exportCSV() {
+  if (!window._analysisData) return;
+  const laps = (window._analysisData.lap_times || []);
+  if (!laps.length) return;
+  const best = Math.min(...laps.map(l => l.time_s));
+  const rows = [['lap','time_s','delta_s'], ...laps.map(l => [l.lap, l.time_s.toFixed(3), (l.time_s - best).toFixed(3)])];
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = (window._analysisData.meta?.filename || 'telemetry').replace(/\.ibt$/i,'') + '_laps.csv';
+  a.click();
+}
+function render(data) {
+  window._analysisData = data;
+  const t = data.tyre_temps     || {};
+  const p = data.tyre_pressures || {};
+  const m = data.meta           || {};
+  const s = data.summary        || {};
+  const det = data.detected     || {};
+
+  const dur  = s.duration_s;
+  const topv = s.max_speed_mph;
+  const laps = s.laps_analysed;
+
+  const carLabel   = (data.car   || '') + (det.auto_detected_car   ? ' <span class="auto-badge">auto</span>' : '');
+  const trackLabel = (data.track || '') + (det.auto_detected_track ? ' <span class="auto-badge">auto</span>' : '');
+
+  const autoDetectBanner = (det.auto_detected_car || det.auto_detected_track) ? `
+  <div style="background:#0d2a40;border-left:3px solid #2196F3;padding:8px 28px;font-size:12px;color:#64b5f6">
+    ⚡ Auto-detected from telemetry${det.auto_detected_car ? ' · Car: <b>' + (data.car || det.car_id) + '</b>' : ''}${det.auto_detected_track ? ' · Track: <b>' + (data.track || det.track_id) + '</b>' : ''}
+  </div>` : '';
+
+  const carId_selected   = document.getElementById('car-select').value;
+  const trackId_selected = document.getElementById('track-select').value;
+  const missingBanner = (!det.auto_detected_car && !carId_selected) || (!det.auto_detected_track && !trackId_selected) ? `
+  <div style="background:#1a1000;border-left:3px solid #ff9800;padding:8px 28px;font-size:12px;color:#ffb74d">
+    ⚠ Could not auto-detect from telemetry —
+    ${det.raw_car_path   ? 'CarPath: <b>' + det.raw_car_path   + '</b>' : 'CarPath: <b>not found</b>'}
+    &nbsp;·&nbsp;
+    ${det.raw_track_name ? 'TrackName: <b>' + det.raw_track_name + '</b>' : 'TrackName: <b>not found</b>'}
+    &nbsp;— select manually above or report this so the config can be updated.
+  </div>` : '';
+
+  const sessionType = m.session_type || null;
+  const sessionBadge = sessionType
+    ? `<span style="background:${sessionType.toLowerCase().includes('race') ? '#7c2d12' : '#1a2a1a'};
+                    color:${sessionType.toLowerCase().includes('race') ? '#fca5a5' : '#86efac'};
+                    border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;
+                    text-transform:uppercase;letter-spacing:.5px">${sessionType}</span>`
+    : '';
+  const raceWarning = sessionType && sessionType.toLowerCase().includes('race')
+    ? `<div style="background:#1a0a00;border-left:3px solid #f59e0b;padding:6px 28px;font-size:12px;color:#fbbf24">
+         ⚠ Race session detected — tyre data may include SC laps or early-stint anomalies. Recommendations are less reliable than practice/qual data.
+       </div>` : '';
+
+  let html = `${autoDetectBanner}${missingBanner}${raceWarning}<div class="meta-bar">
+    <div style="display:flex;align-items:center;gap:8px"><b>${m.filename || ''}</b> ${sessionBadge}</div>
+    <div class="meta-car-track">${carLabel} &nbsp;·&nbsp; ${trackLabel}</div>
+    ${m.ambient_temp_f ? `<div>Air temp: <b>${m.ambient_temp_f} °F</b></div>` : ''}
+    ${m.track_temp_f   ? `<div>Track temp: <b>${m.track_temp_f} °F</b></div>` : ''}
+    ${laps ? `<div>Laps: <b>${laps}</b></div>` : ''}
+    ${dur  ? `<div>Duration: <b>${Math.floor(dur/60)}m ${dur%60}s</b></div>` : ''}
+    ${topv ? `<div>Top speed: <b>${topv} mph</b></div>` : ''}
+    ${s.best_lap_s ? `<div>Best: <b>${fmtLap(s.best_lap_s)}</b></div>` : ''}
+    ${s.avg_lap_s  ? `<div>Avg lap: <b>${fmtLap(s.avg_lap_s)}</b></div>` : ''}
+    ${s.lap_consistency_s ? `<div>Consistency: <b>±${s.lap_consistency_s}s</b></div>` : ''}
+    ${s.fuel_per_lap_gal ? `<div>Fuel/lap: <b>${s.fuel_per_lap_gal} gal</b></div>` : ''}
+    ${s.laps_to_empty ? `<div>Laps to empty: <b>${s.laps_to_empty}</b></div>` : ''}
+    ${s.peak_lat_g ? `<div>Peak lat G: <b>${s.peak_lat_g}g</b></div>` : ''}
+    ${s.peak_brake_g ? `<div>Peak brake G: <b>${s.peak_brake_g}g</b></div>` : ''}
+    <div>Sample rate: <b>${m.tick_rate || '?'} Hz</b></div>
+    <button class="btn-reset" onclick="reset()">&#8592; Analyse another file</button>
+    <button class="btn-reset" onclick="exportJSON()" style="background:#1a2a3a;border-color:#2196F3;color:#64b5f6">&#8595; JSON</button>
+    <button class="btn-reset" onclick="exportCSV()" style="background:#1a2a1a;border-color:#4caf50;color:#86efac">&#8595; CSV</button>
+  </div>
+  <div class="page">
+    ${renderConfidence(data.confidence, data.signal_warnings)}
+    <div class="section-label">Tyre temperatures &amp; hot pressures</div>
+    <div class="tyre-grid">
+      ${tyreCard('LF — Left Front',  t.LF, p.LF)}
+      ${tyreCard('RF — Right Front', t.RF, p.RF)}
+      ${tyreCard('LR — Left Rear',   t.LR, p.LR)}
+      ${tyreCard('RR — Right Rear',  t.RR, p.RR)}
+    </div>
+    ${renderRideHeights(data.ride_heights)}
+    ${renderBalance(data.balance)}
+    ${renderTyreTrend(data.tyre_trend)}
+    ${renderTrackMap(data.track_map)}
+    ${renderInputTrace(data.speed_trace)}
+    ${renderSpeedTrace(data.speed_trace)}
+    ${renderHandling(data.handling)}
+    ${renderBrake(data.brake)}
+    ${renderOverlap(data.throttle_overlap)}
+    ${renderStints(data.stints)}
+    ${renderSectorSplits(data.sector_times)}
+    ${renderLapDelta(data.lap_times)}
+    ${renderLapTimes(data.lap_times)}
+    ${renderSetupCard(data.setup_card, data.car, data.track)}
+    <div class="section-label">Full recommendations</div>
+    <div class="rec-list">${renderRecs(data.recommendations)}</div>
+  </div>`;
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.innerHTML = html;
+  resultsEl.style.display = 'block';
+  document.getElementById('upload-wrap').style.display = 'none';
+  if (window._trackMapData) setTimeout(() => drawTrackMap(localStorage.getItem('iracing-tm-mode') || 'speed'), 20);
+}
+
+// ── Pyodide initialisation ────────────────────────────────────────────────────
+async function initPyodide() {
+  const overlay = document.getElementById('py-loading');
+  const prog    = document.getElementById('py-progress');
+  const bar     = document.getElementById('py-bar');
+
+  const step = (msg, pct) => {
+    prog.textContent = msg;
+    bar.style.width  = pct + '%';
+  };
+
+  try {
+    step('Loading Pyodide runtime…', 10);
+    window._pyodide = await loadPyodide({
+      indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.27.0/full/',
+    });
+
+    step('Loading numpy…', 40);
+    await window._pyodide.loadPackage('numpy');
+
+    step('Loading analysis modules…', 70);
+    const [ibtCode, analyzerCode] = await Promise.all([
+      fetch('ibt_parser.py').then(r => r.text()),
+      fetch('analyzer.py').then(r => r.text()),
+    ]);
+
+    window._pyodide.FS.writeFile('/ibt_parser.py', ibtCode);
+    window._pyodide.FS.writeFile('/analyzer.py',   analyzerCode);
+
+    step('Initialising modules…', 90);
+    await window._pyodide.runPythonAsync(
+      "import sys; sys.path.insert(0, '/'); import ibt_parser, analyzer"
+    );
+
+    step('Ready', 100);
+    overlay.style.display = 'none';
+    loadOptions();
+
+  } catch (e) {
+    prog.textContent      = 'Failed to load: ' + e.message;
+    prog.style.color      = '#f87171';
+    bar.style.background  = '#ef4444';
+    bar.style.width       = '100%';
+    console.error(e);
+  }
+}
+
+initPyodide();
+</script>
+</body>
+</html>
