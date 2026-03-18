@@ -447,6 +447,39 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
     _pri = {'high': 0, 'medium': 1, 'low': 2}
     recs.sort(key=lambda r: _pri.get(r['priority'], 3))
 
+    # ── Post-process: strip ride-height-lowering actions that would breach tech limits ──
+    _min_rh_check = (car_cfg or {}).get('tech_limits', {}).get('min_ride_height_mm', {})
+    if _min_rh_check and out.get('ride_heights'):
+        _rh_near_limit = set()
+        for _c, _rv in out['ride_heights'].items():
+            _min_c = _min_rh_check.get(_c, 0)
+            _rv_mm = _rv if isinstance(_rv, (int, float)) and _rv is not None else 999
+            if _rv_mm - _min_c < 8:   # within 8mm of minimum
+                _rh_near_limit.add(_c[0])   # 'L' or 'R' → front/rear pair
+
+        def _filter_rh_action(action_str):
+            parts = [p.strip() for p in action_str.split('  ') if p.strip()]
+            filtered = []
+            for p in parts:
+                low = p.lower()
+                skip = False
+                if 'lower front ride height' in low and ('L' in _rh_near_limit or 'R' in _rh_near_limit):
+                    skip = True
+                if 'lower rear ride height' in low and ('L' in _rh_near_limit or 'R' in _rh_near_limit):
+                    skip = True
+                if not skip:
+                    filtered.append(p)
+            return '  '.join(filtered) if filtered else action_str
+
+        for _r in recs:
+            if 'action' in _r and isinstance(_r['action'], str):
+                _r['action'] = _filter_rh_action(_r['action'])
+
+    # Flag toe recommendations — toe is not readable from telemetry, verify limits manually
+    for _r in recs:
+        if 'action' in _r and 'toe' in str(_r.get('action', '')).lower():
+            _r['toe_verify'] = True
+
     # ── 5. Convert tyre temps to °F for output ────────────────────────────────
     for corner, td_c in _temps_c.items():
         if td_c is None:
@@ -1036,6 +1069,38 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
             })
     if _any_rh:
         out['ride_heights'] = _rh_out
+
+    # ── 21b. Tech inspection status ──────────────────────────────────────────
+    _tech_limits = (car_cfg or {}).get('tech_limits', {})
+    _min_rh      = _tech_limits.get('min_ride_height_mm', {})
+    if _min_rh and out.get('ride_heights'):
+        _tech_corners = {}
+        _tech_pass    = True
+        for _corner, _rh_val in out['ride_heights'].items():
+            _min = _min_rh.get(_corner)
+            if _min is None:
+                continue
+            _measured = _rh_val if isinstance(_rh_val, (int, float)) and _rh_val is not None else 0
+            _margin   = round(_measured - _min, 1)
+            if _margin < 0:
+                _status = 'fail'
+                _tech_pass = False
+            elif _margin < 5:
+                _status = 'warning'
+            else:
+                _status = 'ok'
+            _tech_corners[_corner] = {
+                'measured_mm': round(_measured, 1),
+                'min_mm':      _min,
+                'margin_mm':   _margin,
+                'status':      _status,
+            }
+        if _tech_corners:
+            out['tech_status'] = {
+                'pass':       _tech_pass,
+                'corners':    _tech_corners,
+                'series_note': _tech_limits.get('series_note', ''),
+            }
 
     # ── 20. Throttle application points & corner minimum speeds ──────────────
     if (out.get('track_map') and throttle_ch is not None and brake_ch is not None

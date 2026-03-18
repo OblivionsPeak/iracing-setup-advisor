@@ -2,9 +2,23 @@
   "name": "Porsche 911 GT3 Cup (992)",
   "class": "Porsche Cup",
   "iracing_car_path": "porsche_911_gt3_cup",
-  "target_hot_psi": { "LF": 30.0, "RF": 30.0, "LR": 30.5, "RR": 30.5 },
+  "target_hot_psi": {
+    "LF": 30.0,
+    "RF": 30.0,
+    "LR": 30.5,
+    "RR": 30.5
+  },
   "temp_min": 75,
   "temp_max": 95,
   "rear_weight_bias_c": 5.0,
-  "notes": "Rear-engine spec cup car — limited adjustability compared to GT3R. Runs higher cold pressures on cup-spec Michelin slicks. Rear temp bias same as GT3R due to identical engine layout."
+  "notes": "Rear-engine spec cup car \u00e2\u20ac\u201d limited adjustability compared to GT3R. Runs higher cold pressures on cup-spec Michelin slicks. Rear temp bias same as GT3R due to identical engine layout.",
+  "tech_limits": {
+    "min_ride_height_mm": {
+      "LF": 50,
+      "RF": 50,
+      "LR": 45,
+      "RR": 45
+    },
+    "series_note": "Porsche Carrera Cup. Ride height limits are strict \u2014 running near minimum requires corner weight check."
+  }
 }

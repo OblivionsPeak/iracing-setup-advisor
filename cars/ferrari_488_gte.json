@@ -2,9 +2,23 @@
   "name": "Ferrari 488 GTE",
   "class": "GTE",
   "iracing_car_path": "ferrari_488_gte",
-  "target_hot_psi": { "LF": 26.5, "RF": 26.5, "LR": 27.5, "RR": 27.5 },
+  "target_hot_psi": {
+    "LF": 26.5,
+    "RF": 26.5,
+    "LR": 27.5,
+    "RR": 27.5
+  },
   "temp_min": 80,
   "temp_max": 100,
   "rear_weight_bias_c": 3.5,
-  "notes": "Mid-engine layout — tail-happy under power, aggressive camber typical"
+  "notes": "Mid-engine layout \u00e2\u20ac\u201d tail-happy under power, aggressive camber typical",
+  "tech_limits": {
+    "min_ride_height_mm": {
+      "LF": 40,
+      "RF": 40,
+      "LR": 35,
+      "RR": 35
+    },
+    "series_note": "GTE / IMSA GTD Pro. Minimum ride heights strictly enforced at tech."
+  }
 }

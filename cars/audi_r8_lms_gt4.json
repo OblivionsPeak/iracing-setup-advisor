@@ -2,9 +2,23 @@
   "name": "Audi R8 LMS GT4",
   "class": "GT4",
   "iracing_car_path": "audi_r8_lms_gt4",
-  "target_hot_psi": { "LF": 29.0, "RF": 29.0, "LR": 29.0, "RR": 29.0 },
+  "target_hot_psi": {
+    "LF": 29.0,
+    "RF": 29.0,
+    "LR": 29.0,
+    "RR": 29.0
+  },
   "temp_min": 75,
   "temp_max": 95,
   "rear_weight_bias_c": 3.0,
-  "notes": "Mid-engine — very neutral tyre loading, one of the most forgiving GT4 cars. Equal front and rear target pressures suit the balanced weight distribution."
+  "notes": "Mid-engine \u00e2\u20ac\u201d very neutral tyre loading, one of the most forgiving GT4 cars. Equal front and rear target pressures suit the balanced weight distribution.",
+  "tech_limits": {
+    "min_ride_height_mm": {
+      "LF": 25,
+      "RF": 25,
+      "LR": 20,
+      "RR": 20
+    },
+    "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+  }
 }

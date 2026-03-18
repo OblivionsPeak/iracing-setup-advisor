@@ -1769,6 +1769,41 @@ function renderComparison(a, b) {
 </div>`;
 }
 
+function renderTechStatus(ts) {
+  if (!ts || !ts.corners || !Object.keys(ts.corners).length) return '';
+  const overall = ts.pass;
+  const badge   = overall
+    ? '<span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:4px;font-size:.8rem;font-weight:700">PASS</span>'
+    : '<span style="background:#dc2626;color:#fff;padding:2px 10px;border-radius:4px;font-size:.8rem;font-weight:700">FAIL</span>';
+
+  const rows = Object.entries(ts.corners).map(([corner, c]) => {
+    const col = c.status === 'fail'    ? '#ef4444'
+              : c.status === 'warning' ? '#f59e0b'
+              :                          '#22c55e';
+    const icon = c.status === 'fail' ? '✖' : c.status === 'warning' ? '⚠' : '✔';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #1e293b">
+      <span style="color:#94a3b8;font-size:.85rem;width:36px">${corner}</span>
+      <span style="color:#e2e8f0;font-size:.85rem">${c.measured_mm} mm measured</span>
+      <span style="color:#64748b;font-size:.8rem">min ${c.min_mm} mm</span>
+      <span style="color:#64748b;font-size:.8rem">+${c.margin_mm} mm margin</span>
+      <span style="color:${col};font-size:.9rem;font-weight:700;width:20px;text-align:right">${icon}</span>
+    </div>`;
+  }).join('');
+
+  const note = ts.series_note
+    ? `<div style="color:#64748b;font-size:.75rem;margin-top:8px;line-height:1.4">${ts.series_note}</div>`
+    : '';
+
+  return `<div class="section-block">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <h3 style="margin:0;color:#e2e8f0;font-size:.95rem">Tech Inspection — Ride Heights</h3>
+      ${badge}
+    </div>
+    ${rows}
+    ${note}
+  </div>`;
+}
+
 function renderRideHeights(rh) {
   if (!rh) return '';
   const corners = ['LF','RF','LR','RR'];
@@ -1884,6 +1919,7 @@ function renderRecs(recs) {
   </div>
   <div class="rec-issue">${r.issue}</div>
   <div class="rec-action">→ ${r.action}</div>
+  ${r.toe_verify ? '<div style="color:#f59e0b;font-size:.75rem;margin-top:4px">⚠ Toe adjustment suggested — iRacing telemetry does not report current toe angle. Verify the change is within your series\' legal adjustment range before applying.</div>' : ''}
 </div>`).join('');
 }
 
@@ -1978,6 +2014,7 @@ function render(data) {
       ${tyreCard('LR — Left Rear',   t.LR, p.LR)}
       ${tyreCard('RR — Right Rear',  t.RR, p.RR)}
     </div>
+    ${renderTechStatus(data.tech_status)}
     ${renderRideHeights(data.ride_heights)}
     ${renderBalance(data.balance)}
     ${renderTyreTrend(data.tyre_trend)}

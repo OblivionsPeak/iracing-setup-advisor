@@ -29,7 +29,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 3.0,
-    "notes": "Mid-engine — hybrid system removed in GT3 trim; balanced weight distribution, good traction out of slow corners"
+    "notes": "Mid-engine — hybrid system removed in GT3 trim; balanced weight distribution, good traction out of slow corners",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "acura_nsx_gt3_evo22": {
     "name": "Acura NSX GT3 Evo 22",
@@ -44,7 +53,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 2.5,
-    "notes": "Updated Evo 22 spec; mid-rear engine gives better exit traction. More aerodynamic downforce than original NSX GT3."
+    "notes": "Updated Evo 22 spec; mid-rear engine gives better exit traction. More aerodynamic downforce than original NSX GT3.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "alfa_romeo_giulia_tc": {
     "name": "Alfa Romeo Giulia TCR",
@@ -77,7 +95,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 2.0,
-    "notes": "Front-engine RWD — heavier car, fronts can build heat in slow corner sequences; rear tyre management important"
+    "notes": "Front-engine RWD — heavier car, fronts can build heat in slow corner sequences; rear tyre management important",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "aston_martin_vantage_gt4": {
     "name": "Aston Martin Vantage GT4",
@@ -92,7 +119,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 2.0,
-    "notes": "Front-engine RWD — production-based GT4 spec. Narrower setup adjustability than GT3; tyre management is more important than outright pace."
+    "notes": "Front-engine RWD â€” production-based GT4 spec. Narrower setup adjustability than GT3; tyre management is more important than outright pace.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "audi_r8_gt3": {
     "name": "Audi R8 LMS GT3 EVO II",
@@ -110,7 +146,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 3.0,
-    "notes": "Mid-engine with longitudinal layout — well-balanced tyre loads"
+    "notes": "Mid-engine with longitudinal layout — well-balanced tyre loads",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "audi_r8_lms_gt4": {
     "name": "Audi R8 LMS GT4",
@@ -125,7 +170,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 3.0,
-    "notes": "Mid-engine — very neutral tyre loading, one of the most forgiving GT4 cars. Equal front and rear target pressures suit the balanced weight distribution."
+    "notes": "Mid-engine â€” very neutral tyre loading, one of the most forgiving GT4 cars. Equal front and rear target pressures suit the balanced weight distribution.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "audi_rs3_lms_tc": {
     "name": "Audi RS3 LMS TCR",
@@ -159,7 +213,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 2.0,
-    "notes": "Front-engine RWD — rears run slightly warmer due to drive load; fronts can overheat under hard braking"
+    "notes": "Front-engine RWD — rears run slightly warmer due to drive load; fronts can overheat under hard braking",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "bmw_m4_gt4": {
     "name": "BMW M4 GT4",
@@ -174,7 +237,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 2.0,
-    "notes": "Front-engine RWD — well-balanced GT4 with good mechanical grip. Fronts can overheat in heavy braking zones; watch inner-outer spread on front axle."
+    "notes": "Front-engine RWD â€” well-balanced GT4 with good mechanical grip. Fronts can overheat in heavy braking zones; watch inner-outer spread on front axle.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "bmw_m6_gt3": {
     "name": "BMW M6 GT3",
@@ -189,7 +261,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 3.0,
-    "notes": "Legacy GT3 V8 BMW; heavier than M4 GT3, needs softer springs to compensate. Front-limited in slow corners."
+    "notes": "Legacy GT3 V8 BMW; heavier than M4 GT3, needs softer springs to compensate. Front-limited in slow corners.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "bmw_m8_gte": {
     "name": "BMW M8 GTE",
@@ -207,7 +288,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 2.0,
-    "notes": "FR layout GTE — wide front track, moderate rear bias typical of BMW GT cars"
+    "notes": "FR layout GTE â€” wide front track, moderate rear bias typical of BMW GT cars",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 40,
+        "RF": 40,
+        "LR": 35,
+        "RR": 35
+      },
+      "series_note": "GTE / IMSA GTD Pro. Minimum ride heights strictly enforced at tech."
+    }
   },
   "bmw_m_hybrid_v8": {
     "name": "BMW M Hybrid V8 GTP",
@@ -259,7 +349,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 2.5,
-    "notes": "FR V8 muscle car in GT4 trim; strong straight-line but needs careful brake bias for rear stability. Runs hotter than European GT4 cars."
+    "notes": "FR V8 muscle car in GT4 trim; strong straight-line but needs careful brake bias for rear stability. Runs hotter than European GT4 cars.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "chevrolet_corvette_z06_gt3": {
     "name": "Chevrolet Corvette Z06 GT3.R",
@@ -277,7 +376,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 3.0,
-    "notes": "Mid-engine (C8) — neutral tyre loading; flat-plane V8 gives strong engine braking, factor into brake bias"
+    "notes": "Mid-engine (C8) — neutral tyre loading; flat-plane V8 gives strong engine braking, factor into brake bias",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "dallara_f3": {
     "name": "Dallara F3",
@@ -377,7 +485,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 3.0,
-    "notes": "Mid-engine layout — relatively balanced tyre loading front to rear"
+    "notes": "Mid-engine layout — relatively balanced tyre loading front to rear",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "ferrari_488_gte": {
     "name": "Ferrari 488 GTE",
@@ -392,7 +509,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 3.5,
-    "notes": "Mid-engine layout — tail-happy under power, aggressive camber typical"
+    "notes": "Mid-engine layout â€” tail-happy under power, aggressive camber typical",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 40,
+        "RF": 40,
+        "LR": 35,
+        "RR": 35
+      },
+      "series_note": "GTE / IMSA GTD Pro. Minimum ride heights strictly enforced at tech."
+    }
   },
   "ford_mustang_gt3": {
     "name": "Ford Mustang GT3",
@@ -407,7 +533,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 2.0,
-    "notes": "Front-engine RWD — flat-plane V8 characteristics; fronts work hard under braking, watch for front lock-up bias"
+    "notes": "Front-engine RWD — flat-plane V8 characteristics; fronts work hard under braking, watch for front lock-up bias",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "ford_mustang_gt4": {
     "name": "Ford Mustang GT4",
@@ -422,7 +557,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 2.5,
-    "notes": "FR V8 GT4; heavier than most GT4 competitors, compensate with softer front springs. Brake bias sensitive."
+    "notes": "FR V8 GT4; heavier than most GT4 competitors, compensate with softer front springs. Brake bias sensitive.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "ginetta_g56_gt4": {
     "name": "Ginetta G56 GT4",
@@ -437,7 +581,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 2.5,
-    "notes": "Lightweight FR GT4; very responsive to setup changes. Low aero — mechanical grip dominant. Good baseline balance."
+    "notes": "Lightweight FR GT4; very responsive to setup changes. Low aero â€” mechanical grip dominant. Good baseline balance.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "honda_civic_type_r_tc": {
     "name": "Honda Civic Type R TC",
@@ -470,7 +623,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 1.5,
-    "notes": "FWD-based GT4 — distinctive front-heavy thermal signature vs RWD GT4s; fronts run hotter"
+    "notes": "FWD-based GT4 â€” distinctive front-heavy thermal signature vs RWD GT4s; fronts run hotter",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "hyundai_elantra_n_tc": {
     "name": "Hyundai Elantra N TC",
@@ -540,7 +702,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 2.5,
-    "notes": "Lightweight mid-engine GT4; highly sensitive to aero and ride height changes. Excellent rotation but requires careful downforce balance."
+    "notes": "Lightweight mid-engine GT4; highly sensitive to aero and ride height changes. Excellent rotation but requires careful downforce balance.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "lamborghini_huracan_gt3": {
     "name": "Lamborghini Huracán GT3 EVO",
@@ -558,7 +729,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 3.0,
-    "notes": "Mid-engine — slightly lower target pressures suit the softer sidewall construction"
+    "notes": "Mid-engine — slightly lower target pressures suit the softer sidewall construction",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "lamborghini_huracan_gt3_evo2": {
     "name": "Lamborghini Huracán GT3 EVO2",
@@ -576,7 +756,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 3.0,
-    "notes": "Mid-engine; responsive to rear ride height changes"
+    "notes": "Mid-engine; responsive to rear ride height changes",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "lamborghini_huracan_st_evo2": {
     "name": "Lamborghini Huracán Super Trofeo EVO2",
@@ -609,7 +798,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 2.0,
-    "notes": "FR layout; watch brake balance for rear stability"
+    "notes": "FR layout; watch brake balance for rear stability",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "ligier_js_f4": {
     "name": "Ligier JS F4",
@@ -653,7 +851,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 2.0,
-    "notes": "Front-engine RWD — long wheelbase gives stability but reduces rotation in slow corners. Benefits from rear toe-in to help rotation."
+    "notes": "Front-engine RWD â€” long wheelbase gives stability but reduces rotation in slow corners. Benefits from rear toe-in to help rotation.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "mazda_mx5_cup": {
     "name": "Mazda MX-5 Cup",
@@ -682,7 +889,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 3.0,
-    "notes": "Mid-engine — even tyre loading across all four corners. Responsive to camber changes; small adjustments have a noticeable effect."
+    "notes": "Mid-engine â€” even tyre loading across all four corners. Responsive to camber changes; small adjustments have a noticeable effect.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "mclaren_720s_gt3": {
     "name": "McLaren 720S GT3 EVO",
@@ -700,7 +916,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 3.0,
-    "notes": "Mid-engine — excellent rotation but can be snappy on exit; balanced tyre loading"
+    "notes": "Mid-engine — excellent rotation but can be snappy on exit; balanced tyre loading",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "mercedes_amg_gt3": {
     "name": "Mercedes-AMG GT3",
@@ -718,7 +943,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 2.0,
-    "notes": "Front-engine RWD — fronts can build excess heat in long braking zones"
+    "notes": "Front-engine RWD — fronts can build excess heat in long braking zones",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "mercedes_amg_gt4": {
     "name": "Mercedes-AMG GT4",
@@ -733,7 +967,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 2.0,
-    "notes": "Front-engine RWD — heavier GT4 entry; benefits from slightly more front camber to manage heat in long corners."
+    "notes": "Front-engine RWD â€” heavier GT4 entry; benefits from slightly more front camber to manage heat in long corners.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "nascar_camping_world_truck": {
     "name": "NASCAR Camping World Truck",
@@ -878,7 +1121,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 3.0,
-    "notes": "FR GT-R-based platform; stable understeer tendency, good traction. Watch front left tyre loading in long fast corners."
+    "notes": "FR GT-R-based platform; stable understeer tendency, good traction. Watch front left tyre loading in long fast corners.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "porsche_718_cayman_gt4": {
     "name": "Porsche 718 Cayman GT4 Clubsport",
@@ -893,7 +1145,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 4.0,
-    "notes": "Mid-rear engine (flat-4 behind rear axle) — similar rear-bias characteristics to the 911 but less extreme. Naturally good rotation; can be prone to snap oversteer if rear pressures are too low."
+    "notes": "Mid-rear engine (flat-4 behind rear axle) â€” similar rear-bias characteristics to the 911 but less extreme. Naturally good rotation; can be prone to snap oversteer if rear pressures are too low.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "porsche_911_gt3_cup": {
     "name": "Porsche 911 GT3 Cup (992)",
@@ -908,7 +1169,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 5.0,
-    "notes": "Rear-engine spec cup car — limited adjustability compared to GT3R. Runs higher cold pressures on cup-spec Michelin slicks. Rear temp bias same as GT3R due to identical engine layout."
+    "notes": "Rear-engine spec cup car â€” limited adjustability compared to GT3R. Runs higher cold pressures on cup-spec Michelin slicks. Rear temp bias same as GT3R due to identical engine layout.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 50,
+        "RF": 50,
+        "LR": 45,
+        "RR": 45
+      },
+      "series_note": "Porsche Carrera Cup. Ride height limits are strict — running near minimum requires corner weight check."
+    }
   },
   "porsche_911_gt3r": {
     "name": "Porsche 911 GT3R",
@@ -928,7 +1198,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 5.0,
-    "notes": "Rear-engine layout — rears naturally run ~5 °C hotter than fronts in a balanced setup"
+    "notes": "Rear-engine layout — rears naturally run ~5 °C hotter than fronts in a balanced setup",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "porsche_911_rsr": {
     "name": "Porsche 911 RSR",
@@ -943,7 +1222,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 6.0,
-    "notes": "Rear-engine layout — rear tyres work significantly harder; higher rear PSI and rear_weight_bias_c reflects this"
+    "notes": "Rear-engine layout â€” rear tyres work significantly harder; higher rear PSI and rear_weight_bias_c reflects this",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 40,
+        "RF": 40,
+        "LR": 35,
+        "RR": 35
+      },
+      "series_note": "GTE / IMSA GTD Pro. Minimum ride heights strictly enforced at tech."
+    }
   },
   "porsche_935": {
     "name": "Porsche 935",
@@ -1093,7 +1381,16 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 100,
     "rear_weight_bias_c": 2.0,
-    "notes": "Front-engine RWD — well-balanced chassis; rears take drive load, fronts can overheat in heavy braking zones"
+    "notes": "Front-engine RWD — well-balanced chassis; rears take drive load, fronts can overheat in heavy braking zones",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
   },
   "toyota_gr_supra_gt4": {
     "name": "Toyota GR Supra GT4",
@@ -1108,7 +1405,16 @@ window.CARS_DATA = {
     "temp_min": 75,
     "temp_max": 95,
     "rear_weight_bias_c": 2.0,
-    "notes": "Front-engine RWD — one of the more adjustable GT4 platforms. Good baseline balance; responds well to spring rate changes."
+    "notes": "Front-engine RWD â€” one of the more adjustable GT4 platforms. Good baseline balance; responds well to spring rate changes.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
   },
   "vw_golf_gti_tc": {
     "name": "Volkswagen Golf GTI TCR",

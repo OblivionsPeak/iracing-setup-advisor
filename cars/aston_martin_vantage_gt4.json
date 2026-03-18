@@ -2,9 +2,23 @@
   "name": "Aston Martin Vantage GT4",
   "class": "GT4",
   "iracing_car_path": "aston_martin_vantage_gt4",
-  "target_hot_psi": { "LF": 29.0, "RF": 29.0, "LR": 29.5, "RR": 29.5 },
+  "target_hot_psi": {
+    "LF": 29.0,
+    "RF": 29.0,
+    "LR": 29.5,
+    "RR": 29.5
+  },
   "temp_min": 75,
   "temp_max": 95,
   "rear_weight_bias_c": 2.0,
-  "notes": "Front-engine RWD — production-based GT4 spec. Narrower setup adjustability than GT3; tyre management is more important than outright pace."
+  "notes": "Front-engine RWD \u00e2\u20ac\u201d production-based GT4 spec. Narrower setup adjustability than GT3; tyre management is more important than outright pace.",
+  "tech_limits": {
+    "min_ride_height_mm": {
+      "LF": 25,
+      "RF": 25,
+      "LR": 20,
+      "RR": 20
+    },
+    "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+  }
 }
