@@ -1205,14 +1205,15 @@ function renderSetupCard(sc, car, track) {
     });
     const groups = sectorOrder.map(sec => {
       const items = bySector[sec].map(s => {
-        // Strip the sector prefix from label since it's shown as group header
-        const shortLabel = s.label.replace(/^[^—–]*[—–]\s*/, '').replace(/^[^—–]*[—–]\s*/, '');
+        if (s.issue === 'neutral') {
+          return `<div class="sc-susp-item" style="color:#4caf50;font-size:.82rem;padding:6px 0">✓ No suspension changes needed</div>`;
+        }
         const optItems = s.options.map((o, i) =>
           `<div class="sc-option"><span class="sc-opt-num">${i+1}</span><span class="sc-opt-text">${o}</span></div>`
         ).join('');
         return `<div class="sc-susp-item">
           <div class="sc-susp-label">
-            <span class="sc-susp-name">${shortLabel || s.label}</span>
+            <span class="sc-susp-name">${s.label}</span>
             <span class="sc-priority-badge ${s.priority}">${s.priority}</span>
           </div>
           <div class="sc-options">${optItems}</div>

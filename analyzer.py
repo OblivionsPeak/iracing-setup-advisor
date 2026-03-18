@@ -831,6 +831,11 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
     for _sec, _sd in out['handling'].items():
         _t = _sd.get('tendency')
         if _t not in ('understeer', 'oversteer'):
+            sc['suspension'].append({
+                'priority': 'ok', 'sector': _sec, 'issue': 'neutral',
+                'label': 'neutral',
+                'options': [],
+            })
             continue
         _phases = _sd.get('phases', {})
         _issue_phases = [p for p, pd in _phases.items() if pd.get('tendency') == _t]
@@ -839,11 +844,11 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
         _phase_suffix = f' — {_phase_key}' if _phase_key else ''
         sc['suspension'].append({
             'priority': 'medium', 'sector': _sec, 'issue': _t,
-            'label': f'{_sec}{_phase_suffix} — {_t}',
+            'label': f'{_phase_suffix.lstrip(" — ") or _t} — {_t}' if _phase_suffix else _t,
             'options': _opts_map[_phase_key],
         })
 
-    _pri2 = {'high': 0, 'medium': 1, 'low': 2}
+    _pri2 = {'high': 0, 'medium': 1, 'low': 2, 'ok': 3}
     sc['suspension'].sort(key=lambda x: _pri2.get(x['priority'], 3))
     out['setup_card'] = sc
 
