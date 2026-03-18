@@ -1,0 +1,11 @@
+{
+  "name": "Hockenheimring Baden-Württemberg",
+  "short": "Hockenheim",
+  "country": "Germany",
+  "sectors": [
+    {"name": "S1 — Einfahrt to Einfahrt Motodrom", "start": 0.0, "end": 0.33},
+    {"name": "S2 — Motodrom to Mercedes arena", "start": 0.33, "end": 0.67},
+    {"name": "S3 — Spitzkehre to finish", "start": 0.67, "end": 1.0}
+  ],
+  "iracing_track_name": ["hockenheimring", "hockenheim", "hockenheimring gp"]
+}

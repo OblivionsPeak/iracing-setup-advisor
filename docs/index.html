@@ -513,6 +513,7 @@ async function go() {
     py.globals.set('_tracks_dict_json', JSON.stringify(window.TRACKS_DATA));
     py.globals.set('_cars_dict_json',   JSON.stringify(window.CARS_DATA));
     py.globals.set('_air_temp_raw',    airTempRaw);
+    py.globals.set('_excluded_laps_json', JSON.stringify([...window._excludedLaps]));
 
     const resultJson = await py.runPythonAsync(`
 import json
@@ -521,7 +522,8 @@ _trk   = json.loads(_track_cfg_json)
 _cars  = json.loads(_cars_dict_json)
 _trks  = json.loads(_tracks_dict_json)
 _amb   = float(_air_temp_raw) if _air_temp_raw else None
-json.dumps(analyzer.analyze_ibt(bytes(_ibt_bytes), _car, _trk, _amb, _cars, _trks))
+_excl  = json.loads(_excluded_laps_json)
+json.dumps(analyzer.analyze_ibt(bytes(_ibt_bytes), _car, _trk, _amb, _cars, _trks, _excl))
 `);
 
     const data = JSON.parse(resultJson);

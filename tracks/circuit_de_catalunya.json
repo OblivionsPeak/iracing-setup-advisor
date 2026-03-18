@@ -1,0 +1,11 @@
+{
+  "name": "Circuit de Barcelona-Catalunya",
+  "short": "Barcelona",
+  "country": "Spain",
+  "sectors": [
+    {"name": "S1 — Turn 1 to Turn 5", "start": 0.0, "end": 0.33},
+    {"name": "S2 — Turn 5 to Turn 10", "start": 0.33, "end": 0.67},
+    {"name": "S3 — Turn 10 to finish", "start": 0.67, "end": 1.0}
+  ],
+  "iracing_track_name": ["circuit de barcelona-catalunya", "barcelona", "circuit de catalunya", "catalunya"]
+}

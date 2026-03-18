@@ -317,6 +317,30 @@ window.CARS_DATA = {
     "rear_weight_bias_c": 5.0,
     "notes": "LMDh — balanced weight distribution"
   },
+  "bmw_z4_gt3": {
+    "name": "BMW Z4 GT3",
+    "class": "GT3",
+    "iracing_car_path": "bmw_z4_gt3",
+    "target_hot_psi": {
+      "LF": 30.0,
+      "RF": 30.0,
+      "LR": 29.5,
+      "RR": 29.5
+    },
+    "temp_min": 80,
+    "temp_max": 100,
+    "rear_weight_bias_c": 2.5,
+    "notes": "Front-engine GT3. Legacy model — replaced by M4 GT3. Prone to understeer on entry, sensitive to front ARB.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
+  },
   "cadillac_vseries_r": {
     "name": "Cadillac V-Series.R GTP",
     "class": "GTP",
@@ -496,6 +520,30 @@ window.CARS_DATA = {
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
     }
   },
+  "ferrari_488_gt3": {
+    "name": "Ferrari 488 GT3",
+    "class": "GT3",
+    "iracing_car_path": "ferrari_488_gt3",
+    "target_hot_psi": {
+      "LF": 28.5,
+      "RF": 28.5,
+      "LR": 28.0,
+      "RR": 28.0
+    },
+    "temp_min": 80,
+    "temp_max": 100,
+    "rear_weight_bias_c": 3.0,
+    "notes": "Mid-rear engine layout. Legacy GT3 — similar balance to 296 but heavier rear. High rear downforce sensitivity.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 35,
+        "RF": 35,
+        "LR": 30,
+        "RR": 30
+      },
+      "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    }
+  },
   "ferrari_488_gte": {
     "name": "Ferrari 488 GTE",
     "class": "GTE",
@@ -558,6 +606,30 @@ window.CARS_DATA = {
     "temp_max": 95,
     "rear_weight_bias_c": 2.5,
     "notes": "FR V8 GT4; heavier than most GT4 competitors, compensate with softer front springs. Brake bias sensitive.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
+  },
+  "ginetta_g55_gt4": {
+    "name": "Ginetta G55 GT4",
+    "class": "GT4",
+    "iracing_car_path": "ginetta_g55_gt4",
+    "target_hot_psi": {
+      "LF": 28.5,
+      "RF": 28.5,
+      "LR": 27.5,
+      "RR": 27.5
+    },
+    "temp_min": 75,
+    "temp_max": 95,
+    "rear_weight_bias_c": 2.0,
+    "notes": "Front-engine British GT car. Light and nimble, good mechanical grip. Less aero-dependent than continental GT4s.",
     "tech_limits": {
       "min_ride_height_mm": {
         "LF": 25,
@@ -927,6 +999,21 @@ window.CARS_DATA = {
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
     }
   },
+  "mercedes_amg_gt2": {
+    "name": "Mercedes-AMG GT2",
+    "class": "GT2",
+    "iracing_car_path": "mercedes_amg_gt2",
+    "target_hot_psi": {
+      "LF": 31.0,
+      "RF": 31.0,
+      "LR": 30.5,
+      "RR": 30.5
+    },
+    "temp_min": 80,
+    "temp_max": 105,
+    "rear_weight_bias_c": 2.5,
+    "notes": "Front-engine GT2 — higher power than GT3, significant aero. Run higher pressures than GT3 AMG."
+  },
   "mercedes_amg_gt3": {
     "name": "Mercedes-AMG GT3",
     "class": "GT3",
@@ -1156,6 +1243,33 @@ window.CARS_DATA = {
       "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
     }
   },
+  "porsche_718_gt4_rs_clubsport": {
+    "name": "Porsche 718 GT4 RS Clubsport",
+    "class": "GT4",
+    "iracing_car_path": [
+      "porsche_718_cayman_gt4_rs_clubsport",
+      "718gt4rsclubsport"
+    ],
+    "target_hot_psi": {
+      "LF": 29.0,
+      "RF": 29.0,
+      "LR": 28.0,
+      "RR": 28.0
+    },
+    "temp_min": 80,
+    "temp_max": 100,
+    "rear_weight_bias_c": 2.0,
+    "notes": "Mid-engine GT4 RS. Higher downforce than standard Cayman GT4, stiffer chassis. Rear-engine weight bias.",
+    "tech_limits": {
+      "min_ride_height_mm": {
+        "LF": 25,
+        "RF": 25,
+        "LR": 20,
+        "RR": 20
+      },
+      "series_note": "GT4 Series. Minimum ride heights enforced at tech. Verify with your specific series ruleset."
+    }
+  },
   "porsche_911_gt3_cup": {
     "name": "Porsche 911 GT3 Cup (992)",
     "class": "Porsche Cup",
@@ -1283,6 +1397,21 @@ window.CARS_DATA = {
     "temp_max": 95,
     "rear_weight_bias_c": 2.0,
     "notes": "Mid-engine sports prototype — very light, mechanically demanding"
+  },
+  "radical_sr8": {
+    "name": "Radical SR8",
+    "class": "Radical",
+    "iracing_car_path": "radical_sr8",
+    "target_hot_psi": {
+      "LF": 20.0,
+      "RF": 20.0,
+      "LR": 16.0,
+      "RR": 16.0
+    },
+    "temp_min": 70,
+    "temp_max": 90,
+    "rear_weight_bias_c": 2.0,
+    "notes": "Motorcycle-derived V8, very high power-to-weight. Rear-limited under traction. Run lower pressures than SR10."
   },
   "ray_ff1600": {
     "name": "Ray FF1600",

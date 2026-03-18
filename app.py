@@ -251,6 +251,8 @@ def analyze_route():
     track_id = request.form.get('track', '').strip()
     air_temp_raw = request.form.get('air_temp_f', '').strip()
     ambient_temp_f = float(air_temp_raw) if air_temp_raw else None
+    excluded_laps_raw = request.form.get('excluded_laps', '').strip()
+    excluded_laps = json.loads(excluded_laps_raw) if excluded_laps_raw else None
     car_cfg   = CARS.get(car_id)
     track_cfg = TRACKS.get(track_id)
 
@@ -296,7 +298,7 @@ def analyze_route():
 
         session_type = _detect_session_type(session_info)
         result = analyze(channels, tick_rate, car_cfg=car_cfg, track_cfg=track_cfg,
-                         ambient_temp_f=ambient_temp_f)
+                         ambient_temp_f=ambient_temp_f, excluded_laps=excluded_laps)
         result['meta'] = {
             'filename':     f.filename,
             'tick_rate':    tick_rate,
@@ -644,6 +646,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .lap-fastest .lap-num{color:#c084fc}
 .lap-fastest .lap-time{color:#c084fc;font-weight:700}
 .lap-fastest .lap-delta{color:#a855f7;font-weight:700}
+.lap-excluded { opacity: 0.4; text-decoration: line-through; }
+.lap-excluded td { color: #555 !important; }
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:7px 16px;
+     border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none}
 </style>
 </head>
 <body>
@@ -840,11 +846,25 @@ dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('ov
 dz.addEventListener('dragleave', () => dz.classList.remove('over'));
 dz.addEventListener('drop', e => {
   e.preventDefault(); dz.classList.remove('over');
-  if (e.dataTransfer.files[0]) go(e.dataTransfer.files[0]);
+  if (e.dataTransfer.files[0]) {
+    window._excludedLaps = new Set();
+    const reBtn2 = document.getElementById('reanalyze-btn');
+    if (reBtn2) reBtn2.style.display = 'none';
+    go(e.dataTransfer.files[0]);
+  }
 });
-fi.addEventListener('change', () => { if (fi.files[0]) go(fi.files[0]); });
+fi.addEventListener('change', () => {
+  if (fi.files[0]) {
+    window._excludedLaps = new Set();
+    const reBtn2 = document.getElementById('reanalyze-btn');
+    if (reBtn2) reBtn2.style.display = 'none';
+    go(fi.files[0]);
+  }
+});
 
 async function go(file) {
+  if (!file) return;
+  window._ibtFile = file;
   const carId   = document.getElementById('car-select').value;
   const trackId = document.getElementById('track-select').value;
 
@@ -856,6 +876,7 @@ async function go(file) {
   form.append('car',      carId);
   form.append('track',    trackId);
   form.append('air_temp_f', document.getElementById('air-temp').value || '');
+  form.append('excluded_laps', JSON.stringify([...window._excludedLaps]));
 
   try {
     const res  = await fetch('/api/analyze', { method: 'POST', body: form });
@@ -882,6 +903,23 @@ function setStatus(msg) {
 }
 
 window._selectedLap = null;
+window._excludedLaps = new Set();
+
+function toggleExcludeLap(lapNum) {
+  if (window._excludedLaps.has(lapNum)) {
+    window._excludedLaps.delete(lapNum);
+  } else {
+    window._excludedLaps.add(lapNum);
+  }
+  // Update visual state of all rows for this lap
+  document.querySelectorAll(`[data-lap="${lapNum}"]`).forEach(el => {
+    el.classList.toggle('lap-excluded', window._excludedLaps.has(lapNum));
+  });
+  // Show/hide re-analyze button
+  const btn = document.getElementById('reanalyze-btn');
+  if (btn) btn.style.display = window._excludedLaps.size > 0 ? 'inline-flex' : 'none';
+}
+
 function selectLap(lapNum) {
   window._selectedLap = (window._selectedLap === lapNum) ? null : lapNum;
   // Highlight lap row
@@ -1851,10 +1889,16 @@ function renderLapTimes(lapTimes) {
     const isBest   = l.time_s === best;
     const delta    = l.time_s - best;
     const deltaStr = isBest ? '⬤ Fastest' : '+' + delta.toFixed(3) + 's';
-    return `<div class="lap-row${isBest ? ' lap-fastest' : ''}" data-lap="${l.lap}" onclick="selectLap(${l.lap})" style="cursor:pointer">
+    const isExcluded = window._excludedLaps && window._excludedLaps.has(l.lap);
+    return `<div class="lap-row${isBest ? ' lap-fastest' : ''}${isExcluded ? ' lap-excluded' : ''}" data-lap="${l.lap}" onclick="selectLap(${l.lap})" style="cursor:pointer;grid-template-columns:56px 1fr 1fr 40px">
       <div class="lap-num">${l.lap}</div>
       <div class="lap-time">${fmtLap(l.time_s)}</div>
       <div class="lap-delta">${deltaStr}</div>
+      <div style="padding:2px 6px;text-align:center">
+        <button onclick="event.stopPropagation();toggleExcludeLap(${l.lap})"
+          title="Exclude lap from analysis"
+          style="background:none;border:1px solid #333;color:#666;border-radius:3px;padding:1px 5px;cursor:pointer;font-size:.7rem;line-height:1.2">✕</button>
+      </div>
     </div>`;
   }).join('');
   const _mn = best, _mx2 = Math.max(...lapTimes.map(l => l.time_s)), _rng = _mx2 - _mn || 1;
@@ -1872,8 +1916,8 @@ function renderLapTimes(lapTimes) {
   return `<div class="section-label">Lap times</div>
 <svg viewBox="0 0 400 28" style="width:100%;height:28px;display:block;margin-bottom:6px;background:#111;border-radius:6px">${_sparkSegs}</svg>
 <div class="lap-table">
-  <div class="lap-row lap-header">
-    <div>Lap</div><div>Time</div><div>Δ Best</div>
+  <div class="lap-row lap-header" style="grid-template-columns:56px 1fr 1fr 40px">
+    <div>Lap</div><div>Time</div><div>Δ Best</div><div></div>
   </div>
   ${rows}
 </div>`;
@@ -1943,6 +1987,20 @@ function exportCSV() {
   a.click();
 }
 function render(data) {
+  // Show re-analyze button if laps are excluded
+  let reBtn = document.getElementById('reanalyze-btn');
+  if (!reBtn) {
+    reBtn = document.createElement('button');
+    reBtn.id = 'reanalyze-btn';
+    reBtn.className = 'btn';
+    reBtn.style.cssText = 'display:none;margin:8px 0;background:#b45309;color:#fff;';
+    reBtn.textContent = 'Re-analyze (excluding selected laps)';
+    reBtn.onclick = () => go(window._ibtFile);
+    const status = document.getElementById('status');
+    if (status) status.parentNode.insertBefore(reBtn, status.nextSibling);
+  }
+  reBtn.style.display = window._excludedLaps.size > 0 ? 'inline-flex' : 'none';
+
   window._analysisData = data;
   const t = data.tyre_temps     || {};
   const p = data.tyre_pressures || {};

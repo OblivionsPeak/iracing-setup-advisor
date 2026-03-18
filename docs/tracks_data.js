@@ -105,6 +105,34 @@ window.TRACKS_DATA = {
       "charlotte motor speedway - roval"
     ]
   },
+  "circuit_de_catalunya": {
+    "name": "Circuit de Barcelona-Catalunya",
+    "short": "Barcelona",
+    "country": "Spain",
+    "sectors": [
+      {
+        "name": "S1 — Turn 1 to Turn 5",
+        "start": 0.0,
+        "end": 0.33
+      },
+      {
+        "name": "S2 — Turn 5 to Turn 10",
+        "start": 0.33,
+        "end": 0.67
+      },
+      {
+        "name": "S3 — Turn 10 to finish",
+        "start": 0.67,
+        "end": 1.0
+      }
+    ],
+    "iracing_track_name": [
+      "circuit de barcelona-catalunya",
+      "barcelona",
+      "circuit de catalunya",
+      "catalunya"
+    ]
+  },
   "cota": {
     "name": "Circuit of the Americas",
     "short": "COTA",
@@ -209,6 +237,33 @@ window.TRACKS_DATA = {
       "fuji speedway",
       "fuji",
       "fuji international"
+    ]
+  },
+  "hockenheimring": {
+    "name": "Hockenheimring Baden-Württemberg",
+    "short": "Hockenheim",
+    "country": "Germany",
+    "sectors": [
+      {
+        "name": "S1 — Einfahrt to Einfahrt Motodrom",
+        "start": 0.0,
+        "end": 0.33
+      },
+      {
+        "name": "S2 — Motodrom to Mercedes arena",
+        "start": 0.33,
+        "end": 0.67
+      },
+      {
+        "name": "S3 — Spitzkehre to finish",
+        "start": 0.67,
+        "end": 1.0
+      }
+    ],
+    "iracing_track_name": [
+      "hockenheimring",
+      "hockenheim",
+      "hockenheimring gp"
     ]
   },
   "homestead": {
@@ -430,6 +485,33 @@ window.TRACKS_DATA = {
       "limerock"
     ]
   },
+  "long_beach": {
+    "name": "Streets of Long Beach",
+    "short": "Long Beach",
+    "country": "United States",
+    "sectors": [
+      {
+        "name": "S1 — Turn 1 to Turn 4",
+        "start": 0.0,
+        "end": 0.33
+      },
+      {
+        "name": "S2 — Turn 4 to Shoreline Drive",
+        "start": 0.33,
+        "end": 0.67
+      },
+      {
+        "name": "S3 — Shoreline to finish",
+        "start": 0.67,
+        "end": 1.0
+      }
+    ],
+    "iracing_track_name": [
+      "streets of long beach",
+      "long beach",
+      "long beach street circuit"
+    ]
+  },
   "mid_ohio": {
     "name": "Mid-Ohio Sports Car Course",
     "short": "Mid-Ohio",
@@ -647,6 +729,59 @@ window.TRACKS_DATA = {
       "paul ricard circuit"
     ]
   },
+  "phillip_island": {
+    "name": "Phillip Island Grand Prix Circuit",
+    "short": "Phillip Island",
+    "country": "Australia",
+    "sectors": [
+      {
+        "name": "S1 — Southern Loop to Hayshed",
+        "start": 0.0,
+        "end": 0.33
+      },
+      {
+        "name": "S2 — Hayshed to Lukey Heights",
+        "start": 0.33,
+        "end": 0.65
+      },
+      {
+        "name": "S3 — Lukey Heights to finish",
+        "start": 0.65,
+        "end": 1.0
+      }
+    ],
+    "iracing_track_name": [
+      "phillip island",
+      "phillip island circuit",
+      "phillip island grand prix circuit"
+    ]
+  },
+  "pocono_raceway": {
+    "name": "Pocono Raceway",
+    "short": "Pocono",
+    "country": "United States",
+    "sectors": [
+      {
+        "name": "S1 — Start to Tunnel Turn",
+        "start": 0.0,
+        "end": 0.35
+      },
+      {
+        "name": "S2 — Tunnel Turn to Long Pond",
+        "start": 0.35,
+        "end": 0.7
+      },
+      {
+        "name": "S3 — Long Pond to finish",
+        "start": 0.7,
+        "end": 1.0
+      }
+    ],
+    "iracing_track_name": [
+      "pocono raceway",
+      "pocono"
+    ]
+  },
   "portland": {
     "name": "Portland International Raceway",
     "short": "Portland",
@@ -804,6 +939,32 @@ window.TRACKS_DATA = {
       "silverstone circuit gp"
     ]
   },
+  "snetterton": {
+    "name": "Snetterton Circuit",
+    "short": "Snetterton",
+    "country": "United Kingdom",
+    "sectors": [
+      {
+        "name": "S1 — Riches to Esses",
+        "start": 0.0,
+        "end": 0.35
+      },
+      {
+        "name": "S2 — Oggies to Coram",
+        "start": 0.35,
+        "end": 0.68
+      },
+      {
+        "name": "S3 — Hamilton to Brundle",
+        "start": 0.68,
+        "end": 1.0
+      }
+    ],
+    "iracing_track_name": [
+      "snetterton circuit",
+      "snetterton"
+    ]
+  },
   "sonoma": {
     "name": "Sonoma Raceway",
     "short": "Sonoma",
@@ -884,6 +1045,60 @@ window.TRACKS_DATA = {
       "suzuka international racing course",
       "suzuka circuit",
       "suzuka"
+    ]
+  },
+  "twin_ring_motegi": {
+    "name": "Twin Ring Motegi",
+    "short": "Motegi",
+    "country": "Japan",
+    "sectors": [
+      {
+        "name": "S1 — Start to S-Curves",
+        "start": 0.0,
+        "end": 0.33
+      },
+      {
+        "name": "S2 — S-Curves to Hairpin",
+        "start": 0.33,
+        "end": 0.67
+      },
+      {
+        "name": "S3 — Hairpin to finish",
+        "start": 0.67,
+        "end": 1.0
+      }
+    ],
+    "iracing_track_name": [
+      "twin ring motegi",
+      "motegi",
+      "twin ring motegi road course"
+    ]
+  },
+  "vallelunga": {
+    "name": "Autodromo Vallelunga",
+    "short": "Vallelunga",
+    "country": "Italy",
+    "sectors": [
+      {
+        "name": "S1 — Start to Curva Grande",
+        "start": 0.0,
+        "end": 0.35
+      },
+      {
+        "name": "S2 — Curva Grande to Variante",
+        "start": 0.35,
+        "end": 0.7
+      },
+      {
+        "name": "S3 — Variante to finish",
+        "start": 0.7,
+        "end": 1.0
+      }
+    ],
+    "iracing_track_name": [
+      "vallelunga",
+      "autodromo vallelunga",
+      "autodromo di vallelunga"
     ]
   },
   "virginia_international_raceway": {

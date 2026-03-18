@@ -1,0 +1,11 @@
+{
+  "name": "Snetterton Circuit",
+  "short": "Snetterton",
+  "country": "United Kingdom",
+  "sectors": [
+    {"name": "S1 — Riches to Esses", "start": 0.0, "end": 0.35},
+    {"name": "S2 — Oggies to Coram", "start": 0.35, "end": 0.68},
+    {"name": "S3 — Hamilton to Brundle", "start": 0.68, "end": 1.0}
+  ],
+  "iracing_track_name": ["snetterton circuit", "snetterton"]
+}

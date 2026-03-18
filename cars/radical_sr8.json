@@ -1,0 +1,10 @@
+{
+  "name": "Radical SR8",
+  "class": "Radical",
+  "iracing_car_path": "radical_sr8",
+  "target_hot_psi": { "LF": 20.0, "RF": 20.0, "LR": 16.0, "RR": 16.0 },
+  "temp_min": 70,
+  "temp_max": 90,
+  "rear_weight_bias_c": 2.0,
+  "notes": "Motorcycle-derived V8, very high power-to-weight. Rear-limited under traction. Run lower pressures than SR10."
+}

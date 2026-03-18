@@ -55,7 +55,7 @@ def _ch(channels, name):
     return channels.get(name)
 
 
-def _flying_lap_mask(channels, n):
+def _flying_lap_mask(channels, n, excluded_laps=None):
     """True for samples on representative flying laps (excludes in/out laps
     and laps more than 15 % slower/faster than the median lap time)."""
     lap = _ch(channels, 'Lap')
@@ -80,10 +80,19 @@ def _flying_lap_mask(channels, n):
             continue
         if median_dur * 0.85 <= (e - s) <= median_dur * 1.15:
             mask[s:e] = True
+
+    # Zero out any manually excluded laps
+    if excluded_laps:
+        _excl_set = set(int(x) for x in excluded_laps)
+        if lap is not None:
+            for i, (s, e) in enumerate(zip(starts, ends)):
+                _lap_num = int(lap_i[s]) if s < len(lap_i) else -1
+                if _lap_num in _excl_set:
+                    mask[s:e] = False
     return mask
 
 
-def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=None):
+def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=None, excluded_laps=None):
     """
     Analyse iRacing telemetry.
 
@@ -111,7 +120,7 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
     sectors         = [(s['name'], s['start'], s['end']) for s in track['sectors']]
 
     n    = len(next(iter(channels.values())))
-    mask = _flying_lap_mask(channels, n)
+    mask = _flying_lap_mask(channels, n, excluded_laps=excluded_laps)
 
     # ── 0. Signal validation — flag implausible channel values ────────────────
     _signal_warnings = []
@@ -1227,7 +1236,8 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
 
 
 def analyze_ibt(ibt_bytes, car_cfg=None, track_cfg=None,
-                ambient_temp_f=None, cars_dict=None, tracks_dict=None):
+                ambient_temp_f=None, cars_dict=None, tracks_dict=None,
+                excluded_laps=None):
     """
     Full pipeline for Pyodide: parse bytes → auto-detect car/track → analyze.
 
@@ -1327,7 +1337,7 @@ def analyze_ibt(ibt_bytes, car_cfg=None, track_cfg=None,
 
     # ── Run analysis ──────────────────────────────────────────────────────────
     result = analyze(channels, tick_rate, car_cfg=car_cfg, track_cfg=track_cfg,
-                     ambient_temp_f=ambient_temp_f)
+                     ambient_temp_f=ambient_temp_f, excluded_laps=excluded_laps)
 
     result['meta'] = {
         'filename':       '',

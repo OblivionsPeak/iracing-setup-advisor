@@ -1,0 +1,11 @@
+{
+  "name": "Twin Ring Motegi",
+  "short": "Motegi",
+  "country": "Japan",
+  "sectors": [
+    {"name": "S1 — Start to S-Curves", "start": 0.0, "end": 0.33},
+    {"name": "S2 — S-Curves to Hairpin", "start": 0.33, "end": 0.67},
+    {"name": "S3 — Hairpin to finish", "start": 0.67, "end": 1.0}
+  ],
+  "iracing_track_name": ["twin ring motegi", "motegi", "twin ring motegi road course"]
+}
