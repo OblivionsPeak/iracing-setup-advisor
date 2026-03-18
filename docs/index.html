@@ -550,6 +550,19 @@ function setStatus(msg) {
 
 window._excludedLaps = new Set();
 window._selectedLap = null;
+function toggleExcludeLap(lapNum) {
+  if (window._excludedLaps.has(lapNum)) {
+    window._excludedLaps.delete(lapNum);
+  } else {
+    window._excludedLaps.add(lapNum);
+  }
+  document.querySelectorAll(`[data-lap="${lapNum}"]`).forEach(el => {
+    el.classList.toggle('lap-excluded', window._excludedLaps.has(lapNum));
+  });
+  const btn = document.getElementById('reanalyze-btn');
+  if (btn) btn.style.display = window._excludedLaps.size > 0 ? 'inline-flex' : 'none';
+}
+
 function selectLap(lapNum) {
   window._selectedLap = (window._selectedLap === lapNum) ? null : lapNum;
   // Highlight lap row
@@ -1463,6 +1476,55 @@ function renderComparison(a, b) {
 </div>`;
 }
 
+function renderDownforceRec(summary) {
+  if (!summary || !summary.downforce_rec) return '';
+  const dr  = summary.downforce_rec;
+  const col = dr.trim === 'High' ? '#3b82f6'
+            : dr.trim === 'Medium' ? '#8b5cf6'
+            : '#f59e0b';
+  const icon = dr.trim === 'High' ? '▲▲' : dr.trim === 'Medium' ? '▲' : '▼';
+  return `<div style="display:flex;align-items:center;gap:12px;background:#1e293b;border-left:3px solid ${col};border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:12px">
+    <span style="color:${col};font-size:1.1rem;font-weight:700">${icon}</span>
+    <div>
+      <span style="color:${col};font-weight:700;font-size:.9rem">${dr.trim} Downforce</span>
+      <span style="color:#64748b;font-size:.8rem;margin-left:8px">recommended</span>
+      <div style="color:#94a3b8;font-size:.82rem;margin-top:2px">${dr.note}</div>
+    </div>
+  </div>`;
+}
+
+function renderTechStatus(ts) {
+  if (!ts || !ts.corners || !Object.keys(ts.corners).length) return '';
+  const overall = ts.pass;
+  const badge   = overall
+    ? '<span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:4px;font-size:.8rem;font-weight:700">PASS</span>'
+    : '<span style="background:#dc2626;color:#fff;padding:2px 10px;border-radius:4px;font-size:.8rem;font-weight:700">FAIL</span>';
+  const rows = Object.entries(ts.corners).map(([corner, c]) => {
+    const col = c.status === 'fail'    ? '#ef4444'
+              : c.status === 'warning' ? '#f59e0b'
+              :                          '#22c55e';
+    const icon = c.status === 'fail' ? '✖' : c.status === 'warning' ? '⚠' : '✔';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #1e293b">
+      <span style="color:#94a3b8;font-size:.85rem;width:36px">${corner}</span>
+      <span style="color:#e2e8f0;font-size:.85rem">${c.measured_mm} mm measured</span>
+      <span style="color:#64748b;font-size:.8rem">min ${c.min_mm} mm</span>
+      <span style="color:#64748b;font-size:.8rem">+${c.margin_mm} mm margin</span>
+      <span style="color:${col};font-size:.9rem;font-weight:700;width:20px;text-align:right">${icon}</span>
+    </div>`;
+  }).join('');
+  const note = ts.series_note
+    ? `<div style="color:#64748b;font-size:.75rem;margin-top:8px;line-height:1.4">${ts.series_note}</div>`
+    : '';
+  return `<div class="section-block">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <h3 style="margin:0;color:#e2e8f0;font-size:.95rem">Tech Inspection — Ride Heights</h3>
+      ${badge}
+    </div>
+    ${rows}
+    ${note}
+  </div>`;
+}
+
 function renderRideHeights(rh) {
   if (!rh) return '';
   const corners = ['LF','RF','LR','RR'];
@@ -1510,10 +1572,16 @@ function renderLapTimes(lapTimes) {
     const isBest   = l.time_s === best;
     const delta    = l.time_s - best;
     const deltaStr = isBest ? '⬤ Fastest' : '+' + delta.toFixed(3) + 's';
-    return `<div class="lap-row${isBest ? ' lap-fastest' : ''}" data-lap="${l.lap}" onclick="selectLap(${l.lap})" style="cursor:pointer">
+    const isExcluded = window._excludedLaps && window._excludedLaps.has(l.lap);
+    return `<div class="lap-row${isBest ? ' lap-fastest' : ''}${isExcluded ? ' lap-excluded' : ''}" data-lap="${l.lap}" onclick="selectLap(${l.lap})" style="cursor:pointer;grid-template-columns:56px 1fr 1fr 40px">
       <div class="lap-num">${l.lap}</div>
       <div class="lap-time">${fmtLap(l.time_s)}</div>
       <div class="lap-delta">${deltaStr}</div>
+      <div style="padding:2px 6px;text-align:center">
+        <button onclick="event.stopPropagation();toggleExcludeLap(${l.lap})"
+          title="Exclude lap from analysis"
+          style="background:none;border:1px solid #333;color:#666;border-radius:3px;padding:1px 5px;cursor:pointer;font-size:.7rem;line-height:1.2">✕</button>
+      </div>
     </div>`;
   }).join('');
   const _mn = best, _mx2 = Math.max(...lapTimes.map(l => l.time_s)), _rng = _mx2 - _mn || 1;
@@ -1531,8 +1599,8 @@ function renderLapTimes(lapTimes) {
   return `<div class="section-label">Lap times</div>
 <svg viewBox="0 0 400 28" style="width:100%;height:28px;display:block;margin-bottom:6px;background:#111;border-radius:6px">${_sparkSegs}</svg>
 <div class="lap-table">
-  <div class="lap-row lap-header">
-    <div>Lap</div><div>Time</div><div>Δ Best</div>
+  <div class="lap-row lap-header" style="grid-template-columns:56px 1fr 1fr 40px">
+    <div>Lap</div><div>Time</div><div>Δ Best</div><div></div>
   </div>
   ${rows}
 </div>`;
@@ -1601,6 +1669,20 @@ function exportCSV() {
   a.click();
 }
 function render(data) {
+  // Show re-analyze button if laps are excluded
+  let reBtn = document.getElementById('reanalyze-btn');
+  if (!reBtn) {
+    reBtn = document.createElement('button');
+    reBtn.id = 'reanalyze-btn';
+    reBtn.className = 'btn';
+    reBtn.style.cssText = 'display:none;margin:8px 0;background:#b45309;color:#fff;';
+    reBtn.textContent = 'Re-analyze (excluding selected laps)';
+    reBtn.onclick = () => go(window._ibtFile);
+    const status = document.getElementById('status');
+    if (status) status.parentNode.insertBefore(reBtn, status.nextSibling);
+  }
+  reBtn.style.display = window._excludedLaps.size > 0 ? 'inline-flex' : 'none';
+
   window._analysisData = data;
   const t = data.tyre_temps     || {};
   const p = data.tyre_pressures || {};
@@ -1664,6 +1746,7 @@ function render(data) {
     <button class="btn-reset" onclick="exportCSV()" style="background:#1a2a1a;border-color:#4caf50;color:#86efac">&#8595; CSV</button>
   </div>
   <div class="page">
+    ${renderDownforceRec(data.summary)}
     ${renderConfidence(data.confidence, data.signal_warnings)}
     <div class="section-label">Tyre temperatures &amp; hot pressures</div>
     <div class="tyre-grid">
@@ -1672,6 +1755,7 @@ function render(data) {
       ${tyreCard('LR — Left Rear',   t.LR, p.LR)}
       ${tyreCard('RR — Right Rear',  t.RR, p.RR)}
     </div>
+    ${renderTechStatus(data.tech_status)}
     ${renderRideHeights(data.ride_heights)}
     ${renderBalance(data.balance)}
     ${renderTyreTrend(data.tyre_trend)}
