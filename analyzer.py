@@ -456,6 +456,48 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
     _pri = {'high': 0, 'medium': 1, 'low': 2}
     recs.sort(key=lambda r: _pri.get(r['priority'], 3))
 
+    # ── Differential recommendations from handling phases ─────────────────
+    _diff_entry_os  = 0   # count of sectors with entry oversteer
+    _diff_exit_os   = 0   # count of sectors with exit oversteer
+    _diff_entry_us  = 0   # count of sectors with entry understeer
+    for _sec_name, _sec_data in out.get('handling', {}).items():
+        _phases = _sec_data.get('phases', {})
+        _entry_tend = _phases.get('entry', {}).get('tendency')
+        _apex_tend  = _phases.get('apex',  {}).get('tendency')
+        _exit_tend  = _phases.get('exit',  {}).get('tendency')
+        if _entry_tend == 'oversteer':
+            _diff_entry_os += 1
+        if _exit_tend  == 'oversteer' or _apex_tend == 'oversteer':
+            _diff_exit_os += 1
+        if _entry_tend == 'understeer':
+            _diff_entry_us += 1
+
+    if _diff_entry_os >= 2:
+        recs.append({
+            'category': 'Differential',
+            'corner':   'ENTRY',
+            'issue':    f'Liftoff/trail-brake oversteer on corner entry in {_diff_entry_os} sectors',
+            'action':   '① Reduce diff preload 1 step — less locking torque at zero throttle reduces snap oversteer on entry  ② Check rear ARB is not too stiff',
+            'priority': 'medium',
+        })
+    if _diff_exit_os >= 2:
+        recs.append({
+            'category': 'Differential',
+            'corner':   'EXIT',
+            'issue':    f'On-throttle oversteer on corner exit in {_diff_exit_os} sectors',
+            'action':   '① Reduce friction faces 1 step — less locking on power reduces exit snap  ② Increase rear toe-in 0.05° for stability',
+            'priority': 'medium',
+            'toe_verify': True,
+        })
+    if _diff_entry_us >= 2 and _diff_entry_os == 0:
+        recs.append({
+            'category': 'Differential',
+            'corner':   'ENTRY',
+            'issue':    f'Persistent understeer on corner entry in {_diff_entry_us} sectors',
+            'action':   '① Add diff preload 1 step — more baseline locking torque improves corner entry stability and reduces push',
+            'priority': 'low',
+        })
+
     # ── Post-process: strip ride-height-lowering actions that would breach tech limits ──
     _min_rh_check = (car_cfg or {}).get('tech_limits', {}).get('min_ride_height_mm', {})
     if _min_rh_check and out.get('ride_heights'):
@@ -546,6 +588,24 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
         if len(s):
             out['summary']['max_speed_mph'] = round(float(np.max(s))  * MS_TO_MPH, 1)
             out['summary']['avg_speed_mph'] = round(float(np.mean(s)) * MS_TO_MPH, 1)
+
+    # ── Downforce trim recommendation from peak speed ─────────────────────
+    if speed is not None and mask.sum() > 0:
+        _max_mph = round(float(np.max(speed[mask])) * MS_TO_MPH, 1)
+        out['summary']['max_speed_mph'] = _max_mph
+        if _max_mph < 155:
+            _df_trim = 'High'
+            _df_note = (f'Peak speed {_max_mph:.0f} mph — below 155 mph favours maximum '
+                        f'downforce for peak cornering speed.')
+        elif _max_mph < 167:
+            _df_trim = 'Medium'
+            _df_note = (f'Peak speed {_max_mph:.0f} mph — 155–167 mph range suits medium '
+                        f'downforce trim, balancing drag vs cornering.')
+        else:
+            _df_trim = 'Low / Minimum'
+            _df_note = (f'Peak speed {_max_mph:.0f} mph — above 167 mph suggests low or '
+                        f'minimum downforce to reduce straight-line drag.')
+        out['summary']['downforce_rec'] = {'trim': _df_trim, 'note': _df_note}
 
     # ── 9. G-force peaks ──────────────────────────────────────────────────────
     lat_ch = _ch(channels, 'LatAccel')

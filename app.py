@@ -365,6 +365,28 @@ def compare_route():
             except Exception: pass
 
 
+@app.route('/api/sto-notes', methods=['POST'])
+def sto_notes_route():
+    """Extract human-readable notes from an iRacing .sto setup file."""
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file'}), 400
+    f = request.files['file']
+    raw = f.read()
+    # iRacing STO files embed UTF-16LE text notes after a binary header.
+    # Scan for readable wide-character text blocks.
+    notes = ''
+    try:
+        decoded = raw.decode('utf-16-le', errors='ignore')
+        import re as _re_sto
+        blocks = _re_sto.findall(r'[ -~\n\r\t]{20,}', decoded)
+        notes = '\n\n'.join(b.strip() for b in blocks if b.strip())
+    except Exception:
+        pass
+    if not notes:
+        return jsonify({'error': 'No readable notes found in this .sto file.'}), 200
+    return jsonify({'notes': notes, 'filename': f.filename})
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 HTML = r"""<!DOCTYPE html>
 <html lang="en">
@@ -740,6 +762,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     </div>
   </div>
   <div id="compare-results"></div>
+</div>
+<div id="sto-wrap" style="margin-top:16px">
+  <button onclick="toggleStoPanel()" class="btn" style="background:#374151;font-size:.8rem;padding:6px 14px">
+    📋 Load Setup Notes (.sto)
+  </button>
+  <div id="sto-panel" style="display:none;margin-top:10px;background:#1e293b;border-radius:10px;padding:14px">
+    <div id="sto-drop" style="border:2px dashed #374151;border-radius:8px;padding:20px;text-align:center;color:#64748b;font-size:.85rem;cursor:pointer"
+         onclick="document.getElementById('sto-file-input').click()"
+         ondragover="event.preventDefault()"
+         ondrop="handleStoDrop(event)">
+      Drop your .sto setup file here or click to browse
+    </div>
+    <input type="file" id="sto-file-input" accept=".sto" style="display:none" onchange="handleStoFile(this.files[0])">
+    <div id="sto-notes-output" style="margin-top:12px;display:none">
+      <div style="color:#94a3b8;font-size:.75rem;margin-bottom:6px" id="sto-filename"></div>
+      <pre id="sto-notes-text" style="color:#cbd5e1;font-size:.75rem;white-space:pre-wrap;max-height:300px;overflow-y:auto;background:#0f172a;border-radius:6px;padding:12px;margin:0;line-height:1.5"></pre>
+    </div>
+  </div>
 </div>
 <div id="tm-tooltip"></div>
 <div id="results" style="display:none"></div>
@@ -1715,6 +1755,35 @@ function toggleCompare() {
   wrap.classList.toggle('visible');
 }
 
+function toggleStoPanel() {
+  const p = document.getElementById('sto-panel');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+
+async function handleStoDrop(e) {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) await handleStoFile(file);
+}
+
+async function handleStoFile(file) {
+  if (!file || !file.name.endsWith('.sto')) {
+    alert('Please drop a .sto iRacing setup file.'); return;
+  }
+  const fd = new FormData();
+  fd.append('file', file);
+  try {
+    const res  = await fetch('/api/sto-notes', {method: 'POST', body: fd});
+    const data = await res.json();
+    if (data.error && !data.notes) { alert(data.error); return; }
+    document.getElementById('sto-filename').textContent    = '📋 ' + file.name;
+    document.getElementById('sto-notes-text').textContent  = data.notes || '(no notes found)';
+    document.getElementById('sto-notes-output').style.display = 'block';
+  } catch (e) {
+    alert('Error reading setup file: ' + e.message);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   ['a','b'].forEach(id => {
     const fi = document.getElementById(`cmp-fi-${id}`);
@@ -1805,6 +1874,23 @@ function renderComparison(a, b) {
   ${sectorRows.length ? `<div class="section-label">Handling by sector</div>
   <div style="background:#181818;border-radius:10px;padding:14px 18px">${sectorRows}</div>` : ''}
 </div>`;
+}
+
+function renderDownforceRec(summary) {
+  if (!summary || !summary.downforce_rec) return '';
+  const dr  = summary.downforce_rec;
+  const col = dr.trim === 'High' ? '#3b82f6'
+            : dr.trim === 'Medium' ? '#8b5cf6'
+            : '#f59e0b';
+  const icon = dr.trim === 'High' ? '▲▲' : dr.trim === 'Medium' ? '▲' : '▼';
+  return `<div style="display:flex;align-items:center;gap:12px;background:#1e293b;border-left:3px solid ${col};border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:12px">
+    <span style="color:${col};font-size:1.1rem;font-weight:700">${icon}</span>
+    <div>
+      <span style="color:${col};font-weight:700;font-size:.9rem">${dr.trim} Downforce</span>
+      <span style="color:#64748b;font-size:.8rem;margin-left:8px">recommended</span>
+      <div style="color:#94a3b8;font-size:.82rem;margin-top:2px">${dr.note}</div>
+    </div>
+  </div>`;
 }
 
 function renderTechStatus(ts) {
@@ -2064,6 +2150,7 @@ function render(data) {
     <button class="btn-reset" onclick="exportCSV()" style="background:#1a2a1a;border-color:#4caf50;color:#86efac">&#8595; CSV</button>
   </div>
   <div class="page">
+    ${renderDownforceRec(data.summary)}
     ${renderConfidence(data.confidence, data.signal_warnings)}
     <div class="section-label">Tyre temperatures &amp; hot pressures</div>
     <div class="tyre-grid">

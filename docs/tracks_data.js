@@ -645,7 +645,9 @@ window.TRACKS_DATA = {
       "nurburgring gp-strecke",
       "nurburgring",
       "nurburgring combined"
-    ]
+    ],
+    "min_ride_height_override_mm": 70,
+    "min_ride_height_note": "Nürburgring configurations require 70mm minimum ride height on all corners due to track surface severity."
   },
   "okayama": {
     "name": "Okayama International Circuit",

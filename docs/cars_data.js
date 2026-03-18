@@ -15,7 +15,13 @@ window.CARS_DATA = {
     "temp_min": 85,
     "temp_max": 110,
     "rear_weight_bias_c": 5.0,
-    "notes": "LMDh — similar setup philosophy to ARX-05"
+    "notes": "LMDh — similar setup philosophy to ARX-05",
+    "optimal_rh_mm": {
+      "front_min": 40,
+      "front_max": 65,
+      "rear_min": 45,
+      "rear_max": 70
+    }
   },
   "acura_nsx_gt3": {
     "name": "Acura NSX GT3 EVO22",
@@ -38,6 +44,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "acura_nsx_gt3_evo22": {
@@ -62,6 +74,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "alfa_romeo_giulia_tc": {
@@ -104,6 +122,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "aston_martin_vantage_gt4": {
@@ -155,6 +179,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "audi_r8_lms_gt4": {
@@ -222,6 +252,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "bmw_m4_gt4": {
@@ -270,6 +306,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "bmw_m8_gte": {
@@ -297,6 +339,12 @@ window.CARS_DATA = {
         "RR": 35
       },
       "series_note": "GTE / IMSA GTD Pro. Minimum ride heights strictly enforced at tech."
+    },
+    "optimal_rh_mm": {
+      "front_min": 50,
+      "front_max": 70,
+      "rear_min": 55,
+      "rear_max": 75
     }
   },
   "bmw_m_hybrid_v8": {
@@ -315,7 +363,13 @@ window.CARS_DATA = {
     "temp_min": 85,
     "temp_max": 110,
     "rear_weight_bias_c": 5.0,
-    "notes": "LMDh — balanced weight distribution"
+    "notes": "LMDh — balanced weight distribution",
+    "optimal_rh_mm": {
+      "front_min": 40,
+      "front_max": 65,
+      "rear_min": 45,
+      "rear_max": 70
+    }
   },
   "bmw_z4_gt3": {
     "name": "BMW Z4 GT3",
@@ -339,6 +393,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "cadillac_vseries_r": {
@@ -358,7 +418,13 @@ window.CARS_DATA = {
     "temp_min": 85,
     "temp_max": 110,
     "rear_weight_bias_c": 5.0,
-    "notes": "LMDh — strong rear downforce package"
+    "notes": "LMDh — strong rear downforce package",
+    "optimal_rh_mm": {
+      "front_min": 40,
+      "front_max": 65,
+      "rear_min": 45,
+      "rear_max": 70
+    }
   },
   "chevrolet_camaro_gt4": {
     "name": "Chevrolet Camaro GT4.R",
@@ -409,6 +475,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "dallara_f3": {
@@ -494,7 +566,13 @@ window.CARS_DATA = {
     "temp_min": 80,
     "temp_max": 105,
     "rear_weight_bias_c": 2.0,
-    "notes": "Open prototype — much higher aero and cornering loads than GT. Tyres heat quickly; front aero balance is critical. Runs slightly lower pressures than GT3 due to Michelin LMP compound."
+    "notes": "Open prototype — much higher aero and cornering loads than GT. Tyres heat quickly; front aero balance is critical. Runs slightly lower pressures than GT3 due to Michelin LMP compound.",
+    "optimal_rh_mm": {
+      "front_min": 45,
+      "front_max": 65,
+      "rear_min": 50,
+      "rear_max": 70
+    }
   },
   "ferrari_296_gt3": {
     "name": "Ferrari 296 GT3",
@@ -518,6 +596,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "ferrari_488_gt3": {
@@ -542,6 +626,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "ferrari_488_gte": {
@@ -566,6 +656,12 @@ window.CARS_DATA = {
         "RR": 35
       },
       "series_note": "GTE / IMSA GTD Pro. Minimum ride heights strictly enforced at tech."
+    },
+    "optimal_rh_mm": {
+      "front_min": 50,
+      "front_max": 70,
+      "rear_min": 55,
+      "rear_max": 75
     }
   },
   "ford_mustang_gt3": {
@@ -590,6 +686,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "ford_mustang_gt4": {
@@ -810,6 +912,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "lamborghini_huracan_gt3_evo2": {
@@ -837,6 +945,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "lamborghini_huracan_st_evo2": {
@@ -879,6 +993,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "ligier_js_f4": {
@@ -997,6 +1117,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "mercedes_amg_gt2": {
@@ -1039,6 +1165,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "mercedes_amg_gt4": {
@@ -1217,6 +1349,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "porsche_718_cayman_gt4": {
@@ -1321,6 +1459,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "porsche_911_rsr": {
@@ -1345,6 +1489,12 @@ window.CARS_DATA = {
         "RR": 35
       },
       "series_note": "GTE / IMSA GTD Pro. Minimum ride heights strictly enforced at tech."
+    },
+    "optimal_rh_mm": {
+      "front_min": 50,
+      "front_max": 70,
+      "rear_min": 55,
+      "rear_max": 75
     }
   },
   "porsche_935": {
@@ -1381,7 +1531,13 @@ window.CARS_DATA = {
     "temp_min": 85,
     "temp_max": 110,
     "rear_weight_bias_c": 5.0,
-    "notes": "LMDh hybrid prototype — front-heavy braking, high rear downforce"
+    "notes": "LMDh hybrid prototype — front-heavy braking, high rear downforce",
+    "optimal_rh_mm": {
+      "front_min": 40,
+      "front_max": 65,
+      "rear_min": 45,
+      "rear_max": 70
+    }
   },
   "radical_sr10": {
     "name": "Radical SR10",
@@ -1519,6 +1675,12 @@ window.CARS_DATA = {
         "RR": 30
       },
       "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+    },
+    "optimal_rh_mm": {
+      "front_min": 55,
+      "front_max": 75,
+      "rear_min": 60,
+      "rear_max": 80
     }
   },
   "toyota_gr_supra_gt4": {
