@@ -2,13 +2,29 @@
   "name": "Ford Mustang GT3",
   "class": "GT3",
   "iracing_car_path": "ford_mustang_gt3",
-  "target_hot_psi": { "LF": 28.5, "RF": 28.5, "LR": 29.0, "RR": 29.0 },
+  "target_hot_psi": {
+    "LF": 28.5,
+    "RF": 28.5,
+    "LR": 29.0,
+    "RR": 29.0
+  },
   "temp_min": 80,
   "temp_max": 100,
   "rear_weight_bias_c": 2.0,
-  "notes": "Front-engine RWD — flat-plane V8 characteristics; fronts work hard under braking, watch for front lock-up bias",
+  "notes": "Front-engine RWD \u2014 flat-plane V8 characteristics; fronts work hard under braking, watch for front lock-up bias",
   "tech_limits": {
-    "min_ride_height_mm": {"LF": 35, "RF": 35, "LR": 30, "RR": 30},
+    "min_ride_height_mm": {
+      "LF": 35,
+      "RF": 35,
+      "LR": 30,
+      "RR": 30
+    },
     "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+  },
+  "optimal_rh_mm": {
+    "front_min": 55,
+    "front_max": 75,
+    "rear_min": 60,
+    "rear_max": 80
   }
 }

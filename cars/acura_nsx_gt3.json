@@ -1,13 +1,29 @@
 {
   "name": "Acura NSX GT3 EVO22",
   "class": "GT3",
-  "target_hot_psi": { "LF": 28.5, "RF": 28.5, "LR": 28.5, "RR": 28.5 },
+  "target_hot_psi": {
+    "LF": 28.5,
+    "RF": 28.5,
+    "LR": 28.5,
+    "RR": 28.5
+  },
   "temp_min": 80,
   "temp_max": 100,
   "rear_weight_bias_c": 3.0,
-  "notes": "Mid-engine — hybrid system removed in GT3 trim; balanced weight distribution, good traction out of slow corners",
+  "notes": "Mid-engine \u2014 hybrid system removed in GT3 trim; balanced weight distribution, good traction out of slow corners",
   "tech_limits": {
-    "min_ride_height_mm": {"LF": 35, "RF": 35, "LR": 30, "RR": 30},
+    "min_ride_height_mm": {
+      "LF": 35,
+      "RF": 35,
+      "LR": 30,
+      "RR": 30
+    },
     "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+  },
+  "optimal_rh_mm": {
+    "front_min": 55,
+    "front_max": 75,
+    "rear_min": 60,
+    "rear_max": 80
   }
 }

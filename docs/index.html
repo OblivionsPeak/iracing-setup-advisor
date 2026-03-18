@@ -485,9 +485,9 @@ dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('ov
 dz.addEventListener('dragleave', () => dz.classList.remove('over'));
 dz.addEventListener('drop', e => {
   e.preventDefault(); dz.classList.remove('over');
-  if (e.dataTransfer.files[0]) { window._ibtFile = e.dataTransfer.files[0]; go(); }
+  if (e.dataTransfer.files[0]) { window._ibtFile = e.dataTransfer.files[0]; window._excludedLaps = new Set(); go(); }
 });
-fi.addEventListener('change', () => { if (fi.files[0]) { window._ibtFile = fi.files[0]; go(); } });
+fi.addEventListener('change', () => { if (fi.files[0]) { window._ibtFile = fi.files[0]; window._excludedLaps = new Set(); go(); } });
 
 async function go() {
   const file = window._ibtFile;
@@ -548,6 +548,7 @@ function setStatus(msg) {
   el.textContent = msg;
 }
 
+window._excludedLaps = new Set();
 window._selectedLap = null;
 function selectLap(lapNum) {
   window._selectedLap = (window._selectedLap === lapNum) ? null : lapNum;

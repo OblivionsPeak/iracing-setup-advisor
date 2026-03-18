@@ -1,14 +1,33 @@
 {
   "name": "Audi R8 LMS GT3 EVO II",
   "class": "GT3",
-  "iracing_car_path": ["audi_r8_lms_evo2", "audi_r8_gt3"],
-  "target_hot_psi": { "LF": 28.5, "RF": 28.5, "LR": 28.5, "RR": 28.5 },
+  "iracing_car_path": [
+    "audi_r8_lms_evo2",
+    "audi_r8_gt3"
+  ],
+  "target_hot_psi": {
+    "LF": 28.5,
+    "RF": 28.5,
+    "LR": 28.5,
+    "RR": 28.5
+  },
   "temp_min": 80,
   "temp_max": 100,
   "rear_weight_bias_c": 3.0,
-  "notes": "Mid-engine with longitudinal layout — well-balanced tyre loads",
+  "notes": "Mid-engine with longitudinal layout \u2014 well-balanced tyre loads",
   "tech_limits": {
-    "min_ride_height_mm": {"LF": 35, "RF": 35, "LR": 30, "RR": 30},
+    "min_ride_height_mm": {
+      "LF": 35,
+      "RF": 35,
+      "LR": 30,
+      "RR": 30
+    },
     "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+  },
+  "optimal_rh_mm": {
+    "front_min": 55,
+    "front_max": 75,
+    "rear_min": 60,
+    "rear_max": 80
   }
 }

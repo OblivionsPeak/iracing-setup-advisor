@@ -23,5 +23,11 @@
       "RR": 35
     },
     "series_note": "GTE / IMSA GTD Pro. Minimum ride heights strictly enforced at tech."
+  },
+  "optimal_rh_mm": {
+    "front_min": 50,
+    "front_max": 70,
+    "rear_min": 55,
+    "rear_max": 75
   }
 }

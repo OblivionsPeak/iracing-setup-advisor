@@ -1,14 +1,33 @@
 {
-  "name": "Lamborghini Huracán GT3 EVO2",
+  "name": "Lamborghini Hurac\u00e1n GT3 EVO2",
   "class": "GT3",
-  "iracing_car_path": ["lamborghini_huracan_gt3_evo2", "lamborghini_huracan_evo2"],
-  "target_hot_psi": { "LF": 28.5, "RF": 28.5, "LR": 28.0, "RR": 28.0 },
+  "iracing_car_path": [
+    "lamborghini_huracan_gt3_evo2",
+    "lamborghini_huracan_evo2"
+  ],
+  "target_hot_psi": {
+    "LF": 28.5,
+    "RF": 28.5,
+    "LR": 28.0,
+    "RR": 28.0
+  },
   "temp_min": 80,
   "temp_max": 100,
   "rear_weight_bias_c": 3.0,
   "notes": "Mid-engine; responsive to rear ride height changes",
   "tech_limits": {
-    "min_ride_height_mm": {"LF": 35, "RF": 35, "LR": 30, "RR": 30},
+    "min_ride_height_mm": {
+      "LF": 35,
+      "RF": 35,
+      "LR": 30,
+      "RR": 30
+    },
     "series_note": "GT3 Challenge / IMSA GT3. Minimum ride heights enforced at tech. Verify with your specific series ruleset before adjusting."
+  },
+  "optimal_rh_mm": {
+    "front_min": 55,
+    "front_max": 75,
+    "rear_min": 60,
+    "rear_max": 80
   }
 }

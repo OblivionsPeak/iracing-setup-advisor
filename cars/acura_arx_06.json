@@ -1,10 +1,24 @@
 {
   "name": "Acura ARX-06 GTP",
   "class": "GTP",
-  "iracing_car_path": ["acuraarx06gtp", "acura_arx_06"],
-  "target_hot_psi": { "LF": 23.0, "RF": 23.0, "LR": 23.0, "RR": 23.0 },
+  "iracing_car_path": [
+    "acuraarx06gtp",
+    "acura_arx_06"
+  ],
+  "target_hot_psi": {
+    "LF": 23.0,
+    "RF": 23.0,
+    "LR": 23.0,
+    "RR": 23.0
+  },
   "temp_min": 85,
   "temp_max": 110,
   "rear_weight_bias_c": 5.0,
-  "notes": "LMDh — similar setup philosophy to ARX-05"
+  "notes": "LMDh \u2014 similar setup philosophy to ARX-05",
+  "optimal_rh_mm": {
+    "front_min": 40,
+    "front_max": 65,
+    "rear_min": 45,
+    "rear_max": 70
+  }
 }

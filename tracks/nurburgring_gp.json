@@ -1,20 +1,20 @@
 {
-  "name": "Nürburgring GP",
-  "short": "Nürburgring GP",
+  "name": "N\u00fcrburgring GP",
+  "short": "N\u00fcrburgring GP",
   "country": "Germany",
   "sectors": [
     {
-      "name": "S1 — T1 to Mercedes Arena",
+      "name": "S1 \u2014 T1 to Mercedes Arena",
       "start": 0.0,
       "end": 0.35
     },
     {
-      "name": "S2 — Ford curve to Schumacher-S",
+      "name": "S2 \u2014 Ford curve to Schumacher-S",
       "start": 0.35,
       "end": 0.68
     },
     {
-      "name": "S3 — NGK to finish",
+      "name": "S3 \u2014 NGK to finish",
       "start": 0.68,
       "end": 1.0
     }
@@ -23,5 +23,7 @@
     "nurburgring gp-strecke",
     "nurburgring",
     "nurburgring combined"
-  ]
+  ],
+  "min_ride_height_override_mm": 70,
+  "min_ride_height_note": "N\u00fcrburgring configurations require 70mm minimum ride height on all corners due to track surface severity."
 }

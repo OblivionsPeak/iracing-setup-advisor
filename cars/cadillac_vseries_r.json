@@ -1,10 +1,25 @@
 {
   "name": "Cadillac V-Series.R GTP",
   "class": "GTP",
-  "iracing_car_path": ["cadillacvseriesrgtp", "cadillac_vseries_r", "cadillac_v_series_r"],
-  "target_hot_psi": { "LF": 23.0, "RF": 23.0, "LR": 23.0, "RR": 23.0 },
+  "iracing_car_path": [
+    "cadillacvseriesrgtp",
+    "cadillac_vseries_r",
+    "cadillac_v_series_r"
+  ],
+  "target_hot_psi": {
+    "LF": 23.0,
+    "RF": 23.0,
+    "LR": 23.0,
+    "RR": 23.0
+  },
   "temp_min": 85,
   "temp_max": 110,
   "rear_weight_bias_c": 5.0,
-  "notes": "LMDh — strong rear downforce package"
+  "notes": "LMDh \u2014 strong rear downforce package",
+  "optimal_rh_mm": {
+    "front_min": 40,
+    "front_max": 65,
+    "rear_min": 45,
+    "rear_max": 70
+  }
 }
