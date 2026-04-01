@@ -725,6 +725,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   </div>
 </div>
 
+<div id="library-banner" style="display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#0c1a3d;border:1px solid #1f3a7a;border-radius:8px;padding:12px 18px;margin-bottom:16px;font-size:14px;color:#93c5fd;">
+  <span>Opened from <strong>iRacing Setup Library</strong> — car &amp; track pre-selected. Upload a telemetry file to analyze this setup.</span>
+  <a href="http://localhost:5057" target="_blank" style="color:#93c5fd;font-weight:600;white-space:nowrap;">← Back to Library</a>
+</div>
+
 <div id="upload-wrap">
   <div class="drop-wrap">
     <div class="drop-zone" id="dz" onclick="document.getElementById('fi').click()">
@@ -813,11 +818,17 @@ async function loadOptions() {
     opt.textContent = t.name + (t.country ? ` — ${t.country}` : '');
     trackSel.appendChild(opt);
   });
-  // Restore saved selections from localStorage
-  const savedCar   = localStorage.getItem('iracing-car');
-  const savedTrack = localStorage.getItem('iracing-track');
+  // URL params from Setup Library take priority, then fall back to localStorage
+  const urlParams  = new URLSearchParams(window.location.search);
+  const urlCar     = urlParams.get('car');
+  const urlTrack   = urlParams.get('track');
+  const savedCar   = urlCar   || localStorage.getItem('iracing-car');
+  const savedTrack = urlTrack || localStorage.getItem('iracing-track');
   if (savedCar)   document.getElementById('car-select').value   = savedCar;
   if (savedTrack) document.getElementById('track-select').value = savedTrack;
+  if (urlCar || urlTrack) {
+    document.getElementById('library-banner').style.display = 'flex';
+  }
   updatePreview();
 }
 loadOptions();
@@ -2193,6 +2204,7 @@ function render(data) {
     ${renderSetupCard(data.setup_card, data.car, data.track)}
     <div class="section-label">Full recommendations</div>
     <div class="rec-list">${renderRecs(data.recommendations)}</div>
+    ${renderLibrarySave(data)}
   </div>`;
 
   const resultsEl = document.getElementById('results');
@@ -2201,6 +2213,77 @@ function render(data) {
   document.getElementById('upload-wrap').style.display = 'none';
   if (window._trackMapData) setTimeout(() => drawTrackMap(localStorage.getItem('iracing-tm-mode') || 'speed'), 20);
 }
+
+function renderLibrarySave(data) {
+  const carId   = document.getElementById('car-select').value;
+  const trackId = document.getElementById('track-select').value;
+  if (!carId || !trackId) return '';
+  const carName   = data.car   ? data.car.name   : carId;
+  const trackName = data.track ? data.track.name : trackId;
+  return `
+  <div id="library-save-block" style="background:#0c1a3d;border:1px solid #1f3a7a;border-radius:8px;padding:20px;margin-top:16px;">
+    <div style="font-size:15px;font-weight:600;color:#93c5fd;margin-bottom:6px;">Save to Setup Library</div>
+    <div style="font-size:13px;color:#6b90c4;margin-bottom:14px;">
+      Append these recommendations to your <strong>${carName}</strong> setup at <strong>${trackName}</strong> in the library.
+    </div>
+    <button onclick="saveToLibrary('${carId}','${trackId}')"
+            style="background:#1d4ed8;color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;">
+      Save to Library
+    </button>
+    <span id="library-save-status" style="margin-left:12px;font-size:13px;"></span>
+  </div>`;
+}
+
+async function saveToLibrary(carKey, trackKey) {
+  const statusEl = document.getElementById('library-save-status');
+  statusEl.textContent = 'Saving…';
+  statusEl.style.color = '#6b90c4';
+
+  // Build a plain-text summary of recommendations
+  const recs  = (window._analysisData.recommendations || []);
+  const sc    = window._analysisData.setup_card || {};
+  let lines   = [];
+
+  if (sc.tyres && sc.tyres.pressures) {
+    lines.push('TYRE PRESSURES:');
+    sc.tyres.pressures.forEach(t => {
+      if (t.cold_adj) lines.push(`  ${t.corner}: ${t.cold_adj > 0 ? '+' : ''}${t.cold_adj} PSI cold (hot target: ${t.target_hot_psi} PSI)`);
+    });
+  }
+  if (sc.tyres && sc.tyres.camber && sc.tyres.camber.length) {
+    lines.push('CAMBER:');
+    sc.tyres.camber.forEach(c => lines.push(`  ${c.corner}: ${c.direction}`));
+  }
+  if (sc.suspension && sc.suspension.length) {
+    lines.push('SUSPENSION:');
+    sc.suspension.forEach(s => lines.push(`  [${s.priority}] ${s.sector} — ${s.label}: ${(s.options||[]).join(', ')}`));
+  }
+  if (recs.length) {
+    lines.push('RECOMMENDATIONS:');
+    recs.forEach(r => lines.push(`  [${r.priority}] ${r.category}${r.corner ? ' ' + r.corner : ''}: ${r.issue} → ${r.action}`));
+  }
+
+  const notes = lines.join('\n');
+
+  try {
+    const resp = await fetch('http://localhost:5057/api/advisor-notes', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ car_key: carKey, track_key: trackKey, notes }),
+    });
+    const result = await resp.json();
+    if (resp.ok) {
+      statusEl.textContent = `Saved to "${result.setup_filename}"`;
+      statusEl.style.color = '#3fb950';
+    } else {
+      statusEl.textContent = result.error || 'Save failed';
+      statusEl.style.color = '#fca5a5';
+    }
+  } catch (e) {
+    statusEl.textContent = 'Could not reach Setup Library (is it running?)';
+    statusEl.style.color = '#fca5a5';
+  }
+}
 </script>
 </body>
 </html>
@@ -2208,7 +2291,7 @@ function render(data) {
 
 if __name__ == '__main__':
     try:
-        port = _free_port()
+        port = _free_port(start=7701)
         url  = f'http://localhost:{port}'
         print(f"\n{'='*52}")
         print(f"  iRacing Setup Advisor v{VERSION}")
