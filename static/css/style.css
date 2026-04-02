@@ -1,30 +1,50 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-     background:#0f0f0f;color:#e0e0e0;min-height:100vh}
+     background:#0c0c0e;color:#e0e0e0;min-height:100vh}
 
-.header{background:#181818;border-bottom:1px solid #2a2a2a;
-        padding:14px 28px;display:flex;align-items:center;gap:12px}
-.header h1{font-size:17px;font-weight:700}
-.header .sub{font-size:12px;color:#555;margin-left:6px}
+/* ── Racing stripe ── */
+.top-stripe{height:3px;background:linear-gradient(to right,
+  #dc2626 0%,#dc2626 33.3%,
+  #f8fafc 33.3%,#f8fafc 66.6%,
+  #2563eb 66.6%,#2563eb 100%);
+  position:sticky;top:0;z-index:200}
+
+/* ── Header ── */
+.header{background:linear-gradient(135deg,#1a1a1e 0%,#161618 100%);
+        border-bottom:1px solid #252528;
+        padding:14px 28px;display:flex;align-items:center;gap:14px;
+        position:sticky;top:3px;z-index:100}
+.header-logo{font-size:26px;line-height:1;opacity:.85;flex-shrink:0}
+.header h1{font-size:17px;font-weight:800;letter-spacing:-.2px;
+           background:linear-gradient(135deg,#e2e8f0 0%,#94a3b8 100%);
+           -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+           background-clip:text}
+.header-sub{font-size:11px;color:#4a4a52;margin-top:1px;letter-spacing:.2px}
+.header .sub{font-size:11px;color:#3a3a42;margin-left:auto;font-variant-numeric:tabular-nums}
 
 /* ── Config selectors ── */
-.config-bar{background:#141414;border-bottom:1px solid #222;
+.config-bar{background:#111113;border-bottom:1px solid #1e1e22;
             padding:16px 28px;display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end}
 .config-group{display:flex;flex-direction:column;gap:6px;flex:1;min-width:220px}
-.config-group label{font-size:11px;font-weight:700;text-transform:uppercase;
-                     letter-spacing:.5px;color:#555}
-.config-group select{background:#1e1e1e;border:1px solid #333;color:#e0e0e0;
-                      padding:8px 12px;border-radius:6px;font-size:13px;cursor:pointer}
-.config-group select:focus{outline:none;border-color:#2196F3}
-.config-hint{font-size:12px;color:#444;padding-top:6px}
+.config-group label{font-size:10px;font-weight:700;text-transform:uppercase;
+                     letter-spacing:.6px;color:#4a4a52}
+.config-group select{background:#18181c;border:1px solid #2a2a30;color:#e0e0e0;
+                      padding:8px 12px;border-radius:8px;font-size:13px;cursor:pointer;
+                      transition:border-color .15s}
+.config-group select:hover{border-color:#3a3a42}
+.config-group select:focus{outline:none;border-color:#2563eb;
+                            box-shadow:0 0 0 2px rgba(37,99,235,.15)}
+.config-hint{font-size:12px;color:#3a3a42;padding-top:6px}
 
 /* ── Preview panel ── */
-.preview-bar{background:#111;border-bottom:1px solid #1e1e1e;
+.preview-bar{background:#0e0e11;border-bottom:1px solid #1a1a1e;
              padding:0 28px;display:none;gap:24px;align-items:stretch;min-height:0;
              transition:all .2s}
 .preview-bar.visible{display:flex;padding:16px 28px}
-.preview-card{background:#181818;border-radius:10px;overflow:hidden;
-              display:flex;align-items:center;gap:0;flex:1;max-width:460px;min-height:110px}
+.preview-card{background:#16161a;border-radius:12px;overflow:hidden;border:1px solid #222226;
+              display:flex;align-items:center;gap:0;flex:1;max-width:460px;min-height:110px;
+              transition:border-color .2s}
+.preview-card:hover{border-color:#2a2a32}
 .preview-card.hidden{display:none}
 .preview-img{width:200px;height:120px;object-fit:cover;flex-shrink:0;
              background:#111;display:block}
@@ -40,50 +60,62 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
 /* ── Drop zone ── */
 .drop-wrap{display:flex;justify-content:center;padding:40px 24px}
-.drop-zone{background:#181818;border:2px dashed #2a2a2a;border-radius:14px;
-           padding:48px 40px;text-align:center;cursor:pointer;
-           transition:border-color .2s,background .2s;max-width:520px;width:100%}
-.drop-zone:hover,.drop-zone.over{border-color:#2196F3;background:#0d1f2e}
-.drop-icon{font-size:48px;margin-bottom:14px}
-.drop-zone h2{font-size:16px;margin-bottom:8px}
-.drop-zone p{font-size:13px;color:#555}
+.drop-zone{background:#14141a;border:2px dashed #28283a;border-radius:18px;
+           padding:52px 40px;text-align:center;cursor:pointer;
+           transition:border-color .2s,background .2s,box-shadow .2s;
+           max-width:540px;width:100%;
+           box-shadow:0 0 0 0 rgba(37,99,235,0)}
+.drop-zone:hover,.drop-zone.over{border-color:#2563eb;background:#0b0f1e;
+  box-shadow:0 0 32px rgba(37,99,235,.1)}
+.drop-icon{font-size:52px;margin-bottom:16px;display:block;
+           filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.drop-zone h2{font-size:16px;font-weight:700;margin-bottom:8px;color:#d1d5db}
+.drop-zone p{font-size:13px;color:#4a4a52;line-height:1.6}
 
 /* ── Status ── */
-#status{text-align:center;padding:14px;font-size:13px;color:#888}
+#status{text-align:center;padding:14px;font-size:13px;color:#6b7280}
 
 /* ── Meta bar ── */
-.meta-bar{background:#161616;border-top:1px solid #222;border-bottom:1px solid #222;
-          padding:9px 28px;font-size:12px;color:#555;display:flex;gap:24px;flex-wrap:wrap;align-items:center}
-.meta-bar b{color:#999}
-.meta-car-track{font-size:12px;color:#2196F3;font-weight:600}
-.btn-reset{margin-left:auto;background:#2a2a2a;border:1px solid #3a3a3a;color:#ccc;
-           padding:5px 14px;border-radius:6px;font-size:12px;cursor:pointer}
-.btn-reset:hover{background:#333;color:#fff}
-.auto-badge{background:#0d2a40;color:#64b5f6;font-size:10px;font-weight:700;
+.meta-bar{background:#111113;border-top:1px solid #1a1a1e;border-bottom:1px solid #1a1a1e;
+          padding:9px 28px;font-size:12px;color:#4a4a52;display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+.meta-bar b{color:#9ca3af}
+.meta-car-track{font-size:12px;color:#3b82f6;font-weight:700}
+.btn-reset{margin-left:auto;background:#1a1a1e;border:1px solid #28283a;color:#9ca3af;
+           padding:5px 14px;border-radius:8px;font-size:12px;cursor:pointer;
+           transition:background .15s,color .15s}
+.btn-reset:hover{background:#22222a;color:#e2e8f0}
+.auto-badge{background:#1e3a5f;color:#60a5fa;font-size:10px;font-weight:700;
             padding:2px 7px;border-radius:8px;letter-spacing:.3px;margin-left:5px;
             text-transform:uppercase}
 
 /* ── Page layout ── */
 .page{max-width:980px;margin:0 auto;padding:24px 28px}
-.section-label{font-size:11px;font-weight:700;text-transform:uppercase;
-               letter-spacing:.8px;color:#555;margin:28px 0 14px}
+.section-label{font-size:10px;font-weight:700;text-transform:uppercase;
+               letter-spacing:.9px;color:#6b7280;margin:28px 0 14px;
+               border-left:3px solid #2563eb;padding-left:10px}
 
 /* ── Tyre grid ── */
 .tyre-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.tyre-card{background:#181818;border-radius:10px;padding:16px 18px}
-.tyre-card h3{font-size:12px;font-weight:700;text-transform:uppercase;
-              letter-spacing:.5px;color:#666;margin-bottom:14px}
+.tyre-card{background:#16161a;border-radius:12px;padding:16px 18px;
+           border:1px solid #222226;transition:border-color .2s}
+.tyre-card:hover{border-color:#2a2a32}
+.tyre-card h3{font-size:11px;font-weight:700;text-transform:uppercase;
+              letter-spacing:.6px;color:#6b7280;margin-bottom:14px}
 .temp-bars{display:flex;gap:6px;margin-bottom:12px}
 .temp-col{flex:1;text-align:center}
-.temp-col .lbl{font-size:10px;color:#444;text-transform:uppercase;margin-bottom:4px}
-.temp-box{border-radius:5px;padding:11px 2px;font-size:14px;font-weight:700;color:#fff}
-.tc-cold{background:#0d47a1}.tc-ok{background:#1b5e20}
-.tc-warm{background:#e65100}.tc-hot{background:#b71c1c}
-.tyre-meta{display:flex;justify-content:space-between;font-size:12px;color:#555;margin-top:6px}
-.tyre-meta em{color:#aaa;font-style:normal;font-weight:600}
+.temp-col .lbl{font-size:10px;color:#3a3a42;text-transform:uppercase;letter-spacing:.3px;margin-bottom:5px}
+.temp-box{border-radius:8px;padding:13px 2px;font-size:15px;font-weight:700;color:#fff;
+          text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.tc-cold{background:linear-gradient(160deg,#1d4ed8,#1e40af)}
+.tc-ok  {background:linear-gradient(160deg,#16a34a,#15803d)}
+.tc-warm{background:linear-gradient(160deg,#ea580c,#c2410c)}
+.tc-hot {background:linear-gradient(160deg,#dc2626,#b91c1c)}
+.tyre-meta{display:flex;justify-content:space-between;font-size:12px;color:#4a4a52;margin-top:8px;
+           border-top:1px solid #1e1e22;padding-top:8px}
+.tyre-meta em{color:#9ca3af;font-style:normal;font-weight:600}
 
 /* ── Balance row ── */
-.balance-row{display:flex;gap:20px;background:#181818;border-radius:8px;
+.balance-row{display:flex;gap:20px;background:#16161a;border-radius:10px;border:1px solid #1e1e22;
              padding:12px 18px;font-size:12px;color:#777;flex-wrap:wrap}
 .balance-item{display:flex;flex-direction:column;gap:3px}
 .balance-item .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#444}
@@ -91,18 +123,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .balance-diff{font-size:11px;color:#888}
 
 /* ── Sector handling ── */
-.sector-table{background:#181818;border-radius:10px;overflow:hidden}
+.sector-table{background:#16161a;border-radius:12px;overflow:hidden;border:1px solid #1e1e22}
 .sector-row{display:flex;align-items:center;gap:14px;padding:11px 18px;
-            border-bottom:1px solid #222}
+            border-bottom:1px solid #1a1a1e}
 .sector-row:last-child{border-bottom:none}
-.s-name{font-size:12px;color:#777;flex:1}
+.s-name{font-size:12px;color:#6b7280;flex:1}
 .badge{padding:3px 12px;border-radius:10px;font-size:11px;font-weight:700;
        text-transform:uppercase;letter-spacing:.3px}
-.b-us{background:#0d47a1}.b-neu{background:#1b5e20}
-.b-os{background:#b71c1c}.b-nd{background:#2a2a2a;color:#444}
+.b-us{background:#1d3a7a;color:#93c5fd}.b-neu{background:#14532d;color:#86efac}
+.b-os{background:#7f1d1d;color:#fca5a5}.b-nd{background:#1a1a1e;color:#374151}
 
 /* ── Brake analysis ── */
-.brake-row{display:flex;gap:16px;background:#181818;border-radius:8px;
+.brake-row{display:flex;gap:16px;background:#16161a;border-radius:10px;border:1px solid #1e1e22;
            padding:12px 18px;font-size:12px;color:#777;flex-wrap:wrap}
 .brake-item{display:flex;flex-direction:column;gap:3px;flex:1;min-width:130px}
 .brake-item .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#444}
@@ -112,7 +144,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .consistency-fill{height:100%;border-radius:4px;transition:width .3s}
 
 /* ── Throttle overlap ── */
-.overlap-summary{background:#181818;border-radius:8px;padding:14px 18px;
+.overlap-summary{background:#16161a;border-radius:10px;border:1px solid #1e1e22;padding:14px 18px;
                  display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .overlap-pct-big{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
                  font-size:2.2rem;font-weight:700;line-height:1}
@@ -126,13 +158,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
 /* ── Recommendations ── */
 .rec-list{display:flex;flex-direction:column;gap:10px}
-.rec{background:#181818;border-radius:8px;padding:14px 18px;border-left:4px solid #333}
-.rec.high{border-left-color:#f44336}
-.rec.medium{border-left-color:#ff9800}
-.rec.low{border-left-color:#4caf50}
+.rec{background:#16161a;border-radius:10px;padding:14px 18px;border-left:4px solid #2a2a30;
+     border:1px solid #1e1e22;border-left:4px solid #2a2a30;
+     transition:transform .1s,box-shadow .1s}
+.rec:hover{transform:translateX(2px)}
+.rec.high{border-left-color:#f44336;
+          box-shadow:0 0 0 1px rgba(244,67,54,.08),0 2px 8px rgba(244,67,54,.08)}
+.rec.medium{border-left-color:#ff9800;
+            box-shadow:0 0 0 1px rgba(255,152,0,.07),0 2px 8px rgba(255,152,0,.07)}
+.rec.low{border-left-color:#4caf50;
+         box-shadow:0 0 0 1px rgba(76,175,80,.06),0 2px 8px rgba(76,175,80,.06)}
 .rec-head{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap}
 .rec-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#666}
-.rec-corner{font-size:11px;font-weight:700;color:#2196F3;background:#0d2a40;padding:2px 10px;border-radius:10px}
+.rec-corner{font-size:11px;font-weight:700;color:#60a5fa;background:#1e3a5f;padding:2px 10px;border-radius:10px}
 .rec-pri-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:1px 7px;border-radius:8px;margin-left:auto}
 .rec-pri-badge.high{background:#3b0d0d;color:#f87171}
 .rec-pri-badge.medium{background:#2d1a00;color:#fbbf24}
@@ -148,8 +186,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .rec-toe-warn{font-size:11px;color:#f59e0b;margin-top:5px}
 
 /* ── STO analysis panel ── */
-.sto-analysis{background:#141414;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;margin-top:14px}
-.sto-analysis-header{background:#181818;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222}
+.sto-analysis{background:#111113;border:1px solid #1e1e22;border-radius:12px;overflow:hidden;margin-top:14px}
+.sto-analysis-header{background:#16161a;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1a1a1e}
 .sto-analysis-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#777}
 .sto-car-badge{font-size:11px;color:#2196F3;background:#0d2a40;padding:2px 10px;border-radius:8px;font-weight:600}
 .sto-tabs{display:flex;gap:0;border-bottom:1px solid #222;overflow-x:auto}
@@ -172,11 +210,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .sto-notes-pre{color:#94a3b8;font-size:.75rem;white-space:pre-wrap;max-height:200px;overflow-y:auto;background:#0f172a;border-radius:6px;padding:12px;margin:0;line-height:1.5}
 
 /* ── Setup analysis visualizations ── */
-.setup-viz-section{padding:16px 20px;border-bottom:1px solid #1a1a1a}
+.setup-viz-section{padding:16px 20px;border-bottom:1px solid #1a1a1e}
 .setup-viz-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#555;margin-bottom:14px}
 .setup-viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.setup-viz-card{background:#181818;border-radius:10px;padding:16px 18px}
-.setup-viz-card h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#666;margin-bottom:12px}
+.setup-viz-card{background:#16161a;border-radius:10px;border:1px solid #1e1e22;padding:16px 18px}
+.setup-viz-card h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6b7280;margin-bottom:12px}
 .car-outline-wrap{display:flex;justify-content:center;padding:8px 0}
 .corner-data{font-size:11px;color:#aaa}
 .corner-data .val{font-size:14px;font-weight:700;color:#ccc}
@@ -213,8 +251,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .brake-bias-rear{background:#f44336;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
 
 /* ── Setup card ── */
-.setup-card{background:#141414;border:1px solid #222;border-radius:12px;overflow:hidden;margin-bottom:8px}
-.sc-header{background:#181818;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222}
+.setup-card{background:#111113;border:1px solid #1e1e22;border-radius:12px;overflow:hidden;margin-bottom:8px}
+.sc-header{background:#16161a;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1a1a1e}
 .sc-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#777}
 .btn-print{background:#1e1e1e;border:1px solid #333;color:#888;padding:5px 14px;border-radius:6px;
            font-size:11px;cursor:pointer;font-weight:600;letter-spacing:.4px}
@@ -268,7 +306,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
             box-shadow:0 4px 12px rgba(0,0,0,.5)}
 
 /* ── Input trace (3-panel) ── */
-.input-trace-wrap{background:#181818;border-radius:10px;padding:16px 18px}
+.input-trace-wrap{background:#16161a;border-radius:12px;border:1px solid #1e1e22;padding:16px 18px}
 .it-panel-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
                 color:#555;margin:8px 0 2px}
 .it-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px}
@@ -276,7 +314,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .it-legend-dot{width:18px;height:3px;border-radius:2px}
 
 /* ── Sector splits ── */
-.sector-splits-table{background:#181818;border-radius:10px;overflow:hidden}
+.sector-splits-table{background:#16161a;border-radius:12px;overflow:hidden;border:1px solid #1e1e22}
 .ss-row{display:grid;align-items:center;padding:9px 18px;border-bottom:1px solid #222;
         font-size:12px;color:#777}
 .ss-row:last-child{border-bottom:none}
@@ -287,19 +325,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .ss-delta.fast{color:#4caf50}.ss-delta.med{color:#ff9800}.ss-delta.slow{color:#f44336}
 
 /* ── Tyre trend ── */
-.tyre-trend-wrap{background:#181818;border-radius:10px;padding:16px 18px}
+.tyre-trend-wrap{background:#16161a;border-radius:12px;border:1px solid #1e1e22;padding:16px 18px}
 .tt-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px}
 .tt-legend-item{display:flex;align-items:center;gap:5px}
 .tt-legend-dot{width:14px;height:3px;border-radius:2px}
 
 /* ── Speed trace ── */
-.speed-trace-wrap{background:#181818;border-radius:10px;padding:16px 18px}
+.speed-trace-wrap{background:#16161a;border-radius:12px;border:1px solid #1e1e22;padding:16px 18px}
 .st-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px}
 .st-legend-item{display:flex;align-items:center;gap:5px}
 .st-legend-dot{width:18px;height:3px;border-radius:2px}
 
 /* ── Stints ── */
-.stint-table{background:#181818;border-radius:10px;overflow:hidden}
+.stint-table{background:#16161a;border-radius:12px;overflow:hidden;border:1px solid #1e1e22}
 .stint-row{display:grid;grid-template-columns:52px 80px 50px 90px 90px 80px;
            align-items:center;padding:9px 18px;border-bottom:1px solid #222;
            font-size:12px;color:#777}
@@ -308,7 +346,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .stint-header div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
 
 /* ── Compare ── */
-.compare-wrap{background:#181818;border:2px dashed #2a2a2a;border-radius:14px;padding:28px;margin-top:16px;display:none}
+.compare-wrap{background:#16161a;border:2px dashed #252530;border-radius:16px;padding:28px;margin-top:16px;display:none}
 .compare-wrap.visible{display:block}
 .compare-inputs{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px}
 .compare-file-group{flex:1;min-width:200px;display:flex;flex-direction:column;gap:6px}
@@ -332,7 +370,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .compare-worse{color:#f44336}
 
 /* ── Lap times ── */
-.lap-table{background:#181818;border-radius:10px;overflow:hidden;max-height:420px;overflow-y:auto}
+.lap-table{background:#16161a;border-radius:12px;overflow:hidden;border:1px solid #1e1e22;max-height:420px;overflow-y:auto}
 .lap-row{display:grid;grid-template-columns:56px 1fr 1fr;align-items:center;
          padding:9px 18px;border-bottom:1px solid #222}
 .lap-row:last-child{border-bottom:none}
