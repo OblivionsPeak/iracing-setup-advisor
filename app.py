@@ -472,7 +472,7 @@ def sto_decode_route():
 
 # ── Heartbeat / auto-shutdown (desktop mode only) ────────────────────────────
 _last_heartbeat = time.monotonic()
-_HEARTBEAT_TIMEOUT = 15          # seconds with no heartbeat before shutdown
+_HEARTBEAT_TIMEOUT = 8           # seconds with no heartbeat before shutdown
 _desktop_mode = False             # toggled True only in __main__
 
 

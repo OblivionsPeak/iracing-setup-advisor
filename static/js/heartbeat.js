@@ -2,7 +2,7 @@
 (function() {
   var hbTimer = setInterval(function() {
     fetch('/api/heartbeat').catch(function(){});
-  }, 4000);
+  }, 3000);
 
   function sendShutdown() {
     navigator.sendBeacon('/api/shutdown');
