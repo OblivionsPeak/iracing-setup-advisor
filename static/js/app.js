@@ -996,6 +996,7 @@ function render(data) {
   document.getElementById('upload-wrap').style.display = 'none';
   if (window._trackMapData) setTimeout(function() { drawTrackMap(localStorage.getItem('iracing-tm-mode') || 'speed'); }, 20);
   window._lastAnalysisResult = data;
+  populateFuelFromTelemetry(data);
 }
 
 function renderLibrarySave(data) {
@@ -1060,4 +1061,203 @@ async function saveToLibrary(carKey, trackKey) {
     statusEl.textContent = 'Could not reach Setup Library (is it running?)';
     statusEl.style.color = '#fca5a5';
   }
+}
+
+// ── Fuel Strategy Calculator ─────────────────────────────────────────────────
+function toggleFuelPanel() {
+  var p = document.getElementById('fuel-panel');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+
+function populateFuelFromTelemetry(data) {
+  var s = data.summary || {};
+  var badge = document.getElementById('fuel-mode-badge');
+  var filled = false;
+
+  if (s.fuel_per_lap_gal) {
+    var inp = document.getElementById('fuel-per-lap');
+    inp.value = s.fuel_per_lap_gal;
+    inp.classList.add('auto-filled');
+    filled = true;
+  }
+  if (s.avg_lap_s) {
+    var inp = document.getElementById('fuel-lap-time');
+    inp.value = s.avg_lap_s.toFixed(2);
+    inp.classList.add('auto-filled');
+    filled = true;
+  }
+
+  if (filled && badge) {
+    badge.textContent = 'From Telemetry';
+    badge.classList.add('telemetry');
+  }
+}
+
+function calculateFuelStrategy() {
+  var fuelPerLap   = parseFloat(document.getElementById('fuel-per-lap').value);
+  var lapTimeSec   = parseFloat(document.getElementById('fuel-lap-time').value);
+  var raceLength   = parseFloat(document.getElementById('fuel-race-length').value);
+  var raceUnit     = document.getElementById('fuel-race-unit').value;
+  var tankCapacity = parseFloat(document.getElementById('fuel-tank-capacity').value);
+  var startingFuel = parseFloat(document.getElementById('fuel-starting-fuel').value);
+  var pitTimeSec   = parseFloat(document.getElementById('fuel-pit-time').value) || 30;
+
+  if (!fuelPerLap || fuelPerLap <= 0) { alert('Enter fuel per lap.'); return; }
+  if (!lapTimeSec || lapTimeSec <= 0) { alert('Enter lap time.'); return; }
+  if (!raceLength || raceLength <= 0) { alert('Enter race length.'); return; }
+  if (!tankCapacity || tankCapacity <= 0) { alert('Enter tank capacity.'); return; }
+
+  // Calculate total race laps
+  var totalLaps;
+  if (raceUnit === 'minutes') {
+    totalLaps = Math.ceil((raceLength * 60) / lapTimeSec);
+  } else {
+    totalLaps = Math.ceil(raceLength);
+  }
+
+  // Default starting fuel to full tank
+  if (isNaN(startingFuel) || startingFuel <= 0) {
+    startingFuel = tankCapacity;
+  }
+  startingFuel = Math.min(startingFuel, tankCapacity);
+
+  var totalFuelNeeded = totalLaps * fuelPerLap;
+  var lapsPerTank = Math.floor(tankCapacity / fuelPerLap);
+
+  // Build stints
+  var stints = [];
+  var currentLap = 1;
+  var currentFuel = startingFuel;
+  var stintNum = 1;
+
+  while (currentLap <= totalLaps) {
+    var lapsOnFuel = Math.floor(currentFuel / fuelPerLap);
+    // Don't overshoot total laps
+    var stintLaps = Math.min(lapsOnFuel, totalLaps - currentLap + 1);
+    if (stintLaps <= 0) stintLaps = 1; // safety
+
+    var fuelStart = currentFuel;
+    var fuelEnd = currentFuel - (stintLaps * fuelPerLap);
+    if (fuelEnd < 0) fuelEnd = 0;
+
+    var endLap = currentLap + stintLaps - 1;
+    var needsPit = endLap < totalLaps;
+
+    // Calculate fuel to add at the pit stop
+    var fuelToAdd = 0;
+    var fillType = 'start';
+    if (needsPit) {
+      var remainingLaps = totalLaps - endLap;
+      var remainingStops = 0;
+      // Estimate remaining stops: how many more full tanks after this pit?
+      var fuelNeededForRest = remainingLaps * fuelPerLap;
+      if (fuelNeededForRest <= tankCapacity) {
+        // Last stop — only add what's needed + small margin
+        fuelToAdd = Math.min(fuelNeededForRest + fuelPerLap * 0.5, tankCapacity) - fuelEnd;
+        fillType = fuelToAdd < tankCapacity * 0.4 ? 'splash' : 'full';
+      } else {
+        // Not the last stop — fill to full
+        fuelToAdd = tankCapacity - fuelEnd;
+        fillType = 'full';
+      }
+      fuelToAdd = Math.max(0, Math.min(fuelToAdd, tankCapacity - fuelEnd));
+    }
+
+    stints.push({
+      stint: stintNum,
+      startLap: currentLap,
+      endLap: endLap,
+      laps: stintLaps,
+      fuelStart: fuelStart,
+      fuelEnd: fuelEnd,
+      fuelToAdd: fuelToAdd,
+      fillType: fillType
+    });
+
+    currentLap = endLap + 1;
+    currentFuel = fuelEnd + fuelToAdd;
+    stintNum++;
+
+    if (stintNum > 100) break; // safety valve
+  }
+
+  var numPitStops = stints.length - 1;
+  var totalPitTime = numPitStops * pitTimeSec;
+  var totalDrivingTime = totalLaps * lapTimeSec;
+  var totalRaceTime = totalDrivingTime + totalPitTime;
+
+  renderFuelResults({
+    totalLaps: totalLaps,
+    totalFuelNeeded: totalFuelNeeded,
+    numPitStops: numPitStops,
+    stints: stints,
+    tankCapacity: tankCapacity,
+    fuelPerLap: fuelPerLap,
+    lapTimeSec: lapTimeSec,
+    pitTimeSec: pitTimeSec,
+    totalDrivingTime: totalDrivingTime,
+    totalPitTime: totalPitTime,
+    totalRaceTime: totalRaceTime,
+    lapsPerTank: lapsPerTank
+  });
+}
+
+function renderFuelResults(r) {
+  var html = '';
+
+  // Summary stats
+  html += '<div class="fuel-summary">';
+  html += '<div class="fuel-stat highlight"><div class="lbl">Total Fuel</div><div class="val">'+r.totalFuelNeeded.toFixed(1)+'</div><div class="sub">gallons</div></div>';
+  html += '<div class="fuel-stat"><div class="lbl">Pit Stops</div><div class="val">'+r.numPitStops+'</div><div class="sub">'+r.lapsPerTank+' laps/tank</div></div>';
+  html += '<div class="fuel-stat"><div class="lbl">Total Laps</div><div class="val">'+r.totalLaps+'</div><div class="sub">'+fmtRaceTime(r.totalDrivingTime)+' driving</div></div>';
+  html += '<div class="fuel-stat"><div class="lbl">Race Time</div><div class="val">'+fmtRaceTime(r.totalRaceTime)+'</div><div class="sub">+'+fmtRaceTime(r.totalPitTime)+' in pits</div></div>';
+  html += '</div>';
+
+  // Stint table
+  html += '<div class="fuel-stint-table">';
+  html += '<div class="fuel-stint-row fuel-stint-header"><div>Stint</div><div>Start</div><div>End</div><div>Laps</div><div>Fuel Start</div><div>Fuel End</div><div>Fuel Add</div></div>';
+  r.stints.forEach(function(s) {
+    html += '<div class="fuel-stint-row">';
+    html += '<div class="stint-num">Stint '+s.stint+'</div>';
+    html += '<div>Lap '+s.startLap+'</div>';
+    html += '<div>Lap '+s.endLap+'</div>';
+    html += '<div>'+s.laps+'</div>';
+    html += '<div>'+s.fuelStart.toFixed(1)+' gal</div>';
+    html += '<div>'+s.fuelEnd.toFixed(1)+' gal</div>';
+    if (s.fuelToAdd > 0) {
+      html += '<div><span class="fuel-add">+'+s.fuelToAdd.toFixed(1)+'</span> <span class="fuel-type '+s.fillType+'">'+s.fillType+'</span></div>';
+    } else {
+      html += '<div><span class="fuel-type start">finish</span></div>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // Timeline visualization
+  html += '<div class="fuel-timeline-wrap">';
+  html += '<div class="fuel-timeline-title">Race Timeline</div>';
+  html += renderFuelTimeline(r);
+  html += '</div>';
+
+  // Race time breakdown
+  html += '<div class="fuel-race-time">';
+  html += '<span class="total">'+fmtRaceTime(r.totalRaceTime)+'</span>';
+  html += '<span class="breakdown">Driving: '+fmtRaceTime(r.totalDrivingTime)+'</span>';
+  if (r.numPitStops > 0) {
+    html += '<span class="breakdown">Pit stops: '+r.numPitStops+' × '+r.pitTimeSec+'s = '+fmtRaceTime(r.totalPitTime)+'</span>';
+  }
+  html += '</div>';
+
+  var el = document.getElementById('fuel-results');
+  el.innerHTML = html;
+  el.style.display = 'block';
+}
+
+function fmtRaceTime(totalSec) {
+  var h = Math.floor(totalSec / 3600);
+  var m = Math.floor((totalSec % 3600) / 60);
+  var s = Math.floor(totalSec % 60);
+  if (h > 0) return h + 'h ' + m + 'm ' + s + 's';
+  if (m > 0) return m + 'm ' + s + 's';
+  return s + 's';
 }

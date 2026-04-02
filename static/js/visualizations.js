@@ -482,3 +482,114 @@ function renderLapDelta(lapTimes) {
   return '<div class="section-label">Lap delta vs best</div>'
     + '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:'+H+'px;display:block;background:#111;border-radius:6px;margin-bottom:12px">'+svg+'</svg>';
 }
+
+// ── Fuel Strategy Timeline ───────────────────────────────────────────────────
+function renderFuelTimeline(r) {
+  var W = 600, H = 140, PL = 40, PR = 16, PT = 30, PB = 28;
+  var IW = W - PL - PR;
+  var barH = 32;
+  var fuelH = 40;
+  var barY = PT;
+  var fuelY = barY + barH + 16;
+
+  var svg = '';
+
+  // Background
+  svg += '<rect x="'+PL+'" y="'+barY+'" width="'+IW+'" height="'+barH+'" fill="#111" rx="4"/>';
+
+  var stintColors = ['#2196F3','#4caf50','#ff9800','#c084fc','#f06292','#64b5f6','#81c784','#ffb74d'];
+  var totalLaps = r.totalLaps;
+
+  // Draw stints as colored blocks
+  r.stints.forEach(function(s, i) {
+    var x1 = PL + ((s.startLap - 1) / totalLaps) * IW;
+    var x2 = PL + (s.endLap / totalLaps) * IW;
+    var w = x2 - x1;
+    var col = stintColors[i % stintColors.length];
+
+    // Stint block
+    svg += '<rect x="'+x1.toFixed(1)+'" y="'+barY+'" width="'+w.toFixed(1)+'" height="'+barH+'" fill="'+col+'" opacity="0.3" rx="2"/>';
+    svg += '<rect x="'+x1.toFixed(1)+'" y="'+barY+'" width="'+w.toFixed(1)+'" height="'+barH+'" fill="none" stroke="'+col+'" stroke-width="1.5" rx="2"/>';
+
+    // Stint label
+    var cx = x1 + w / 2;
+    if (w > 30) {
+      svg += '<text x="'+cx.toFixed(1)+'" y="'+(barY + barH / 2 + 1)+'" fill="'+col+'" font-size="10" font-weight="700" text-anchor="middle" dominant-baseline="middle">S'+s.stint+'</text>';
+      svg += '<text x="'+cx.toFixed(1)+'" y="'+(barY + barH / 2 + 12)+'" fill="#555" font-size="8" text-anchor="middle">'+s.laps+' laps</text>';
+    }
+
+    // Pit stop marker between stints
+    if (i < r.stints.length - 1) {
+      var pitX = x2;
+      svg += '<line x1="'+pitX.toFixed(1)+'" y1="'+(barY - 6)+'" x2="'+pitX.toFixed(1)+'" y2="'+(barY + barH + 6)+'" stroke="#f44336" stroke-width="2" stroke-dasharray="3,2"/>';
+      svg += '<text x="'+pitX.toFixed(1)+'" y="'+(barY - 9)+'" fill="#f44336" font-size="9" font-weight="700" text-anchor="middle">PIT</text>';
+    }
+  });
+
+  // Lap markers along bottom of race bar
+  var step = totalLaps <= 20 ? 5 : totalLaps <= 50 ? 10 : totalLaps <= 100 ? 20 : 50;
+  for (var lap = step; lap < totalLaps; lap += step) {
+    var lx = PL + (lap / totalLaps) * IW;
+    svg += '<line x1="'+lx.toFixed(1)+'" y1="'+(barY + barH)+'" x2="'+lx.toFixed(1)+'" y2="'+(barY + barH + 4)+'" stroke="#444" stroke-width="1"/>';
+    svg += '<text x="'+lx.toFixed(1)+'" y="'+(barY + barH + 13)+'" fill="#444" font-size="8" text-anchor="middle">'+lap+'</text>';
+  }
+  // Start/end labels
+  svg += '<text x="'+PL+'" y="'+(barY + barH + 13)+'" fill="#555" font-size="8">1</text>';
+  svg += '<text x="'+(PL + IW)+'" y="'+(barY + barH + 13)+'" fill="#555" font-size="8" text-anchor="end">'+totalLaps+'</text>';
+
+  // Fuel level graph
+  svg += '<rect x="'+PL+'" y="'+fuelY+'" width="'+IW+'" height="'+fuelH+'" fill="#0a0a0a" rx="3"/>';
+
+  // Build fuel level points
+  var fuelPts = [];
+  r.stints.forEach(function(s) {
+    var x1 = PL + ((s.startLap - 1) / totalLaps) * IW;
+    var x2 = PL + (s.endLap / totalLaps) * IW;
+    var yStart = fuelY + fuelH - (s.fuelStart / r.tankCapacity) * fuelH;
+    var yEnd = fuelY + fuelH - (s.fuelEnd / r.tankCapacity) * fuelH;
+    fuelPts.push({x: x1, y: yStart});
+    fuelPts.push({x: x2, y: yEnd});
+    // If there's a refuel, jump up
+    if (s.fuelToAdd > 0) {
+      var newFuel = s.fuelEnd + s.fuelToAdd;
+      var yNew = fuelY + fuelH - (newFuel / r.tankCapacity) * fuelH;
+      fuelPts.push({x: x2, y: yNew});
+    }
+  });
+
+  // Fuel fill area
+  if (fuelPts.length > 0) {
+    var areaD = 'M'+fuelPts[0].x.toFixed(1)+','+fuelPts[0].y.toFixed(1);
+    for (var i = 1; i < fuelPts.length; i++) {
+      areaD += ' L'+fuelPts[i].x.toFixed(1)+','+fuelPts[i].y.toFixed(1);
+    }
+    areaD += ' L'+fuelPts[fuelPts.length-1].x.toFixed(1)+','+(fuelY + fuelH)+' L'+fuelPts[0].x.toFixed(1)+','+(fuelY + fuelH)+' Z';
+    svg += '<path d="'+areaD+'" fill="#2196F3" opacity="0.15"/>';
+
+    var lineD = 'M'+fuelPts[0].x.toFixed(1)+','+fuelPts[0].y.toFixed(1);
+    for (var i = 1; i < fuelPts.length; i++) {
+      lineD += ' L'+fuelPts[i].x.toFixed(1)+','+fuelPts[i].y.toFixed(1);
+    }
+    svg += '<path d="'+lineD+'" fill="none" stroke="#2196F3" stroke-width="1.8"/>';
+  }
+
+  // Fuel axis labels
+  svg += '<text x="'+(PL - 4)+'" y="'+(fuelY + 4)+'" fill="#444" font-size="8" text-anchor="end">'+r.tankCapacity.toFixed(0)+'</text>';
+  svg += '<text x="'+(PL - 4)+'" y="'+(fuelY + fuelH)+'" fill="#444" font-size="8" text-anchor="end">0</text>';
+  svg += '<text x="'+(PL - 4)+'" y="'+(fuelY + fuelH / 2 + 3)+'" fill="#333" font-size="7" text-anchor="end">gal</text>';
+
+  // "Empty" danger line
+  var emptyY = fuelY + fuelH - (r.fuelPerLap / r.tankCapacity) * fuelH;
+  svg += '<line x1="'+PL+'" y1="'+emptyY.toFixed(1)+'" x2="'+(PL + IW)+'" y2="'+emptyY.toFixed(1)+'" stroke="#f44336" stroke-width="0.5" stroke-dasharray="4,3" opacity="0.5"/>';
+
+  // Legend
+  var legY = H - 6;
+  svg += '<circle cx="'+(PL + 4)+'" cy="'+legY+'" r="3" fill="#2196F3"/>';
+  svg += '<text x="'+(PL + 10)+'" y="'+(legY + 3)+'" fill="#555" font-size="8">Fuel level</text>';
+  svg += '<line x1="'+(PL + 70)+'" y1="'+legY+'" x2="'+(PL + 82)+'" y2="'+legY+'" stroke="#f44336" stroke-width="2" stroke-dasharray="3,2"/>';
+  svg += '<text x="'+(PL + 86)+'" y="'+(legY + 3)+'" fill="#555" font-size="8">Pit stop</text>';
+  svg += '<line x1="'+(PL + 130)+'" y1="'+legY+'" x2="'+(PL + 142)+'" y2="'+legY+'" stroke="#f44336" stroke-width="0.5" stroke-dasharray="4,3" opacity="0.5"/>';
+  svg += '<text x="'+(PL + 146)+'" y="'+(legY + 3)+'" fill="#555" font-size="8">Low fuel</text>';
+
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;display:block">'+svg+'</svg>';
+}
