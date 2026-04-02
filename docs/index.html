@@ -145,6 +145,71 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .rec-issue{font-size:13px;color:#ccc;margin-bottom:5px}
 .rec-action{font-size:13px;color:#66bb6a;font-style:italic}
 
+/* ── STO analysis panel ── */
+.sto-analysis{background:#141414;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;margin-top:14px}
+.sto-analysis-header{background:#181818;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222}
+.sto-analysis-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#777}
+.sto-car-badge{font-size:11px;color:#2196F3;background:#0d2a40;padding:2px 10px;border-radius:8px;font-weight:600}
+.sto-tabs{display:flex;gap:0;border-bottom:1px solid #222;overflow-x:auto}
+.sto-tab-btn{background:none;border:none;border-bottom:2px solid transparent;color:#555;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:color .15s}
+.sto-tab-btn:hover{color:#aaa}
+.sto-tab-btn.active{color:#2196F3;border-bottom-color:#2196F3}
+.sto-tab-content{padding:16px 20px;max-height:400px;overflow-y:auto}
+.sto-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#444;margin:12px 0 8px}
+.sto-section-title:first-child{margin-top:0}
+.sto-param-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #1a1a1a;font-size:12px}
+.sto-param-row:last-child{border-bottom:none}
+.sto-param-label{color:#666;flex:1}
+.sto-param-value{font-weight:700;color:#ccc;margin-left:12px;font-variant-numeric:tabular-nums}
+.sto-param-range{font-size:10px;color:#444;margin-left:8px}
+.sto-insight{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:6px;margin-top:4px;font-size:12px}
+.sto-insight.warn{background:#1a0f00;border-left:3px solid #ff9800;color:#ffb74d}
+.sto-insight.good{background:#0a1a0a;border-left:3px solid #4caf50;color:#81c784}
+.sto-insight.info{background:#0a1520;border-left:3px solid #2196F3;color:#64b5f6}
+.sto-notes-block{padding:14px 20px;border-top:1px solid #1a1a1a}
+.sto-notes-pre{color:#94a3b8;font-size:.75rem;white-space:pre-wrap;max-height:200px;overflow-y:auto;background:#0f172a;border-radius:6px;padding:12px;margin:0;line-height:1.5}
+
+/* ── Setup analysis visualizations ── */
+.setup-viz-section{padding:16px 20px;border-bottom:1px solid #1a1a1a}
+.setup-viz-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#555;margin-bottom:14px}
+.setup-viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.setup-viz-card{background:#181818;border-radius:10px;padding:16px 18px}
+.setup-viz-card h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#666;margin-bottom:12px}
+.car-outline-wrap{display:flex;justify-content:center;padding:8px 0}
+.corner-data{font-size:11px;color:#aaa}
+.corner-data .val{font-size:14px;font-weight:700;color:#ccc}
+.corner-data .unit{font-size:10px;color:#555}
+.bar-chart-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bar-chart-row .bar-label{font-size:11px;color:#666;width:80px;text-align:right;flex-shrink:0}
+.bar-chart-row .bar-wrap{flex:1;height:16px;background:#111;border-radius:3px;overflow:hidden;position:relative}
+.bar-chart-row .bar-fill{height:100%;border-radius:3px;transition:width .3s}
+.bar-chart-row .bar-val{font-size:11px;color:#aaa;width:60px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.bar-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.bar-pair-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;text-align:center}
+.bar-pair-value{font-size:13px;font-weight:700;text-align:center;margin-top:4px}
+.ratio-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;margin-left:8px}
+.ratio-badge.front-bias{background:#0d2a40;color:#64b5f6}
+.ratio-badge.rear-bias{background:#2d0a0a;color:#f44336}
+.ratio-badge.balanced{background:#0a1a0a;color:#4caf50}
+.setup-rec-list{display:flex;flex-direction:column;gap:8px}
+.setup-rec{background:#181818;border-radius:8px;padding:12px 16px;border-left:4px solid #333}
+.setup-rec.high{border-left-color:#f44336}
+.setup-rec.medium{border-left-color:#ff9800}
+.setup-rec.low{border-left-color:#4caf50}
+.setup-rec-head{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.setup-rec-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#666}
+.setup-rec-priority{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;padding:2px 6px;border-radius:6px}
+.setup-rec-priority.high{background:#2d0a0a;color:#f44336}
+.setup-rec-priority.medium{background:#1a1000;color:#ff9800}
+.setup-rec-priority.low{background:#0a1a0a;color:#4caf50}
+.setup-rec-text{font-size:12px;color:#ccc;line-height:1.5}
+.setup-rec-action{font-size:12px;color:#66bb6a;font-style:italic;margin-top:3px}
+.aero-balance-indicator{display:flex;align-items:center;gap:2px;margin:12px 0}
+.aero-balance-bar{height:8px;border-radius:4px;transition:width .3s}
+.brake-bias-bar{display:flex;height:24px;border-radius:6px;overflow:hidden;margin:8px 0}
+.brake-bias-front{background:#2196F3;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.brake-bias-rear{background:#f44336;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+
 /* ── Setup card ── */
 .setup-card{background:#141414;border:1px solid #222;border-radius:12px;overflow:hidden;margin-bottom:8px}
 .sc-header{background:#181818;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222}
@@ -278,6 +343,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .lap-fastest .lap-num{color:#c084fc}
 .lap-fastest .lap-time{color:#c084fc;font-weight:700}
 .lap-fastest .lap-delta{color:#a855f7;font-weight:700}
+.lap-excluded { opacity: 0.4; text-decoration: line-through; }
+.lap-excluded td { color: #555 !important; }
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:7px 16px;
+     border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none}
+
 </style>
   <script src="https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js"></script>
   <script src="cars_data.js"></script>
@@ -293,9 +363,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   </div>
 </div>
 
+
 <div class="header">
   <h1>iRacing Setup Advisor</h1>
-  <span class="sub">v1.9.0</span>
+  <span class="sub">v2.1.0</span>
 </div>
 
 <!-- Car & Track selection -->
@@ -384,499 +455,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 <div id="results" style="display:none"></div>
 
 <script>
-// ── Populate dropdowns & preview lookups ─────────────────────────────────────
-const carData   = {};   // id → {name, class, image_url}
-const trackData = {};   // id → {name, country, map_url}
-
-function loadOptions() {
-  const carSel   = document.getElementById('car-select');
-  const trackSel = document.getElementById('track-select');
-
-  // Cars
-  const cars = Object.entries(window.CARS_DATA)
-    .sort((a, b) => (a[1].name || a[0]).localeCompare(b[1].name || b[0]));
-  cars.forEach(([id, c]) => {
-    const o = document.createElement('option');
-    o.value = id;
-    o.textContent = c.name + (c.class ? ' (' + c.class + ')' : '');
-    carSel.appendChild(o);
-  });
-
-  // Tracks
-  const tracks = Object.entries(window.TRACKS_DATA)
-    .sort((a, b) => (a[1].name || a[0]).localeCompare(b[1].name || b[0]));
-  tracks.forEach(([id, t]) => {
-    const o = document.createElement('option');
-    o.value = id;
-    o.textContent = t.name + (t.country ? ' — ' + t.country : '');
-    trackSel.appendChild(o);
-  });
-
-  // Restore localStorage selections
-  const savedCar   = localStorage.getItem('iracing-car');
-  const savedTrack = localStorage.getItem('iracing-track');
-  if (savedCar   && carSel.querySelector(`option[value="${savedCar}"]`))   carSel.value   = savedCar;
-  if (savedTrack && trackSel.querySelector(`option[value="${savedTrack}"]`)) trackSel.value = savedTrack;
-
-  updatePreview();
-}
-
-// ── Preview panel ─────────────────────────────────────────────────────────────
-function updatePreview() {
-  const carId   = document.getElementById('car-select').value;
-  const trackId = document.getElementById('track-select').value;
-  if (carId)   localStorage.setItem('iracing-car',   carId);
-  if (trackId) localStorage.setItem('iracing-track', trackId);
-  const bar     = document.getElementById('preview-bar');
-
-  const carCard   = document.getElementById('car-preview');
-  const trackCard = document.getElementById('track-preview');
-
-  if (carId && carData[carId]) {
-    const c = carData[carId];
-    document.getElementById('car-preview-name').textContent  = c.name;
-    document.getElementById('car-preview-class').textContent = c.class || '';
-    const img   = document.getElementById('car-img');
-    const noImg = document.getElementById('car-no-img');
-    if (c.image_url) {
-      img.src = c.image_url;
-      img.style.display    = 'block';
-      noImg.style.display  = 'none';
-    } else {
-      img.style.display    = 'none';
-      noImg.style.display  = 'flex';
-    }
-    carCard.classList.remove('hidden');
-  } else {
-    carCard.classList.add('hidden');
-  }
-
-  if (trackId && trackData[trackId]) {
-    const t = trackData[trackId];
-    document.getElementById('track-preview-name').textContent    = t.name;
-    document.getElementById('track-preview-country').textContent = t.country || '';
-    const img   = document.getElementById('track-img');
-    const noImg = document.getElementById('track-no-img');
-    if (t.map_url) {
-      img.src = t.map_url;
-      img.style.display    = 'block';
-      noImg.style.display  = 'none';
-    } else {
-      img.style.display    = 'none';
-      noImg.style.display  = 'flex';
-    }
-    trackCard.classList.remove('hidden');
-  } else {
-    trackCard.classList.add('hidden');
-  }
-
-  const anyVisible = (carId && carData[carId]) || (trackId && trackData[trackId]);
-  bar.classList.toggle('visible', !!anyVisible);
-}
-
-document.getElementById('car-select').addEventListener('change', updatePreview);
-document.getElementById('track-select').addEventListener('change', updatePreview);
-
-// ── File handling ─────────────────────────────────────────────────────────────
-const dz = document.getElementById('dz');
-const fi = document.getElementById('fi');
-
-dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('over'); });
-dz.addEventListener('dragleave', () => dz.classList.remove('over'));
-dz.addEventListener('drop', e => {
-  e.preventDefault(); dz.classList.remove('over');
-  if (e.dataTransfer.files[0]) { window._ibtFile = e.dataTransfer.files[0]; window._excludedLaps = new Set(); go(); }
-});
-fi.addEventListener('change', () => { if (fi.files[0]) { window._ibtFile = fi.files[0]; window._excludedLaps = new Set(); go(); } });
-
-async function go() {
-  const file = window._ibtFile;
-  if (!file) { alert('Drop an .ibt file first.'); return; }
-
-  const carId    = document.getElementById('car-select').value;
-  const trackId  = document.getElementById('track-select').value;
-  const airTempRaw = document.getElementById('air-temp') ? document.getElementById('air-temp').value : '';
-
-  const carCfg   = window.CARS_DATA[carId]   || null;
-  const trackCfg = window.TRACKS_DATA[trackId] || null;
-
-  setStatus('Analyzing…', 'info');
-  document.getElementById('results').innerHTML = '';
-
-  try {
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    const py = window._pyodide;
-
-    py.globals.set('_ibt_bytes',       bytes);
-    py.globals.set('_car_cfg_json',    JSON.stringify(carCfg));
-    py.globals.set('_track_cfg_json',  JSON.stringify(trackCfg));
-    py.globals.set('_tracks_dict_json', JSON.stringify(window.TRACKS_DATA));
-    py.globals.set('_cars_dict_json',   JSON.stringify(window.CARS_DATA));
-    py.globals.set('_air_temp_raw',    airTempRaw);
-    py.globals.set('_excluded_laps_json', JSON.stringify([...window._excludedLaps]));
-
-    const resultJson = await py.runPythonAsync(`
-import json
-_car   = json.loads(_car_cfg_json)
-_trk   = json.loads(_track_cfg_json)
-_cars  = json.loads(_cars_dict_json)
-_trks  = json.loads(_tracks_dict_json)
-_amb   = float(_air_temp_raw) if _air_temp_raw else None
-_excl  = json.loads(_excluded_laps_json)
-json.dumps(analyzer.analyze_ibt(bytes(_ibt_bytes), _car, _trk, _amb, _cars, _trks, _excl))
-`);
-
-    const data = JSON.parse(resultJson);
-
-    // Auto-update dropdowns if car/track was detected
-    if (data.detected) {
-      const d = data.detected;
-      if (d.auto_detected_car   && d.car_id)   document.getElementById('car-select').value   = d.car_id;
-      if (d.auto_detected_track && d.track_id) document.getElementById('track-select').value = d.track_id;
-    }
-
-    render(data);
-    setStatus('Analysis complete', 'ok');
-  } catch (e) {
-    setStatus('Error: ' + e.message, 'error');
-    console.error(e);
-  }
-}
-
-function setStatus(msg) {
-  const el = document.getElementById('status');
-  el.textContent = msg;
-}
-
-window._excludedLaps = new Set();
-window._selectedLap = null;
-function toggleExcludeLap(lapNum) {
-  if (window._excludedLaps.has(lapNum)) {
-    window._excludedLaps.delete(lapNum);
-  } else {
-    window._excludedLaps.add(lapNum);
-  }
-  document.querySelectorAll(`[data-lap="${lapNum}"]`).forEach(el => {
-    el.classList.toggle('lap-excluded', window._excludedLaps.has(lapNum));
-  });
-  const btn = document.getElementById('reanalyze-btn');
-  if (btn) btn.style.display = window._excludedLaps.size > 0 ? 'inline-flex' : 'none';
-}
-
-function selectLap(lapNum) {
-  window._selectedLap = (window._selectedLap === lapNum) ? null : lapNum;
-  // Highlight lap row
-  document.querySelectorAll('.lap-row[data-lap]').forEach(el => {
-    el.style.outline = (parseInt(el.dataset.lap) === window._selectedLap) ? '2px solid #2196F3' : '';
-    el.style.background = (parseInt(el.dataset.lap) === window._selectedLap) ? '#0d2a40' : '';
-  });
-  // Highlight tyre trend row
-  document.querySelectorAll('.tt-row[data-lap]').forEach(el => {
-    el.style.outline = (parseInt(el.dataset.lap) === window._selectedLap) ? '2px solid #2196F3' : '';
-    el.style.background = (parseInt(el.dataset.lap) === window._selectedLap) ? '#0d2a40' : '';
-  });
-  // Highlight lap delta dot
-  document.querySelectorAll('[data-lap-dot]').forEach(el => {
-    const isSelected = parseInt(el.dataset.lapDot) === window._selectedLap;
-    el.setAttribute('r', isSelected ? '7' : '4');
-    el.setAttribute('stroke-width', isSelected ? '2.5' : '1');
-  });
-}
-
-function reset() {
-  document.getElementById('results').style.display     = 'none';
-  document.getElementById('upload-wrap').style.display = '';
-  document.getElementById('fi').value = '';
-  setStatus('');
-  window._trackMapData = null;
-  updatePreview();
-}
-
-// ── Rendering ─────────────────────────────────────────────────────────────────
-function tempClass(t) {
-  return t < 167 ? 'tc-cold' : t < 203 ? 'tc-ok' : t < 230 ? 'tc-warm' : 'tc-hot';
-}
-
-function fmtLap(s) {
-  if (!s) return null;
-  const m = Math.floor(s / 60);
-  const r = (s % 60).toFixed(3).padStart(6, '0');
-  return m + ':' + r;
-}
-
-function tyreCard(label, td, psi) {
-  if (!td) return `<div class="tyre-card"><h3>${label}</h3>
-    <p style="color:#444;font-size:12px">No data in telemetry</p></div>`;
-  const sStr = (td.spread >= 0 ? '+' : '') + td.spread.toFixed(1) + ' °F';
-  const pStr = psi != null ? psi.toFixed(1) + ' psi' : '—';
-  return `
-<div class="tyre-card"><h3>${label}</h3>
-  <div class="temp-bars">
-    ${['inner','mid','outer'].map(k => `
-    <div class="temp-col">
-      <div class="lbl">${k}</div>
-      <div class="temp-box ${tempClass(td[k])}">${td[k].toFixed(0)}°F</div>
-    </div>`).join('')}
-  </div>
-  <div class="tyre-meta">
-    <div>Avg <em>${td.avg.toFixed(0)} °F</em></div>
-    <div>Spread <em>${sStr}</em></div>
-    <div>Hot <em>${pStr}</em></div>
-  </div>
-</div>`;
-}
-
-function renderBalance(b) {
-  if (!b || (!b.front_avg && !b.left_avg)) return '';
-  const frd = b.front_rear_diff;
-  const lrd = b.left_right_diff;
-  const items = [];
-  if (b.front_avg != null && b.rear_avg != null) {
-    const diff = frd > 0 ? `+${frd.toFixed(1)} rear` : `${(-frd).toFixed(1)} front`;
-    items.push(`<div class="balance-item">
-        <div class="lbl">Front / Rear</div>
-        <div class="val">${b.front_avg}°F / ${b.rear_avg}°F</div>
-        <div class="balance-diff">${diff} hotter</div></div>`);
-  }
-  if (b.left_avg != null && b.right_avg != null) {
-    const diff2 = lrd > 0 ? `+${lrd.toFixed(1)} right` : `${(-lrd).toFixed(1)} left`;
-    items.push(`<div class="balance-item">
-        <div class="lbl">Left / Right</div>
-        <div class="val">${b.left_avg}°F / ${b.right_avg}°F</div>
-        <div class="balance-diff">${diff2} hotter</div></div>`);
-  }
-  if (!items.length) return '';
-  return `<div class="section-label">Tyre balance</div>
-<div class="balance-row">${items.join('')}</div>`;
-}
-
-function renderHandling(h) {
-  if (!h || !Object.keys(h).length) return '';
-  const rows = Object.entries(h).map(([name, d]) => {
-    const t   = d.tendency || 'no data';
-    const cls = t === 'understeer' ? 'b-us' : t === 'neutral' ? 'b-neu'
-              : t === 'oversteer'  ? 'b-os' : 'b-nd';
-    return `<div class="sector-row">
-      <div class="s-name">${name}</div>
-      <span class="badge ${cls}">${t}</span>
-    </div>`;
-  }).join('');
-  return `<div class="section-label">Handling balance by sector</div>
-<div class="sector-table">${rows}</div>`;
-}
-
-function renderBrake(b) {
-  if (!b || !Object.keys(b).length) return '';
-  const items = [];
-
-  if (b.avg_bias_front_pct != null) {
-    const rear = (100 - b.avg_bias_front_pct).toFixed(1);
-    items.push(`<div class="brake-item">
-      <div class="lbl">Bias Setting</div>
-      <div class="val">${b.avg_bias_front_pct.toFixed(1)}% Front</div>
-      <div class="sub">${rear}% Rear</div>
-    </div>`);
-  }
-  if (b.actual_front_bias_pct != null) {
-    items.push(`<div class="brake-item">
-      <div class="lbl">Actual Split</div>
-      <div class="val">${b.actual_front_bias_pct.toFixed(1)}% Front</div>
-      <div class="sub">from line pressures</div>
-    </div>`);
-  }
-  if (b.peak_brake_press_psi != null) {
-    items.push(`<div class="brake-item">
-      <div class="lbl">Peak Pressure</div>
-      <div class="val">${b.peak_brake_press_psi} psi</div>
-    </div>`);
-  }
-  if (b.brake_events != null) {
-    items.push(`<div class="brake-item">
-      <div class="lbl">Brake Events</div>
-      <div class="val">${b.brake_events}</div>
-    </div>`);
-  }
-  if (b.avg_peak_brake_pct != null) {
-    items.push(`<div class="brake-item">
-      <div class="lbl">Avg Peak Input</div>
-      <div class="val">${b.avg_peak_brake_pct}%</div>
-    </div>`);
-  }
-  if (b.brake_consistency != null) {
-    const pct   = Math.min(b.brake_consistency * 3, 100);
-    const color = b.brake_consistency < 5 ? '#4caf50' : b.brake_consistency < 12 ? '#ff9800' : '#f44336';
-    const label = b.brake_consistency < 5 ? 'Consistent' : b.brake_consistency < 12 ? 'Moderate' : 'Inconsistent';
-    items.push(`<div class="brake-item">
-      <div class="lbl">Consistency (σ)</div>
-      <div class="val">${label} <span style="color:${color};font-size:12px">±${b.brake_consistency}%</span></div>
-      <div class="consistency-bar"><div class="consistency-fill" style="width:${pct}%;background:${color}"></div></div>
-    </div>`);
-  }
-  if (!items.length) return '';
-  return `<div class="section-label">Brake analysis</div>
-<div class="brake-row">${items.join('')}</div>`;
-}
-
-function renderOverlap(o) {
-  if (!o) return '';
-  const pct = o.overall_pct;
-  const color = pct < 3 ? '#4caf50' : pct < 8 ? '#ff9800' : '#f44336';
-  const desc  = pct < 3
-    ? 'Minimal overlap — clean pedal separation.'
-    : pct < 8
-    ? 'Moderate overlap — likely intentional trail braking. Check sector breakdown.'
-    : 'High overlap — review technique. May indicate unintentional input or a setup balance issue.';
-
-  let sectorHtml = '';
-  if (o.by_sector) {
-    const rows = Object.entries(o.by_sector).map(([name, p]) => {
-      const w     = Math.min(p * 5, 100);
-      const c     = p < 3 ? '#4caf50' : p < 8 ? '#ff9800' : '#f44336';
-      return `<div class="overlap-sector-row">
-        <div class="overlap-sec-name">${name}</div>
-        <div class="overlap-bar-wrap"><div class="overlap-bar-fill" style="width:${w}%;background:${c}"></div></div>
-        <div class="overlap-sec-pct">${p}%</div>
-      </div>`;
-    }).join('');
-    sectorHtml = `<div class="overlap-sectors">${rows}</div>`;
-  }
-
-  return `<div class="section-label">Throttle / brake overlap</div>
-<div class="overlap-summary">
-  <div class="overlap-pct-big" style="color:${color}">${pct}%</div>
-  <div class="overlap-desc">${desc}</div>
-</div>
-${sectorHtml}`;
-}
-
-function renderSetupCard(sc, car, track) {
-  if (!sc) return '';
-  const t = sc.tyres || {};
-  const pressures = t.pressures || [];
-  const cambers   = t.camber   || [];
-  const susp      = sc.suspension || [];
-
-  // ── Tyre pressure grid ───────────────────────────────────────────────────
-  const psiCells = pressures.map(p => {
-    if (p.status === 'no_data') return `
-      <div class="sc-psi-cell">
-        <div class="sc-psi-corner">${p.corner}</div>
-        <div class="sc-psi-hot psi-ok" style="font-size:13px;color:#333">No data</div>
-      </div>`;
-    const cls   = p.status === 'over' ? 'psi-over' : p.status === 'under' ? 'psi-under' : 'psi-ok';
-    const adjCls = p.status === 'over' ? 'adj-over' : p.status === 'under' ? 'adj-under' : 'adj-ok';
-    const adjStr = p.status === 'ok'
-      ? '✓ On target'
-      : (p.cold_adj > 0 ? `+${p.cold_adj}` : `${p.cold_adj}`) + ' psi cold';
-    return `
-      <div class="sc-psi-cell">
-        <div class="sc-psi-corner">${p.corner}</div>
-        <div class="sc-psi-hot ${cls}">${p.hot_psi} <span style="font-size:11px;font-weight:400">psi</span></div>
-        <div class="sc-psi-target">target ${p.target_hot_psi} psi hot</div>
-        <div class="sc-psi-adj ${adjCls}">${adjStr}</div>
-      </div>`;
-  }).join('');
-
-  // ── Camber ───────────────────────────────────────────────────────────────
-  let camberHtml = '';
-  if (cambers.length) {
-    const rows = cambers.map(c => {
-      const dir = c.direction === 'add' ? 'Add' : 'Reduce';
-      const why = c.direction === 'add'
-        ? `outer ${Math.abs(c.spread_f)}°F hotter — rolling onto outside edge`
-        : `inner ${Math.abs(c.spread_f)}°F hotter — too much negative camber`;
-      return `<div class="sc-camber-row">
-        <div class="sc-camber-corner">${c.corner}</div>
-        <div class="sc-camber-action">${dir} negative camber <b>${c.range}</b></div>
-        <div class="sc-camber-detail">${why}</div>
-      </div>`;
-    }).join('');
-    camberHtml = `<div class="sc-section">
-      <div class="sc-section-title">Camber</div>${rows}</div>`;
-  }
-
-  // ── Suspension (grouped by sector) ───────────────────────────────────────
-  let suspHtml = '';
-  if (susp.length) {
-    const sectorOrder = [];
-    const bySector = {};
-    susp.forEach(s => {
-      const sec = s.sector || 'ALL';
-      if (!bySector[sec]) { bySector[sec] = []; sectorOrder.push(sec); }
-      bySector[sec].push(s);
-    });
-    const groups = sectorOrder.map(sec => {
-      const items = bySector[sec].map(s => {
-        if (s.issue === 'neutral') {
-          return `<div class="sc-susp-item" style="color:#4caf50;font-size:.82rem;padding:6px 0">✓ No suspension changes needed</div>`;
-        }
-        const optItems = s.options.map((o, i) =>
-          `<div class="sc-option"><span class="sc-opt-num">${i+1}</span><span class="sc-opt-text">${o}</span></div>`
-        ).join('');
-        return `<div class="sc-susp-item">
-          <div class="sc-susp-label">
-            <span class="sc-susp-name">${s.label}</span>
-            <span class="sc-priority-badge ${s.priority}">${s.priority}</span>
-          </div>
-          <div class="sc-options">${optItems}</div>
-        </div>`;
-      }).join('');
-      const secHeader = sec !== 'ALL'
-        ? `<div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;padding:6px 0 2px 0;margin-top:4px">${sec}</div>`
-        : '';
-      return secHeader + items;
-    }).join('');
-    suspHtml = `<div class="sc-section">
-      <div class="sc-section-title">Suspension — by sector</div>${groups}</div>`;
-  }
-
-  if (!psiCells && !camberHtml && !suspHtml) return '';
-
-  return `<div class="section-label">Setup card
-    <button class="btn-print" onclick="printCard()" style="float:right;margin-top:-2px">&#128438; Print / Save PDF</button>
-  </div>
-  <div class="setup-card" id="setup-card-block">
-    <div class="sc-header">
-      <span class="sc-title">Garage adjustments — ${car || 'Car'} at ${track || 'Track'}</span>
-    </div>
-    <div class="sc-section">
-      <div class="sc-section-title">Tyre pressures — adjust cold to hit hot targets</div>
-      <div class="sc-psi-grid">${psiCells}</div>
-    </div>
-    ${camberHtml}
-    ${suspHtml}
-  </div>`;
-}
-
-function printCard() {
-  const card = document.getElementById('setup-card-block');
-  if (!card) return;
-  const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html><head><title>Setup Card</title>
-  <style>
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#111;padding:24px;font-size:13px}
-    h2{font-size:16px;margin-bottom:16px}
-    .sc-psi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
-    .sc-psi-cell{border:1px solid #ddd;border-radius:6px;padding:10px;text-align:center}
-    .sc-psi-corner{font-size:10px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px}
-    .sc-psi-hot{font-size:18px;font-weight:700}
-    .sc-psi-hot.psi-over{color:#c00}.sc-psi-hot.psi-under{color:#00c}.sc-psi-hot.psi-ok{color:#080}
-    .sc-psi-target{font-size:11px;color:#888;margin-top:2px}
-    .sc-psi-adj{font-size:12px;font-weight:700;margin-top:6px}
-    .adj-over{color:#c00}.adj-under{color:#00c}.adj-ok{color:#080}
-    .section{margin:16px 0}
-    .sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#999;margin-bottom:8px}
-    .camber-row{display:flex;gap:10px;padding:4px 0;border-bottom:1px solid #eee}
-    .susp-item{padding:8px 0;border-bottom:1px solid #eee}
-    .susp-label{font-weight:600;margin-bottom:4px}
-    .option{display:flex;gap:6px;font-size:12px;color:#444;margin:2px 0}
-    .opt-num{color:#7c3aed;font-weight:700;width:16px}
-    @media print{body{padding:0}}
-  </style></head><body>` + card.innerHTML + `</body></html>`);
-  win.document.close();
-  win.print();
-}
-
+// ── Track Map ─────────────────────────────────────────────────────────────────
 function renderTrackMap(tm) {
   if (!tm || !tm.points || tm.points.length < 20) return '';
   window._trackMapData = tm;
@@ -901,104 +480,104 @@ function renderTrackMap(tm) {
 
 function drawTrackMap(mode) {
   if (mode) localStorage.setItem('iracing-tm-mode', mode);
-  const tm = window._trackMapData;
+  var tm = window._trackMapData;
   if (!tm) return;
-  const pts = tm.points;
+  var pts = tm.points;
 
-  document.querySelectorAll('.tm-btn').forEach(b =>
-    b.classList.toggle('active', b.dataset.mode === mode));
+  document.querySelectorAll('.tm-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.mode === mode);
+  });
 
   // Bounding box of Python-normalised coords (0–1000 range)
-  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-  pts.forEach(p => {
+  var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  pts.forEach(function(p) {
     if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x;
     if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
   });
-  const PAD = 36;
-  const VW  = (maxX - minX) + 2 * PAD;
-  const VH  = (maxY - minY) + 2 * PAD;
-  const ox  = -minX + PAD;
-  const oy  = -minY + PAD;
+  var PAD = 36;
+  var VW  = (maxX - minX) + 2 * PAD;
+  var VH  = (maxY - minY) + 2 * PAD;
+  var ox  = -minX + PAD;
+  var oy  = -minY + PAD;
 
   function valColor(v, m) {
-    const c = x => Math.max(0, Math.min(1, x));
-    const L = (a, b, t) => Math.round(a + (b - a) * c(t));
-    const lRGB = (c1, c2, t) => [L(c1[0],c2[0],t), L(c1[1],c2[1],t), L(c1[2],c2[2],t)];
+    var c = function(x) { return Math.max(0, Math.min(1, x)); };
+    var L = function(a, b, t) { return Math.round(a + (b - a) * c(t)); };
+    var lRGB = function(c1, c2, t) { return [L(c1[0],c2[0],t), L(c1[1],c2[1],t), L(c1[2],c2[2],t)]; };
     if (m === 'speed') {
-      const stops = [[26,79,216],[0,188,212],[76,175,80],[255,235,59],[244,67,54]];
-      const t4 = c(v) * 4, i = Math.min(3, Math.floor(t4));
-      const [r,g,b] = lRGB(stops[i], stops[i+1], t4 - i);
-      return `rgb(${r},${g},${b})`;
+      var stops = [[26,79,216],[0,188,212],[76,175,80],[255,235,59],[244,67,54]];
+      var t4 = c(v) * 4, i = Math.min(3, Math.floor(t4));
+      var rgb = lRGB(stops[i], stops[i+1], t4 - i);
+      return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
     }
     if (m === 'throttle') {
-      const [r,g,b] = lRGB([26,26,26], [0,230,118], c(v));
-      return `rgb(${r},${g},${b})`;
+      var rgb = lRGB([26,26,26], [0,230,118], c(v));
+      return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
     }
     if (m === 'gear') {
-      const gc = [[60,60,60],[244,67,54],[255,152,0],[255,235,59],[76,175,80],[0,188,212],[33,150,243],[124,77,255],[224,64,251]];
-      const [r,g,b] = gc[Math.min(8, Math.max(0, Math.round(v)))];
-      return `rgb(${r},${g},${b})`;
+      var gc = [[60,60,60],[244,67,54],[255,152,0],[255,235,59],[76,175,80],[0,188,212],[33,150,243],[124,77,255],[224,64,251]];
+      var rgb = gc[Math.min(8, Math.max(0, Math.round(v)))];
+      return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
     }
     if (m === 'balance') {
-      // v is us_idx: <0.85 oversteer (red), ~1.0 neutral (gray), >1.15 understeer (blue)
-      const t = Math.max(0, Math.min(1, (v - 0.7) / 0.6));   // 0=OS, 0.5=neutral, 1=US
-      if (t < 0.5) { const [r,g,b] = lRGB([244,67,54],[80,80,80],t*2); return `rgb(${r},${g},${b})`; }
-      else          { const [r,g,b] = lRGB([80,80,80],[33,150,243],(t-0.5)*2); return `rgb(${r},${g},${b})`; }
+      var t = Math.max(0, Math.min(1, (v - 0.7) / 0.6));
+      if (t < 0.5) { var rgb = lRGB([244,67,54],[80,80,80],t*2); return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')'; }
+      else          { var rgb = lRGB([80,80,80],[33,150,243],(t-0.5)*2); return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')'; }
     }
-    const [r,g,b] = lRGB([26,26,26], [244,67,54], c(v));
-    return `rgb(${r},${g},${b})`;
+    var rgb = lRGB([26,26,26], [244,67,54], c(v));
+    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
   }
 
-  const mx = tm.max_speed;
-  let svg = '';
+  var mx = tm.max_speed;
+  var svg = '';
 
   // Coloured track path
-  for (let i = 1; i < pts.length; i++) {
-    const p0 = pts[i-1], p1 = pts[i];
-    const v = mode === 'speed'    ? ((p0.spd + p1.spd) / 2) / mx
+  for (var i = 1; i < pts.length; i++) {
+    var p0 = pts[i-1], p1 = pts[i];
+    var v = mode === 'speed'    ? ((p0.spd + p1.spd) / 2) / mx
             : mode === 'throttle' ? (p0.thr + p1.thr) / 2
             : mode === 'gear'     ? ((p0.gear || 0) + (p1.gear || 0)) / 2
             : mode === 'balance'  ? ((p0.us  || 1) + (p1.us  || 1)) / 2
             :                       (p0.brk + p1.brk) / 2;
-    const col = valColor(v, mode);
-    svg += `<line x1="${(p0.x+ox).toFixed(1)}" y1="${(p0.y+oy).toFixed(1)}" `
-         + `x2="${(p1.x+ox).toFixed(1)}" y2="${(p1.y+oy).toFixed(1)}" `
-         + `stroke="${col}" stroke-width="3.5" stroke-linecap="round"/>`;
+    var col = valColor(v, mode);
+    svg += '<line x1="'+(p0.x+ox).toFixed(1)+'" y1="'+(p0.y+oy).toFixed(1)+'" '
+         + 'x2="'+(p1.x+ox).toFixed(1)+'" y2="'+(p1.y+oy).toFixed(1)+'" '
+         + 'stroke="'+col+'" stroke-width="3.5" stroke-linecap="round"/>';
   }
 
   // Sector boundary markers
-  (tm.sectors || []).forEach((s, si) => {
+  (tm.sectors || []).forEach(function(s, si) {
     if (s.start <= 0.005) return;
-    let closest = 0, minD = Infinity;
-    pts.forEach((p, i) => { const d = Math.abs(p.pct - s.start); if (d < minD) { minD = d; closest = i; } });
-    const p = pts[closest];
-    svg += `<circle cx="${(p.x+ox).toFixed(1)}" cy="${(p.y+oy).toFixed(1)}" r="5" fill="#f59e0b" stroke="#111" stroke-width="1.5"/>`;
-    svg += `<text x="${(p.x+ox+8).toFixed(0)}" y="${(p.y+oy+4).toFixed(0)}" fill="#f59e0b" font-size="12" font-family="sans-serif" font-weight="700">S${si+1}</text>`;
+    var closest = 0, minD = Infinity;
+    pts.forEach(function(p, i) { var d = Math.abs(p.pct - s.start); if (d < minD) { minD = d; closest = i; } });
+    var p = pts[closest];
+    svg += '<circle cx="'+(p.x+ox).toFixed(1)+'" cy="'+(p.y+oy).toFixed(1)+'" r="5" fill="#f59e0b" stroke="#111" stroke-width="1.5"/>';
+    svg += '<text x="'+(p.x+ox+8).toFixed(0)+'" y="'+(p.y+oy+4).toFixed(0)+'" fill="#f59e0b" font-size="12" font-family="sans-serif" font-weight="700">S'+(si+1)+'</text>';
   });
 
   // Start / finish ring
   if (pts.length > 0) {
-    const sf = pts[0];
-    svg += `<circle cx="${(sf.x+ox).toFixed(1)}" cy="${(sf.y+oy).toFixed(1)}" r="6" fill="none" stroke="#fff" stroke-width="2.5"/>`;
-    svg += `<circle cx="${(sf.x+ox).toFixed(1)}" cy="${(sf.y+oy).toFixed(1)}" r="2.5" fill="#fff"/>`;
+    var sf = pts[0];
+    svg += '<circle cx="'+(sf.x+ox).toFixed(1)+'" cy="'+(sf.y+oy).toFixed(1)+'" r="6" fill="none" stroke="#fff" stroke-width="2.5"/>';
+    svg += '<circle cx="'+(sf.x+ox).toFixed(1)+'" cy="'+(sf.y+oy).toFixed(1)+'" r="2.5" fill="#fff"/>';
   }
 
   // Throttle application points (orange dots)
-  (tm.throttle_apps || []).forEach(ap => {
-    svg += `<circle cx="${(ap.x+ox).toFixed(1)}" cy="${(ap.y+oy).toFixed(1)}" r="4" fill="#f97316" stroke="#111" stroke-width="1" opacity="0.85"/>`;
+  (tm.throttle_apps || []).forEach(function(ap) {
+    svg += '<circle cx="'+(ap.x+ox).toFixed(1)+'" cy="'+(ap.y+oy).toFixed(1)+'" r="4" fill="#f97316" stroke="#111" stroke-width="1" opacity="0.85"/>';
   });
 
   // Corner minimum speed dots (cyan) with speed label
-  (tm.corner_mins || []).forEach(cm => {
-    svg += `<circle cx="${(cm.x+ox).toFixed(1)}" cy="${(cm.y+oy).toFixed(1)}" r="5" fill="#06b6d4" stroke="#111" stroke-width="1" opacity="0.9"/>`;
-    svg += `<text x="${(cm.x+ox+7).toFixed(0)}" y="${(cm.y+oy+4).toFixed(0)}" fill="#06b6d4" font-size="9" font-family="sans-serif" font-weight="600">${cm.spd.toFixed(0)}</text>`;
+  (tm.corner_mins || []).forEach(function(cm) {
+    svg += '<circle cx="'+(cm.x+ox).toFixed(1)+'" cy="'+(cm.y+oy).toFixed(1)+'" r="5" fill="#06b6d4" stroke="#111" stroke-width="1" opacity="0.9"/>';
+    svg += '<text x="'+(cm.x+ox+7).toFixed(0)+'" y="'+(cm.y+oy+4).toFixed(0)+'" fill="#06b6d4" font-size="9" font-family="sans-serif" font-weight="600">'+cm.spd.toFixed(0)+'</text>';
   });
 
   // Coast zone overlay — grey segments where throttle < 5% and brake < 5%
-  {
-    const _coastSegs = [];
-    let _cSeg = null;
-    pts.forEach(p => {
+  (function() {
+    var _coastSegs = [];
+    var _cSeg = null;
+    pts.forEach(function(p) {
       if (p.thr < 0.05 && p.brk < 0.05) {
         if (!_cSeg) _cSeg = [];
         _cSeg.push(p);
@@ -1008,59 +587,59 @@ function drawTrackMap(mode) {
       }
     });
     if (_cSeg && _cSeg.length > 1) _coastSegs.push(_cSeg);
-    _coastSegs.forEach(seg => {
-      const d = seg.map((p, i) => `${i===0?'M':'L'}${(p.x+ox).toFixed(1)},${(p.y+oy).toFixed(1)}`).join(' ');
-      svg += `<path d="${d}" fill="none" stroke="rgba(200,200,200,0.45)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    _coastSegs.forEach(function(seg) {
+      var d = seg.map(function(p, i) { return (i===0?'M':'L')+(p.x+ox).toFixed(1)+','+(p.y+oy).toFixed(1); }).join(' ');
+      svg += '<path d="'+d+'" fill="none" stroke="rgba(200,200,200,0.45)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>';
     });
-  }
+  })();
 
-  const svgEl = document.getElementById('track-map-svg');
+  var svgEl = document.getElementById('track-map-svg');
   if (svgEl) {
-    svgEl.setAttribute('viewBox', `0 0 ${VW.toFixed(0)} ${VH.toFixed(0)}`);
+    svgEl.setAttribute('viewBox', '0 0 '+VW.toFixed(0)+' '+VH.toFixed(0));
     svgEl.innerHTML = svg;
   }
 
   // Update colour legend
-  const leg = document.getElementById('tm-legend-bar');
+  var leg = document.getElementById('tm-legend-bar');
   if (leg) {
-    const gradients = {
+    var gradients = {
       speed:    'linear-gradient(to right,rgb(26,79,216),rgb(0,188,212),rgb(76,175,80),rgb(255,235,59),rgb(244,67,54))',
       throttle: 'linear-gradient(to right,rgb(26,26,26),rgb(0,230,118))',
       brake:    'linear-gradient(to right,rgb(26,26,26),rgb(244,67,54))',
       gear:     'linear-gradient(to right,rgb(244,67,54),rgb(255,152,0),rgb(255,235,59),rgb(76,175,80),rgb(0,188,212),rgb(33,150,243),rgb(124,77,255),rgb(224,64,251))',
       balance:  'linear-gradient(to right,rgb(244,67,54),rgb(80,80,80),rgb(33,150,243))',
     };
-    const labels = { speed: `Slow → ${mx} mph`, throttle: '0 → 100% throttle', brake: '0 → 100% brake', gear: '1st → 8th gear', balance: 'Oversteer ← Neutral → Understeer' };
-    leg.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px">
-      <span style="display:inline-block;width:80px;height:6px;border-radius:3px;background:${gradients[mode]}"></span>
-      <span>${labels[mode]}</span></span>
-      <span style="display:inline-flex;align-items:center;gap:4px;margin-left:12px;opacity:0.7">
-        <span style="display:inline-block;width:18px;height:4px;border-radius:2px;background:rgba(200,200,200,0.6)"></span>
-        <span style="font-size:11px">coast</span>
-      </span>`;
+    var labels = { speed: 'Slow \u2192 '+mx+' mph', throttle: '0 \u2192 100% throttle', brake: '0 \u2192 100% brake', gear: '1st \u2192 8th gear', balance: 'Oversteer \u2190 Neutral \u2192 Understeer' };
+    leg.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px">'
+      + '<span style="display:inline-block;width:80px;height:6px;border-radius:3px;background:'+gradients[mode]+'"></span>'
+      + '<span>'+labels[mode]+'</span></span>'
+      + '<span style="display:inline-flex;align-items:center;gap:4px;margin-left:12px;opacity:0.7">'
+      + '<span style="display:inline-block;width:18px;height:4px;border-radius:2px;background:rgba(200,200,200,0.6)"></span>'
+      + '<span style="font-size:11px">coast</span>'
+      + '</span>';
   }
 
   if (svgEl) {
     if (svgEl._tmMousemove)  svgEl.removeEventListener('mousemove',  svgEl._tmMousemove);
     if (svgEl._tmMouseleave) svgEl.removeEventListener('mouseleave', svgEl._tmMouseleave);
-    const tt = document.getElementById('tm-tooltip');
-    const _pts = pts, _ox = ox, _oy = oy;
+    var tt = document.getElementById('tm-tooltip');
+    var _pts = pts, _ox = ox, _oy = oy;
     svgEl._tmMousemove = function(e) {
-      const rect = svgEl.getBoundingClientRect();
-      const vb = svgEl.viewBox.baseVal;
+      var rect = svgEl.getBoundingClientRect();
+      var vb = svgEl.viewBox.baseVal;
       if (!vb.width) return;
-      const mx = (e.clientX - rect.left) / rect.width * vb.width;
-      const my = (e.clientY - rect.top)  / rect.height * vb.height;
-      let bestIdx = 0, bestD = Infinity;
-      _pts.forEach((p, i) => {
-        const d = (p.x + _ox - mx) ** 2 + (p.y + _oy - my) ** 2;
+      var mx = (e.clientX - rect.left) / rect.width * vb.width;
+      var my = (e.clientY - rect.top)  / rect.height * vb.height;
+      var bestIdx = 0, bestD = Infinity;
+      _pts.forEach(function(p, i) {
+        var d = Math.pow(p.x + _ox - mx, 2) + Math.pow(p.y + _oy - my, 2);
         if (d < bestD) { bestD = d; bestIdx = i; }
       });
-      const bp = _pts[bestIdx];
-      const _thresh = (vb.width * 0.06) ** 2;
+      var bp = _pts[bestIdx];
+      var _thresh = Math.pow(vb.width * 0.06, 2);
       if (tt && bestD < _thresh) {
-        const gStr = bp.gear != null ? `<br>Gear: <b>${bp.gear || 'N'}</b>` : '';
-        tt.innerHTML = `<b>${bp.spd.toFixed(0)} mph</b><br>Throttle: ${(bp.thr*100).toFixed(0)}%<br>Brake: ${(bp.brk*100).toFixed(0)}%${gStr}<br><span style="color:#555">${(bp.pct*100).toFixed(1)}% lap</span>`;
+        var gStr = bp.gear != null ? '<br>Gear: <b>'+(bp.gear || 'N')+'</b>' : '';
+        tt.innerHTML = '<b>'+bp.spd.toFixed(0)+' mph</b><br>Throttle: '+(bp.thr*100).toFixed(0)+'%<br>Brake: '+(bp.brk*100).toFixed(0)+'%'+gStr+'<br><span style="color:#555">'+(bp.pct*100).toFixed(1)+'% lap</span>';
         tt.style.display = 'block';
         tt.style.left = (e.clientX + 16) + 'px';
         tt.style.top  = (e.clientY - 8)  + 'px';
@@ -1073,26 +652,26 @@ function drawTrackMap(mode) {
 }
 
 function saveTrackMapPNG() {
-  const svgEl = document.getElementById('track-map-svg');
+  var svgEl = document.getElementById('track-map-svg');
   if (!svgEl) return;
-  const vb = svgEl.viewBox.baseVal;
+  var vb = svgEl.viewBox.baseVal;
   if (!vb.width) return;
-  const scale = 2, w = Math.round(vb.width * scale), h = Math.round(vb.height * scale);
-  const svgData = new XMLSerializer().serializeToString(svgEl);
-  const canvas = document.createElement('canvas');
+  var scale = 2, w = Math.round(vb.width * scale), h = Math.round(vb.height * scale);
+  var svgData = new XMLSerializer().serializeToString(svgEl);
+  var canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
-  const ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d');
   ctx.fillStyle = '#181818';
   ctx.fillRect(0, 0, w, h);
-  const blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const img = new Image();
-  img.onload = () => {
+  var blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var img = new Image();
+  img.onload = function() {
     ctx.drawImage(img, 0, 0, w, h);
     URL.revokeObjectURL(url);
-    const a = document.createElement('a');
-    const tm = window._trackMapData;
-    a.download = tm ? `track-map-lap${tm.lap}.png` : 'track-map.png';
+    var a = document.createElement('a');
+    var tm = window._trackMapData;
+    a.download = tm ? 'track-map-lap'+tm.lap+'.png' : 'track-map.png';
     a.href = canvas.toDataURL('image/png');
     a.click();
   };
@@ -1102,334 +681,2100 @@ function saveTrackMapPNG() {
 // ── Input Trace (3-panel speed / throttle / brake) ───────────────────────────
 function renderInputTrace(st) {
   if (!st || !st.laps || !st.laps.length) return '';
-  const W = 600, PL = 44, PR = 12, PT = 6, PB = 18;
-  const panels = [
+  var W = 600, PL = 44, PR = 12, PT = 6, PB = 18;
+  var panels = [
     {key: 'spd', label: 'Speed (mph)', h: 100, color: '#c084fc', max: null},
     {key: 'thr', label: 'Throttle %',  h: 60,  color: '#4caf50', max: 1},
     {key: 'brk', label: 'Brake %',     h: 60,  color: '#f44336', max: 1},
   ];
 
-  // Determine max speed across all laps
-  let maxSpd = 0;
-  st.laps.forEach(l => l.points.forEach(p => { if (p.spd > maxSpd) maxSpd = p.spd; }));
+  var maxSpd = 0;
+  st.laps.forEach(function(l) { l.points.forEach(function(p) { if (p.spd > maxSpd) maxSpd = p.spd; }); });
   panels[0].max = maxSpd || 1;
 
-  const colors = ['#c084fc','#64b5f6','#81c784','#ffb74d','#f06292'];
+  var colors = ['#c084fc','#64b5f6','#81c784','#ffb74d','#f06292'];
 
-  let totalH = panels.reduce((s, p) => s + p.h + PT + PB, 0) + 10;
-  let svgContent = '';
-  let yOffset = 0;
+  var totalH = panels.reduce(function(s, p) { return s + p.h + PT + PB; }, 0) + 10;
+  var svgContent = '';
+  var yOffset = 0;
 
-  panels.forEach((panel, pi) => {
-    const IW = W - PL - PR, IH = panel.h;
-    const yBase = yOffset + PT;
+  panels.forEach(function(panel, pi) {
+    var IW = W - PL - PR, IH = panel.h;
+    var yBase = yOffset + PT;
 
-    // Background
-    svgContent += `<rect x="${PL}" y="${yBase}" width="${IW}" height="${IH}" fill="#111" rx="3"/>`;
+    svgContent += '<rect x="'+PL+'" y="'+yBase+'" width="'+IW+'" height="'+IH+'" fill="#111" rx="3"/>';
 
-    // Grid lines (25%, 50%, 75%)
-    for (let g = 25; g <= 75; g += 25) {
-      const gy = (yBase + IH - (g / 100) * IH).toFixed(1);
-      const val = panel.key === 'spd' ? Math.round(panel.max * g / 100) : g;
-      svgContent += `<line x1="${PL}" y1="${gy}" x2="${W - PR}" y2="${gy}" stroke="#222" stroke-width="1"/>`;
-      svgContent += `<text x="${PL - 4}" y="${parseFloat(gy) + 4}" text-anchor="end" fill="#444" font-size="9">${val}</text>`;
+    for (var g = 25; g <= 75; g += 25) {
+      var gy = (yBase + IH - (g / 100) * IH).toFixed(1);
+      var val = panel.key === 'spd' ? Math.round(panel.max * g / 100) : g;
+      svgContent += '<line x1="'+PL+'" y1="'+gy+'" x2="'+(W - PR)+'" y2="'+gy+'" stroke="#222" stroke-width="1"/>';
+      svgContent += '<text x="'+(PL - 4)+'" y="'+(parseFloat(gy) + 4)+'" text-anchor="end" fill="#444" font-size="9">'+val+'</text>';
     }
 
-    // Panel label
-    svgContent += `<text x="${PL}" y="${yBase - 2}" fill="#555" font-size="9" font-weight="700" text-transform="uppercase">${panel.label}</text>`;
+    svgContent += '<text x="'+PL+'" y="'+(yBase - 2)+'" fill="#555" font-size="9" font-weight="700" text-transform="uppercase">'+panel.label+'</text>';
 
-    // Draw non-best laps first (dimmed)
-    st.laps.filter(l => !l.is_best).forEach((l, li) => {
+    st.laps.filter(function(l) { return !l.is_best; }).forEach(function(l, li) {
       if (!l.points[0] || l.points[0][panel.key] == null) return;
-      const col = colors[(li + 1) % colors.length];
-      const pts = l.points.map(p => {
-        const v = panel.key === 'spd' ? p.spd / panel.max : (p[panel.key] || 0);
-        return `${(PL + p.pct * IW).toFixed(1)},${(yBase + IH - v * IH).toFixed(1)}`;
+      var col = colors[(li + 1) % colors.length];
+      var pts = l.points.map(function(p) {
+        var v = panel.key === 'spd' ? p.spd / panel.max : (p[panel.key] || 0);
+        return (PL + p.pct * IW).toFixed(1)+','+(yBase + IH - v * IH).toFixed(1);
       }).join(' ');
-      svgContent += `<polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1" opacity="0.35"/>`;
+      svgContent += '<polyline points="'+pts+'" fill="none" stroke="'+col+'" stroke-width="1" opacity="0.35"/>';
     });
 
-    // Draw best lap on top
-    st.laps.filter(l => l.is_best).forEach(l => {
+    st.laps.filter(function(l) { return l.is_best; }).forEach(function(l) {
       if (!l.points[0] || l.points[0][panel.key] == null) return;
-      const pts = l.points.map(p => {
-        const v = panel.key === 'spd' ? p.spd / panel.max : (p[panel.key] || 0);
-        return `${(PL + p.pct * IW).toFixed(1)},${(yBase + IH - v * IH).toFixed(1)}`;
+      var pts = l.points.map(function(p) {
+        var v = panel.key === 'spd' ? p.spd / panel.max : (p[panel.key] || 0);
+        return (PL + p.pct * IW).toFixed(1)+','+(yBase + IH - v * IH).toFixed(1);
       }).join(' ');
-      svgContent += `<polyline points="${pts}" fill="none" stroke="${panel.color}" stroke-width="1.8"/>`;
+      svgContent += '<polyline points="'+pts+'" fill="none" stroke="'+panel.color+'" stroke-width="1.8"/>';
     });
 
-    // X-axis labels on last panel only
     if (pi === panels.length - 1) {
-      svgContent += `<text x="${PL}" y="${yBase + IH + 12}" fill="#444" font-size="9">0%</text>`;
-      svgContent += `<text x="${W - PR}" y="${yBase + IH + 12}" text-anchor="end" fill="#444" font-size="9">100% lap</text>`;
+      svgContent += '<text x="'+PL+'" y="'+(yBase + IH + 12)+'" fill="#444" font-size="9">0%</text>';
+      svgContent += '<text x="'+(W - PR)+'" y="'+(yBase + IH + 12)+'" text-anchor="end" fill="#444" font-size="9">100% lap</text>';
     }
 
     yOffset += PT + IH + PB;
   });
 
-  const legendItems = st.laps.map((l, i) => {
-    const col = l.is_best ? '#c084fc' : colors[i % colors.length];
-    const op  = l.is_best ? '1' : '0.5';
-    return `<span class="it-legend-item" style="opacity:${op}">
-      <span class="it-legend-dot" style="background:${col}"></span>
-      Lap ${l.lap} — ${fmtLap(l.time_s)}${l.is_best ? ' ⬤' : ''}
-    </span>`;
+  var legendItems = st.laps.map(function(l, i) {
+    var col = l.is_best ? '#c084fc' : colors[i % colors.length];
+    var op  = l.is_best ? '1' : '0.5';
+    return '<span class="it-legend-item" style="opacity:'+op+'">'
+      + '<span class="it-legend-dot" style="background:'+col+'"></span>'
+      + 'Lap '+l.lap+' \u2014 '+fmtLap(l.time_s)+(l.is_best ? ' \u2b24' : '')
+      + '</span>';
   }).join('');
 
-  return `<div class="section-label">Driver inputs — Top ${st.laps.length} laps</div>
-<div class="input-trace-wrap">
-  <svg viewBox="0 0 ${W} ${totalH}" style="width:100%;display:block">${svgContent}</svg>
-  <div class="it-legend">${legendItems}</div>
-</div>`;
+  return '<div class="section-label">Driver inputs \u2014 Top '+st.laps.length+' laps</div>'
+    + '<div class="input-trace-wrap">'
+    + '<svg viewBox="0 0 '+W+' '+totalH+'" style="width:100%;display:block">'+svgContent+'</svg>'
+    + '<div class="it-legend">'+legendItems+'</div>'
+    + '</div>';
 }
 
 // ── Sector Splits ─────────────────────────────────────────────────────────────
 function renderSectorSplits(st) {
   if (!st || !st.laps || !st.laps.length || !st.sectors) return '';
-  const sectors  = st.sectors;
-  const nSec     = sectors.length;
-  const bestSpl  = st.best_splits || [];
-  const colTpl   = `52px repeat(${nSec}, 1fr) 90px`;
+  var sectors  = st.sectors;
+  var nSec     = sectors.length;
+  var bestSpl  = st.best_splits || [];
+  var colTpl   = '52px repeat('+nSec+', 1fr) 90px';
 
-  const headerCells = sectors.map((s, i) =>
-    `<div>${s.name.replace(/ —.*/, '').trim()}</div>`
-  ).join('');
-
-  const rows = st.laps.map(l => {
-    const splits = l.splits || [];
-    const cells = splits.map((s, i) => {
-      const best  = bestSpl[i];
-      const isBst = best != null && Math.abs(s - best) < 0.001;
-      const delta = best != null ? s - best : null;
-      const dStr  = isBst ? '' : (delta != null ? `+${delta.toFixed(3)}` : '');
-      const dCls  = delta == null ? '' : delta < 0.1 ? 'fast' : delta < 0.4 ? 'med' : 'slow';
-      return `<div>
-        <span class="${isBst ? 'ss-best' : ''}">${fmtLap(s)}</span>
-        ${dStr ? `<span class="ss-delta ${dCls}"> ${dStr}</span>` : ''}
-      </div>`;
-    }).join('');
-    return `<div class="ss-row" style="grid-template-columns:${colTpl}">
-      <div style="color:#666">${l.lap}</div>
-      ${cells}
-      <div style="color:#aaa;font-weight:600">${fmtLap(l.total_s)}</div>
-    </div>`;
+  var headerCells = sectors.map(function(s) {
+    return '<div>'+s.name.replace(/ —.*/, '').trim()+'</div>';
   }).join('');
 
-  const bestRow = `<div class="ss-row" style="grid-template-columns:${colTpl};background:#140a24">
-    <div style="color:#a855f7;font-size:10px;font-weight:700">BEST</div>
-    ${bestSpl.map(b => `<div class="ss-best">${b != null ? fmtLap(b) : '—'}</div>`).join('')}
-    <div class="ss-best">${fmtLap(bestSpl.filter(b => b != null).reduce((a, b) => a + b, 0))}</div>
-  </div>`;
+  var rows = st.laps.map(function(l) {
+    var splits = l.splits || [];
+    var cells = splits.map(function(s, i) {
+      var best  = bestSpl[i];
+      var isBst = best != null && Math.abs(s - best) < 0.001;
+      var delta = best != null ? s - best : null;
+      var dStr  = isBst ? '' : (delta != null ? '+'+delta.toFixed(3) : '');
+      var dCls  = delta == null ? '' : delta < 0.1 ? 'fast' : delta < 0.4 ? 'med' : 'slow';
+      return '<div>'
+        + '<span class="'+(isBst ? 'ss-best' : '')+'">'+fmtLap(s)+'</span>'
+        + (dStr ? '<span class="ss-delta '+dCls+'"> '+dStr+'</span>' : '')
+        + '</div>';
+    }).join('');
+    return '<div class="ss-row" style="grid-template-columns:'+colTpl+'">'
+      + '<div style="color:#666">'+l.lap+'</div>'
+      + cells
+      + '<div style="color:#aaa;font-weight:600">'+fmtLap(l.total_s)+'</div>'
+      + '</div>';
+  }).join('');
 
-  return `<div class="section-label">Sector split times</div>
-<div class="sector-splits-table">
-  <div class="ss-row ss-header" style="grid-template-columns:${colTpl}">
-    <div>Lap</div>${headerCells}<div>Total</div>
-  </div>
-  ${bestRow}
-  ${rows}
-</div>`;
+  var bestRow = '<div class="ss-row" style="grid-template-columns:'+colTpl+';background:#140a24">'
+    + '<div style="color:#a855f7;font-size:10px;font-weight:700">BEST</div>'
+    + bestSpl.map(function(b) { return '<div class="ss-best">'+(b != null ? fmtLap(b) : '\u2014')+'</div>'; }).join('')
+    + '<div class="ss-best">'+fmtLap(bestSpl.filter(function(b) { return b != null; }).reduce(function(a, b) { return a + b; }, 0))+'</div>'
+    + '</div>';
+
+  return '<div class="section-label">Sector split times</div>'
+    + '<div class="sector-splits-table">'
+    + '<div class="ss-row ss-header" style="grid-template-columns:'+colTpl+'">'
+    + '<div>Lap</div>'+headerCells+'<div>Total</div>'
+    + '</div>'
+    + bestRow
+    + rows
+    + '</div>';
 }
 
 // ── Tyre Trend ────────────────────────────────────────────────────────────────
 function renderTyreTrend(trend) {
   if (!trend || !trend.laps || trend.laps.length < 3) return '';
-  const laps = trend.laps;
-  const corners = ['LF','RF','LR','RR'];
-  const cols    = {LF:'#64b5f6', RF:'#4caf50', LR:'#ff9800', RR:'#f44336'};
-  const W = 600, PL = 44, PR = 12, PT = 10, PB = 24, H = 130;
-  const IW = W - PL - PR, IH = H - PT - PB;
+  var laps = trend.laps;
+  var corners = ['LF','RF','LR','RR'];
+  var cols    = {LF:'#64b5f6', RF:'#4caf50', LR:'#ff9800', RR:'#f44336'};
+  var W = 600, PL = 44, PR = 12, PT = 10, PB = 24, H = 130;
+  var IW = W - PL - PR, IH = H - PT - PB;
 
-  // Find temp range across all corners and laps
-  let minT = Infinity, maxT = -Infinity;
-  laps.forEach(l => corners.forEach(c => {
+  var minT = Infinity, maxT = -Infinity;
+  laps.forEach(function(l) { corners.forEach(function(c) {
     if (l[c] != null) { if (l[c] < minT) minT = l[c]; if (l[c] > maxT) maxT = l[c]; }
-  }));
+  }); });
   if (minT === Infinity) return '';
-  const pad = 5;
+  var pad = 5;
   minT = Math.floor(minT - pad);
   maxT = Math.ceil(maxT + pad);
-  const tRange = maxT - minT || 1;
+  var tRange = maxT - minT || 1;
 
-  const lapNums = laps.map(l => l.lap);
-  const nLaps = lapNums.length;
+  var lapNums = laps.map(function(l) { return l.lap; });
+  var nLaps = lapNums.length;
 
-  let svg = `<rect x="${PL}" y="${PT}" width="${IW}" height="${IH}" fill="#111" rx="3"/>`;
+  var svg = '<rect x="'+PL+'" y="'+PT+'" width="'+IW+'" height="'+IH+'" fill="#111" rx="3"/>';
 
-  // Gridlines
-  for (let g = 0; g <= 1; g += 0.5) {
-    const gy = (PT + IH - g * IH).toFixed(1);
-    const tv = Math.round(minT + g * tRange);
-    svg += `<line x1="${PL}" y1="${gy}" x2="${W-PR}" y2="${gy}" stroke="#222" stroke-width="1"/>`;
-    svg += `<text x="${PL-4}" y="${parseFloat(gy)+4}" text-anchor="end" fill="#444" font-size="9">${tv}°F</text>`;
+  for (var g = 0; g <= 1; g += 0.5) {
+    var gy = (PT + IH - g * IH).toFixed(1);
+    var tv = Math.round(minT + g * tRange);
+    svg += '<line x1="'+PL+'" y1="'+gy+'" x2="'+(W-PR)+'" y2="'+gy+'" stroke="#222" stroke-width="1"/>';
+    svg += '<text x="'+(PL-4)+'" y="'+(parseFloat(gy)+4)+'" text-anchor="end" fill="#444" font-size="9">'+tv+'\u00b0F</text>';
   }
 
-  // X axis labels
-  svg += `<text x="${PL}" y="${H-4}" fill="#444" font-size="9">Lap ${lapNums[0]}</text>`;
-  svg += `<text x="${W-PR}" y="${H-4}" text-anchor="end" fill="#444" font-size="9">Lap ${lapNums[nLaps-1]}</text>`;
+  svg += '<text x="'+PL+'" y="'+(H-4)+'" fill="#444" font-size="9">Lap '+lapNums[0]+'</text>';
+  svg += '<text x="'+(W-PR)+'" y="'+(H-4)+'" text-anchor="end" fill="#444" font-size="9">Lap '+lapNums[nLaps-1]+'</text>';
 
-  // Lines per corner
-  corners.forEach(c => {
-    const pts = laps.map((l, i) => {
+  corners.forEach(function(c) {
+    var pts = laps.map(function(l, i) {
       if (l[c] == null) return null;
-      const x = PL + (i / Math.max(nLaps - 1, 1)) * IW;
-      const y = PT + IH - ((l[c] - minT) / tRange) * IH;
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
+      var x = PL + (i / Math.max(nLaps - 1, 1)) * IW;
+      var y = PT + IH - ((l[c] - minT) / tRange) * IH;
+      return x.toFixed(1)+','+y.toFixed(1);
     }).filter(Boolean);
     if (pts.length < 2) return;
-    svg += `<polyline points="${pts.join(' ')}" fill="none" stroke="${cols[c]}" stroke-width="1.8"/>`;
+    svg += '<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+cols[c]+'" stroke-width="1.8"/>';
   });
 
-  const legend = corners.map(c =>
-    `<span class="tt-legend-item"><span class="tt-legend-dot" style="background:${cols[c]}"></span>${c}</span>`
-  ).join('');
+  var legend = corners.map(function(c) {
+    return '<span class="tt-legend-item"><span class="tt-legend-dot" style="background:'+cols[c]+'"></span>'+c+'</span>';
+  }).join('');
 
-  return `<div class="section-label">Tyre temperature trend</div>
-<div class="tyre-trend-wrap">
-  <svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">${svg}</svg>
-  <div class="tt-legend">${legend}</div>
-</div>`;
+  return '<div class="section-label">Tyre temperature trend</div>'
+    + '<div class="tyre-trend-wrap">'
+    + '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;display:block">'+svg+'</svg>'
+    + '<div class="tt-legend">'+legend+'</div>'
+    + '</div>';
 }
 
 // ── Speed Trace ───────────────────────────────────────────────────────────────
 function renderSpeedTrace(st) {
   if (!st || !st.laps || !st.laps.length) return '';
-  const W = 600, H = 160, PL = 40, PR = 12, PT = 10, PB = 24;
-  const IW = W - PL - PR, IH = H - PT - PB;
-  let allSpds = [];
-  st.laps.forEach(l => l.points.forEach(p => allSpds.push(p.spd)));
-  const maxSpd = Math.max(...allSpds) || 1;
-  const colors = ['#c084fc','#64b5f6','#81c784','#ffb74d','#f06292'];
-  let svgLines = '';
-  // Draw non-best laps first (dimmed)
-  st.laps.filter(l => !l.is_best).forEach((l, li) => {
-    const pts = l.points.map(p =>
-      `${(PL + p.pct * IW).toFixed(1)},${(PT + IH - (p.spd / maxSpd) * IH).toFixed(1)}`
-    ).join(' ');
-    svgLines += `<polyline points="${pts}" fill="none" stroke="${colors[(li+1)%colors.length]}" stroke-width="1" opacity="0.4"/>`;
+  var W = 600, H = 160, PL = 40, PR = 12, PT = 10, PB = 24;
+  var IW = W - PL - PR, IH = H - PT - PB;
+  var allSpds = [];
+  st.laps.forEach(function(l) { l.points.forEach(function(p) { allSpds.push(p.spd); }); });
+  var maxSpd = Math.max.apply(null, allSpds) || 1;
+  var colors = ['#c084fc','#64b5f6','#81c784','#ffb74d','#f06292'];
+  var svgLines = '';
+  st.laps.filter(function(l) { return !l.is_best; }).forEach(function(l, li) {
+    var pts = l.points.map(function(p) {
+      return (PL + p.pct * IW).toFixed(1)+','+(PT + IH - (p.spd / maxSpd) * IH).toFixed(1);
+    }).join(' ');
+    svgLines += '<polyline points="'+pts+'" fill="none" stroke="'+colors[(li+1)%colors.length]+'" stroke-width="1" opacity="0.4"/>';
   });
-  // Draw best lap on top
-  st.laps.filter(l => l.is_best).forEach(l => {
-    const pts = l.points.map(p =>
-      `${(PL + p.pct * IW).toFixed(1)},${(PT + IH - (p.spd / maxSpd) * IH).toFixed(1)}`
-    ).join(' ');
-    svgLines += `<polyline points="${pts}" fill="none" stroke="#c084fc" stroke-width="2"/>`;
+  st.laps.filter(function(l) { return l.is_best; }).forEach(function(l) {
+    var pts = l.points.map(function(p) {
+      return (PL + p.pct * IW).toFixed(1)+','+(PT + IH - (p.spd / maxSpd) * IH).toFixed(1);
+    }).join(' ');
+    svgLines += '<polyline points="'+pts+'" fill="none" stroke="#c084fc" stroke-width="2"/>';
   });
-  // Y-axis gridlines
-  let gridLines = '';
-  for (let g = 25; g <= 75; g += 25) {
-    const y = (PT + IH - (g / 100) * IH).toFixed(1);
-    const spd = Math.round(maxSpd * g / 100);
-    gridLines += `<line x1="${PL}" y1="${y}" x2="${W - PR}" y2="${y}" stroke="#222" stroke-width="1"/>`;
-    gridLines += `<text x="${PL - 4}" y="${parseFloat(y)+4}" text-anchor="end" fill="#444" font-size="9">${spd}</text>`;
+  var gridLines = '';
+  for (var g = 25; g <= 75; g += 25) {
+    var y = (PT + IH - (g / 100) * IH).toFixed(1);
+    var spd = Math.round(maxSpd * g / 100);
+    gridLines += '<line x1="'+PL+'" y1="'+y+'" x2="'+(W - PR)+'" y2="'+y+'" stroke="#222" stroke-width="1"/>';
+    gridLines += '<text x="'+(PL - 4)+'" y="'+(parseFloat(y)+4)+'" text-anchor="end" fill="#444" font-size="9">'+spd+'</text>';
   }
-  // X-axis label
-  gridLines += `<text x="${PL}" y="${H - 2}" fill="#444" font-size="9">0%</text>`;
-  gridLines += `<text x="${W - PR}" y="${H - 2}" text-anchor="end" fill="#444" font-size="9">100% lap</text>`;
-  // Legend
-  const legendItems = st.laps.map((l, i) => {
-    const col = l.is_best ? '#c084fc' : colors[(i) % colors.length];
-    const opacity = l.is_best ? '1' : '0.5';
-    return `<span class="st-legend-item" style="opacity:${opacity}">
-      <span class="st-legend-dot" style="background:${col}"></span>
-      Lap ${l.lap} — ${fmtLap(l.time_s)}${l.is_best ? ' ⬤' : ''}
-    </span>`;
+  gridLines += '<text x="'+PL+'" y="'+(H - 2)+'" fill="#444" font-size="9">0%</text>';
+  gridLines += '<text x="'+(W - PR)+'" y="'+(H - 2)+'" text-anchor="end" fill="#444" font-size="9">100% lap</text>';
+  var legendItems = st.laps.map(function(l, i) {
+    var col = l.is_best ? '#c084fc' : colors[(i) % colors.length];
+    var opacity = l.is_best ? '1' : '0.5';
+    return '<span class="st-legend-item" style="opacity:'+opacity+'">'
+      + '<span class="st-legend-dot" style="background:'+col+'"></span>'
+      + 'Lap '+l.lap+' \u2014 '+fmtLap(l.time_s)+(l.is_best ? ' \u2b24' : '')
+      + '</span>';
   }).join('');
-  return `<div class="section-label">Speed trace — Top ${st.laps.length} laps</div>
-<div class="speed-trace-wrap">
-  <svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">
-    <rect x="${PL}" y="${PT}" width="${IW}" height="${IH}" fill="#111" rx="4"/>
-    ${gridLines}
-    ${svgLines}
-  </svg>
-  <div class="st-legend">${legendItems}</div>
-</div>`;
+  return '<div class="section-label">Speed trace \u2014 Top '+st.laps.length+' laps</div>'
+    + '<div class="speed-trace-wrap">'
+    + '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;display:block">'
+    + '<rect x="'+PL+'" y="'+PT+'" width="'+IW+'" height="'+IH+'" fill="#111" rx="4"/>'
+    + gridLines
+    + svgLines
+    + '</svg>'
+    + '<div class="st-legend">'+legendItems+'</div>'
+    + '</div>';
+}
+
+// ── Lap Delta Chart ──────────────────────────────────────────────────────────
+function renderLapDelta(lapTimes) {
+  if (!lapTimes || lapTimes.length < 2) return '';
+  var best = Math.min.apply(null, lapTimes.map(function(l) { return l.time_s; }));
+  var deltas = lapTimes.map(function(l) { return l.time_s - best; });
+  var maxD = Math.max.apply(null, deltas.concat([0.001]));
+  var W = 500, H = 80, PL = 36, PR = 8, PT = 8, PB = 18;
+  var iW = W - PL - PR, iH = H - PT - PB;
+  var n = lapTimes.length;
+  var xScale = function(i) { return PL + (i / Math.max(n - 1, 1)) * iW; };
+  var yScale = function(d) { return PT + iH - (d / maxD) * iH; };
+  var svg = '<line x1="'+PL+'" y1="'+(PT+iH)+'" x2="'+(PL+iW)+'" y2="'+(PT+iH)+'" stroke="#333" stroke-width="1"/>';
+  svg += '<text x="'+(PL-2)+'" y="'+(PT+4)+'" fill="#555" font-size="9" text-anchor="end">+'+maxD.toFixed(1)+'s</text>';
+  svg += '<text x="'+(PL-2)+'" y="'+(PT+iH+4)+'" fill="#555" font-size="9" text-anchor="end">\u00b10</text>';
+  for (var i = 1; i < n; i++) {
+    var x1 = xScale(i-1), y1 = yScale(deltas[i-1]);
+    var x2 = xScale(i),   y2 = yScale(deltas[i]);
+    svg += '<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="#444" stroke-width="1.5"/>';
+  }
+  lapTimes.forEach(function(l, i) {
+    var d = deltas[i];
+    var col = d < 0.001 ? '#4caf50' : d < 0.3 ? '#4caf50' : d < 1.5 ? '#ff9800' : '#f44336';
+    var cx = xScale(i).toFixed(1), cy = yScale(d).toFixed(1);
+    svg += '<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="'+col+'" stroke="#111" stroke-width="1" data-lap-dot="'+l.lap+'"/>';
+    svg += '<text x="'+cx+'" y="'+(PT+iH+12).toFixed(0)+'" fill="#555" font-size="9" text-anchor="middle">'+l.lap+'</text>';
+  });
+  return '<div class="section-label">Lap delta vs best</div>'
+    + '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:'+H+'px;display:block;background:#111;border-radius:6px;margin-bottom:12px">'+svg+'</svg>';
+}
+
+</script>
+<script>
+// ── Telemetry cross-reference hints ──────────────────────────────────────────
+function _crossRef(label, value, lastAnalysis, setupAnalysis) {
+  var l   = label.toLowerCase();
+  var val = parseFloat(value);
+
+  if (setupAnalysis) {
+    var sa = setupAnalysis;
+    var rangeRec = (sa.recs || []).find(function(r) { return r.category === 'Range Limit' && r.text.toLowerCase().includes(label.toLowerCase().substring(0, 15)); });
+    if (rangeRec) {
+      return {type: rangeRec.priority === 'high' ? 'warn' : 'info', text: rangeRec.text + '. ' + rangeRec.action};
+    }
+  }
+
+  if (!lastAnalysis) return null;
+  var recs = (lastAnalysis.recommendations || []);
+  var handling = lastAnalysis.handling || {};
+
+  var tendencies = Object.values(handling).map(function(h) { return h.tendency; }).filter(Boolean);
+  var usCount = tendencies.filter(function(t) { return t === 'understeer'; }).length;
+  var osCount = tendencies.filter(function(t) { return t === 'oversteer'; }).length;
+  var overallUS = usCount > osCount;
+  var overallOS = osCount > usCount;
+
+  var setupTendency = setupAnalysis ? setupAnalysis.tendencySummary : null;
+
+  if (l.includes('front arb') || l.includes('front anti-roll') || (l.includes('arb') && l.includes('front'))) {
+    if (overallUS) return {type:'warn', text:'Telemetry shows understeer \u2014 consider increasing front ARB to add front grip response, or decreasing rear ARB to free the rear.'};
+    if (overallOS) return {type:'warn', text:'Telemetry shows oversteer \u2014 consider softening front ARB to reduce snap.'};
+  }
+  if (l.includes('rear arb') || l.includes('rear anti-roll') || l.includes('rarb')) {
+    if (overallUS) return {type:'info', text:'Understeer detected \u2014 softening rear ARB can free up rear rotation and reduce understeer.'};
+    if (overallOS) return {type:'warn', text:'Oversteer detected \u2014 stiffening rear ARB may add stability.'};
+  }
+  if ((l.includes('spring') || l.includes('spring rate')) && (l.includes('front') || l.includes('left front') || l.includes('right front'))) {
+    if (overallUS) return {type:'info', text:'Front understeer \u2014 softening front spring rate can increase front mechanical grip.'};
+  }
+  if ((l.includes('spring') || l.includes('spring rate')) && (l.includes('rear') || l.includes('left rear') || l.includes('right rear'))) {
+    if (overallOS) return {type:'info', text:'Oversteer \u2014 stiffening rear spring rate can add rear stability.'};
+  }
+  var cornerMap = {'lf':'LF','rf':'RF','lr':'LR','rr':'RR','left front':'LF','right front':'RF','left rear':'LR','right rear':'RR'};
+  for (var kw in cornerMap) {
+    var corner = cornerMap[kw];
+    if (l.includes(kw) && (l.includes('pressure') || l.includes('psi'))) {
+      var pRec = recs.find(function(r) { return r.category === 'Tyre Pressure' && r.corner === corner; });
+      if (pRec) return {type:'warn', text:'Telemetry: '+pRec.issue+'. Suggested action: '+pRec.action+'.'};
+      var pressures = lastAnalysis.tyre_pressures || {};
+      if (pressures[corner] != null) {
+        return {type:'good', text:'Hot pressure measured at '+pressures[corner].toFixed(1)+' psi at '+corner+'.'};
+      }
+    }
+  }
+  for (var kw in cornerMap) {
+    var corner = cornerMap[kw];
+    if (l.includes(kw) && l.includes('camber')) {
+      var cRec = recs.find(function(r) { return r.category === 'Camber' && r.corner === corner; });
+      if (cRec) return {type:'warn', text:'Telemetry: '+cRec.issue+'. '+cRec.action+'.'};
+    }
+  }
+  if (l.includes('brake bias') || l.includes('brake balance') || l.includes('brake pressure bias')) {
+    var brk = lastAnalysis.balance;
+    if (brk && brk.brake_balance_pct != null) {
+      var extra = '';
+      if (setupAnalysis && setupAnalysis.brakeBias != null) {
+        var diff = setupAnalysis.brakeBias - brk.brake_balance_pct;
+        if (Math.abs(diff) > 0.5) {
+          extra = ' Setup bias '+setupAnalysis.brakeBias+'% vs telemetry avg '+brk.brake_balance_pct.toFixed(1)+'% \u2014 driver adjusted by '+(diff > 0 ? '+' : '')+diff.toFixed(1)+'% during session.';
+        }
+      }
+      return {type:'info', text:'Session average brake balance: '+brk.brake_balance_pct.toFixed(1)+'%.'+extra};
+    }
+  }
+  if (l.includes('wing') || l.includes('downforce') || l.includes('aero')) {
+    if (overallUS) return {type:'info', text:'Understeer present \u2014 adding front aero (if available) can help balance.'};
+  }
+  if (setupTendency && setupTendency !== 'balanced') {
+    if (l.includes('spring') || l.includes('arb') || l.includes('damper')) {
+      if (setupTendency === 'understeer' && overallUS) {
+        return {type:'warn', text:'Both setup geometry and telemetry suggest understeer. This parameter contributes to the imbalance.'};
+      }
+      if (setupTendency === 'oversteer' && overallOS) {
+        return {type:'warn', text:'Both setup geometry and telemetry suggest oversteer. This parameter contributes to the imbalance.'};
+      }
+    }
+  }
+  return null;
+}
+
+// ── Setup Recommendation Engine ──────────────────────────────────────────────
+function analyzeSetup(tabs, carConfig) {
+  var recs = [];
+  var params = {};
+
+  Object.values(tabs).forEach(function(sections) {
+    Object.entries(sections).forEach(function(entry) {
+      var sect = entry[0], pList = entry[1];
+      pList.forEach(function(p) {
+        var key = (sect + ' ' + p.label).toLowerCase();
+        params[key] = p;
+        params[p.label.toLowerCase()] = p;
+      });
+    });
+  });
+
+  function numVal(p) {
+    if (!p || !p.value) return null;
+    var m = p.value.match(/-?[\d.]+/);
+    return m ? parseFloat(m[0]) : null;
+  }
+
+  function rangeVal(str) {
+    if (!str) return null;
+    var m = str.match(/-?[\d.]+/);
+    return m ? parseFloat(m[0]) : null;
+  }
+
+  function findParam(keywords) {
+    var kws = keywords.map(function(k) { return k.toLowerCase(); });
+    for (var key in params) {
+      if (kws.every(function(kw) { return key.includes(kw); })) return params[key];
+    }
+    return null;
+  }
+
+  var corners = {
+    LF: {label:'Left Front'}, RF: {label:'Right Front'},
+    LR: {label:'Left Rear'}, RR: {label:'Right Rear'}
+  };
+  var cornerKeys = {LF:'left front', RF:'right front', LR:'left rear', RR:'right rear'};
+
+  Object.entries(cornerKeys).forEach(function(entry) {
+    var corner = entry[0], searchKey = entry[1];
+    corners[corner].pressure = numVal(findParam([searchKey, 'pressure']));
+    corners[corner].spring = numVal(findParam([searchKey, 'spring']));
+    corners[corner].rideHeight = numVal(findParam([searchKey, 'ride height']));
+    corners[corner].bumpRubber = numVal(findParam([searchKey, 'bump rubber']));
+    corners[corner].camber = numVal(findParam([searchKey, 'camber']));
+  });
+
+  var frontARB = numVal(findParam(['arb setting']));
+  var rearARB = numVal(findParam(['rarb setting']));
+  var wing = numVal(findParam(['wing setting']));
+  var frontRHSpeed = numVal(findParam(['front rh at speed']));
+  var rearRHSpeed = numVal(findParam(['rear rh at speed']));
+  var brakeBias = numVal(findParam(['brake pressure bias'])) || numVal(findParam(['brake bias']));
+  var frontMC = numVal(findParam(['front master']));
+  var rearMC = numVal(findParam(['rear master']));
+  var brakePads = (findParam(['brake pads']) || {}).value || '';
+
+  var dampers = {};
+  ['Low Speed Compression', 'High Speed Compression', 'Low Speed Rebound', 'High Speed Rebound'].forEach(function(mode) {
+    var frontP = findParam(['front dampers', mode.toLowerCase()]);
+    var rearP = findParam(['rear dampers', mode.toLowerCase()]);
+    dampers[mode] = {
+      front: numVal(frontP),
+      rear: numVal(rearP),
+      frontRange: frontP ? {min: rangeVal(frontP.range_min), max: rangeVal(frontP.range_max)} : null,
+      rearRange: rearP ? {min: rangeVal(rearP.range_min), max: rangeVal(rearP.range_max)} : null
+    };
+  });
+
+  // ── 1. Range validation ────────────────────────────────────────────────────
+  Object.values(tabs).forEach(function(sections) {
+    Object.values(sections).forEach(function(pList) {
+      pList.forEach(function(p) {
+        if (!p.range_min || !p.range_max) return;
+        var v = numVal(p);
+        var mn = rangeVal(p.range_min);
+        var mx = rangeVal(p.range_max);
+        if (v == null || mn == null || mx == null) return;
+        var range = mx - mn;
+        if (range <= 0) return;
+        if (v <= mn) {
+          recs.push({category:'Range Limit', priority:'medium', text:p.label+' is at minimum ('+p.value+')', action:'Consider increasing \u2014 currently at the lowest possible setting.'});
+        } else if (v >= mx) {
+          recs.push({category:'Range Limit', priority:'medium', text:p.label+' is at maximum ('+p.value+')', action:'Consider decreasing \u2014 currently at the highest possible setting. You may be compensating for another issue.'});
+        } else if ((v - mn) / range < 0.05) {
+          recs.push({category:'Range Limit', priority:'low', text:p.label+' is near minimum ('+p.value+', range '+p.range_min+'\u2013'+p.range_max+')', action:'Very close to the limit \u2014 check if this is intentional.'});
+        } else if ((mx - v) / range < 0.05) {
+          recs.push({category:'Range Limit', priority:'low', text:p.label+' is near maximum ('+p.value+', range '+p.range_min+'\u2013'+p.range_max+')', action:'Very close to the limit \u2014 check if this is intentional.'});
+        }
+      });
+    });
+  });
+
+  // ── 2. Cross-corner balance ────────────────────────────────────────────────
+  if (corners.LF.spring != null && corners.RF.spring != null && corners.LF.spring !== corners.RF.spring) {
+    var diff = Math.abs(corners.LF.spring - corners.RF.spring);
+    recs.push({category:'Cross-Corner Balance', priority: diff > 20 ? 'high' : 'medium',
+      text:'Front spring asymmetry: LF '+corners.LF.spring+' vs RF '+corners.RF.spring+' N/mm (\u0394'+diff+')',
+      action:'Asymmetric front springs are unusual unless compensating for a specific track characteristic. Verify this is intentional.'});
+  }
+  if (corners.LR.spring != null && corners.RR.spring != null && corners.LR.spring !== corners.RR.spring) {
+    var diff = Math.abs(corners.LR.spring - corners.RR.spring);
+    recs.push({category:'Cross-Corner Balance', priority: diff > 20 ? 'high' : 'medium',
+      text:'Rear spring asymmetry: LR '+corners.LR.spring+' vs RR '+corners.RR.spring+' N/mm (\u0394'+diff+')',
+      action:'Asymmetric rear springs create an uneven platform \u2014 verify this is intentional.'});
+  }
+
+  if (corners.LF.rideHeight != null && corners.RF.rideHeight != null) {
+    var diff = Math.abs(corners.LF.rideHeight - corners.RF.rideHeight);
+    if (diff > 0.001) {
+      recs.push({category:'Cross-Corner Balance', priority:'medium',
+        text:'Front ride height asymmetry: LF '+(corners.LF.rideHeight*1000).toFixed(1)+' vs RF '+(corners.RF.rideHeight*1000).toFixed(1)+' mm',
+        action:'Asymmetric ride heights affect aero balance. Usually indicates a track with more load on one side.'});
+    }
+  }
+  if (corners.LR.rideHeight != null && corners.RR.rideHeight != null) {
+    var diff = Math.abs(corners.LR.rideHeight - corners.RR.rideHeight);
+    if (diff > 0.001) {
+      recs.push({category:'Cross-Corner Balance', priority:'medium',
+        text:'Rear ride height asymmetry: LR '+(corners.LR.rideHeight*1000).toFixed(1)+' vs RR '+(corners.RR.rideHeight*1000).toFixed(1)+' mm',
+        action:'Asymmetric rear ride heights affect mechanical grip balance. May be intentional for oval-style setups.'});
+    }
+  }
+
+  if (corners.LF.camber != null && corners.RF.camber != null) {
+    var diff = Math.abs(corners.LF.camber + corners.RF.camber);
+    if (diff > 0.2) {
+      recs.push({category:'Cross-Corner Balance', priority:'medium',
+        text:'Front camber asymmetry: LF '+corners.LF.camber+'\u00b0 vs RF '+corners.RF.camber+'\u00b0 (should mirror)',
+        action:'On road courses, front camber is typically symmetric (LF \u2248 -RF). A difference suggests intentional oval compensation or a possible error.'});
+    }
+  }
+  if (corners.LR.camber != null && corners.RR.camber != null) {
+    var diff = Math.abs(corners.LR.camber + corners.RR.camber);
+    if (diff > 0.2) {
+      recs.push({category:'Cross-Corner Balance', priority:'medium',
+        text:'Rear camber asymmetry: LR '+corners.LR.camber+'\u00b0 vs RR '+corners.RR.camber+'\u00b0 (should mirror)',
+        action:'Symmetric rear camber is standard for road courses. Review if this asymmetry is intentional.'});
+    }
+  }
+
+  if (corners.LF.pressure != null && corners.RF.pressure != null) {
+    var diff = Math.abs(corners.LF.pressure - corners.RF.pressure);
+    if (diff > 3) {
+      recs.push({category:'Cross-Corner Balance', priority:'medium',
+        text:'Front pressure asymmetry: LF '+corners.LF.pressure+' vs RF '+corners.RF.pressure+' kPa',
+        action:'Starting pressures are usually equal across an axle. Split pressures are uncommon unless compensating for asymmetric track load.'});
+    }
+  }
+  if (corners.LR.pressure != null && corners.RR.pressure != null) {
+    var diff = Math.abs(corners.LR.pressure - corners.RR.pressure);
+    if (diff > 3) {
+      recs.push({category:'Cross-Corner Balance', priority:'medium',
+        text:'Rear pressure asymmetry: LR '+corners.LR.pressure+' vs RR '+corners.RR.pressure+' kPa',
+        action:'Starting pressures are usually equal across an axle. Verify this split is intentional.'});
+    }
+  }
+
+  // ── 3. Front-to-rear balance analysis ──────────────────────────────────────
+  var frontSpring = (corners.LF.spring != null && corners.RF.spring != null) ? (corners.LF.spring + corners.RF.spring) / 2 : null;
+  var rearSpring = (corners.LR.spring != null && corners.RR.spring != null) ? (corners.LR.spring + corners.RR.spring) / 2 : null;
+
+  if (frontSpring != null && rearSpring != null) {
+    var ratio = frontSpring / rearSpring;
+    if (ratio > 1.15) {
+      recs.push({category:'Front/Rear Balance', priority:'medium',
+        text:'Front springs significantly stiffer than rear ('+frontSpring+' vs '+rearSpring+' N/mm, ratio '+ratio.toFixed(2)+')',
+        action:'A stiff front relative to rear tends toward understeer. Soften front springs or stiffen rear for more neutral balance.'});
+    } else if (ratio < 0.85) {
+      recs.push({category:'Front/Rear Balance', priority:'medium',
+        text:'Rear springs significantly stiffer than front ('+rearSpring+' vs '+frontSpring+' N/mm, ratio '+(1/ratio).toFixed(2)+')',
+        action:'A stiff rear relative to front tends toward oversteer. Stiffen front or soften rear for more stability.'});
+    }
+  }
+
+  Object.entries(dampers).forEach(function(entry) {
+    var mode = entry[0], d = entry[1];
+    if (d.front != null && d.rear != null && d.front !== d.rear) {
+      var diff = d.front - d.rear;
+      if (Math.abs(diff) > 4) {
+        var stiffer = diff > 0 ? 'Front' : 'Rear';
+        var tendency = mode.includes('Compression')
+          ? (diff > 0 ? 'understeer on bump' : 'oversteer on bump')
+          : (diff > 0 ? 'understeer on rebound' : 'oversteer on rebound');
+        recs.push({category:'Front/Rear Balance', priority:'low',
+          text:mode+': front '+d.front+' vs rear '+d.rear+' clicks \u2014 '+stiffer+' is stiffer',
+          action:'Large damper split contributes to '+tendency+'. '+(mode.includes('Compression') ? 'Compression affects weight transfer rate into corners.' : 'Rebound affects weight transfer rate out of corners.')});
+      }
+    }
+  });
+
+  if (frontARB != null && rearARB != null) {
+    if (frontARB > rearARB + 2) {
+      recs.push({category:'Front/Rear Balance', priority:'low',
+        text:'Front ARB stiffer than rear ('+frontARB+' vs '+rearARB+')',
+        action:'Stiffer front ARB reduces front grip in corners \u2192 tends toward understeer. Consider softening front or stiffening rear ARB.'});
+    } else if (rearARB > frontARB + 2) {
+      recs.push({category:'Front/Rear Balance', priority:'low',
+        text:'Rear ARB stiffer than front ('+rearARB+' vs '+frontARB+')',
+        action:'Stiffer rear ARB reduces rear grip in corners \u2192 tends toward oversteer. Consider softening rear or stiffening front ARB.'});
+    }
+  }
+
+  // ── 4. Contextual recommendations (car config aware) ───────────────────────
+  if (carConfig) {
+    var targetPsi = carConfig.target_hot_psi;
+    if (targetPsi) {
+      Object.entries(cornerKeys).forEach(function(entry) {
+        var corner = entry[0], searchKey = entry[1];
+        var pKpa = corners[corner].pressure;
+        if (pKpa == null) return;
+        var pPsi = pKpa * 0.14503773773;
+        var target = targetPsi[corner];
+        if (!target) return;
+      });
+    }
+  }
+
+  if (wing != null) {
+    var wingParam = findParam(['wing setting']);
+    if (wingParam && wingParam.range_min && wingParam.range_max) {
+      var wMin = rangeVal(wingParam.range_min);
+      var wMax = rangeVal(wingParam.range_max);
+      if (wMin != null && wMax != null) {
+        var wRange = wMax - wMin;
+        var wPct = (wing - wMin) / wRange;
+        if (wPct > 0.8) {
+          recs.push({category:'Aero', priority:'low',
+            text:'Wing at '+wing+'\u00b0 \u2014 high downforce end ('+(wPct*100).toFixed(0)+'% of range)',
+            action:'Good for technical tracks with lots of slow-medium corners. May sacrifice top speed on long straights.'});
+        } else if (wPct < 0.2) {
+          recs.push({category:'Aero', priority:'low',
+            text:'Wing at '+wing+'\u00b0 \u2014 low downforce end ('+(wPct*100).toFixed(0)+'% of range)',
+            action:'Good for high-speed tracks. May lack rear grip in slow corners \u2014 compensate with mechanical grip (springs, dampers).'});
+        }
+      }
+    }
+  }
+
+  Object.entries(cornerKeys).forEach(function(entry) {
+    var corner = entry[0], searchKey = entry[1];
+    var gap = corners[corner].bumpRubber;
+    if (gap != null && gap < 0.02) {
+      recs.push({category:'Suspension', priority:'medium',
+        text:corners[corner].label+' bump rubber gap very small ('+(gap*1000).toFixed(0)+' mm)',
+        action:'A small gap means the car will frequently contact bump stops, creating a harsh, non-linear suspension response. Consider raising ride height or stiffening springs.'});
+    }
+  });
+
+  var tendencySummary = 'balanced';
+  var usScore = 0, osScore = 0;
+  if (frontSpring != null && rearSpring != null) {
+    if (frontSpring > rearSpring * 1.05) usScore++;
+    if (rearSpring > frontSpring * 1.05) osScore++;
+  }
+  if (frontARB != null && rearARB != null) {
+    if (frontARB > rearARB) usScore++;
+    if (rearARB > frontARB) osScore++;
+  }
+  if (brakeBias != null) {
+    if (brakeBias > 58) usScore++;
+    if (brakeBias < 54) osScore++;
+  }
+  if (usScore > osScore) tendencySummary = 'understeer';
+  else if (osScore > usScore) tendencySummary = 'oversteer';
+
+  return {
+    recs: recs,
+    corners: corners,
+    dampers: dampers,
+    frontARB: frontARB, rearARB: rearARB,
+    wing: wing, frontRHSpeed: frontRHSpeed, rearRHSpeed: rearRHSpeed,
+    brakeBias: brakeBias, frontMC: frontMC, rearMC: rearMC, brakePads: brakePads,
+    frontSpring: frontSpring, rearSpring: rearSpring,
+    tendencySummary: tendencySummary
+  };
+}
+
+// ── SVG: Car outline with tire pressures, camber, ride heights ──────────────
+function renderCarOutlineSVG(analysis) {
+  var c = analysis.corners;
+  var W = 340, H = 440;
+  var bodyX = 110, bodyY = 60, bodyW = 120, bodyH = 320;
+  var wheelW = 28, wheelH = 56;
+
+  var svg = '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:340px;height:auto;display:block;margin:0 auto">';
+  svg += '<rect width="'+W+'" height="'+H+'" fill="#111" rx="8"/>';
+  svg += '<rect x="'+bodyX+'" y="'+bodyY+'" width="'+bodyW+'" height="'+bodyH+'" rx="20" ry="20" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>';
+  svg += '<path d="M'+(bodyX+20)+' '+(bodyY+40)+' L'+(bodyX+bodyW-20)+' '+(bodyY+40)+' L'+(bodyX+bodyW-30)+' '+(bodyY+80)+' L'+(bodyX+30)+' '+(bodyY+80)+' Z" fill="#222" stroke="#333" stroke-width="1"/>';
+  svg += '<path d="M'+(bodyX+25)+' '+(bodyY+bodyH-80)+' L'+(bodyX+bodyW-25)+' '+(bodyY+bodyH-80)+' L'+(bodyX+bodyW-20)+' '+(bodyY+bodyH-45)+' L'+(bodyX+20)+' '+(bodyY+bodyH-45)+' Z" fill="#222" stroke="#333" stroke-width="1"/>';
+  svg += '<line x1="'+(W/2)+'" y1="'+(bodyY+10)+'" x2="'+(W/2)+'" y2="'+(bodyY+bodyH-10)+'" stroke="#2a2a2a" stroke-width="1" stroke-dasharray="4,4"/>';
+
+  var positions = {
+    LF: {wx: bodyX - wheelW - 4, wy: bodyY + 30, tx: 6, ty: bodyY + 20},
+    RF: {wx: bodyX + bodyW + 4, wy: bodyY + 30, tx: bodyX + bodyW + wheelW + 12, ty: bodyY + 20},
+    LR: {wx: bodyX - wheelW - 4, wy: bodyY + bodyH - 30 - wheelH, tx: 6, ty: bodyY + bodyH - 96},
+    RR: {wx: bodyX + bodyW + 4, wy: bodyY + bodyH - 30 - wheelH, tx: bodyX + bodyW + wheelW + 12, ty: bodyY + bodyH - 96}
+  };
+
+  Object.entries(positions).forEach(function(entry) {
+    var corner = entry[0], pos = entry[1];
+    var cd = c[corner];
+    var pKpa = cd.pressure;
+    var pPsi = pKpa != null ? (pKpa * 0.14503773773).toFixed(1) : '\u2014';
+    var camber = cd.camber != null ? cd.camber.toFixed(1) + '\u00b0' : '\u2014';
+    var rh = cd.rideHeight != null ? (cd.rideHeight * 1000).toFixed(1) : '\u2014';
+
+    var wheelColor = pKpa != null ? '#2a2a2a' : '#1e1e1e';
+    svg += '<rect x="'+pos.wx+'" y="'+pos.wy+'" width="'+wheelW+'" height="'+wheelH+'" rx="4" fill="'+wheelColor+'" stroke="#444" stroke-width="1.5"/>';
+    for (var i = 0; i < 4; i++) {
+      var ly = pos.wy + 10 + i * 12;
+      svg += '<line x1="'+(pos.wx+4)+'" y1="'+ly+'" x2="'+(pos.wx+wheelW-4)+'" y2="'+ly+'" stroke="#555" stroke-width="1" opacity="0.5"/>';
+    }
+
+    var isLeft = corner.startsWith('L');
+    var anchor = isLeft ? 'end' : 'start';
+    var labelX = isLeft ? pos.tx + 90 : pos.tx;
+
+    svg += '<text x="'+labelX+'" y="'+pos.ty+'" fill="#666" font-size="10" font-weight="700" text-anchor="'+anchor+'" letter-spacing=".5">'+corner+'</text>';
+    svg += '<text x="'+labelX+'" y="'+(pos.ty + 16)+'" fill="#ccc" font-size="14" font-weight="700" text-anchor="'+anchor+'">'+pPsi+'<tspan fill="#555" font-size="10"> psi</tspan></text>';
+    svg += '<text x="'+labelX+'" y="'+(pos.ty + 32)+'" fill="#aaa" font-size="11" text-anchor="'+anchor+'">\u27e8 '+camber+'</text>';
+    svg += '<text x="'+labelX+'" y="'+(pos.ty + 46)+'" fill="#888" font-size="11" text-anchor="'+anchor+'">\u2195 '+rh+'<tspan fill="#555" font-size="9"> mm</tspan></text>';
+  });
+
+  svg += '<text x="'+(W/2)+'" y="'+(bodyY - 8)+'" fill="#444" font-size="10" text-anchor="middle" font-weight="700">FRONT</text>';
+  svg += '<text x="'+(W/2)+'" y="'+(bodyY + bodyH + 16)+'" fill="#444" font-size="10" text-anchor="middle" font-weight="700">REAR</text>';
+  svg += '<path d="M'+(W/2)+' '+(bodyY+12)+' L'+(W/2-6)+' '+(bodyY+22)+' L'+(W/2+6)+' '+(bodyY+22)+' Z" fill="#2196F3" opacity="0.6"/>';
+
+  svg += '</svg>';
+  return svg;
+}
+
+// ── SVG: Suspension & damper bar charts ──────────────────────────────────────
+function renderSuspensionBars(analysis) {
+  var corners = analysis.corners, dampers = analysis.dampers;
+  var frontARB = analysis.frontARB, rearARB = analysis.rearARB;
+  var frontSpring = analysis.frontSpring, rearSpring = analysis.rearSpring;
+  var html = '';
+
+  if (frontSpring != null || rearSpring != null) {
+    var maxSpring = Math.max(frontSpring || 0, rearSpring || 0, 1);
+    html += '<h4>Spring Rates</h4>';
+    html += '<div class="bar-pair">';
+    html += '<div><div class="bar-pair-label">Front avg</div>'
+      + '<div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:'+((frontSpring/maxSpring*100).toFixed(0))+'%;background:#2196F3"></div></div></div>'
+      + '<div class="bar-pair-value" style="color:#64b5f6">'+(frontSpring != null ? frontSpring + ' N/mm' : '\u2014')+'</div></div>';
+    html += '<div><div class="bar-pair-label">Rear avg</div>'
+      + '<div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:'+((rearSpring/maxSpring*100).toFixed(0))+'%;background:#f44336"></div></div></div>'
+      + '<div class="bar-pair-value" style="color:#ef9a9a">'+(rearSpring != null ? rearSpring + ' N/mm' : '\u2014')+'</div></div>';
+    html += '</div>';
+    if (frontSpring && rearSpring) {
+      var ratio = (frontSpring / rearSpring).toFixed(2);
+      var cls = ratio > 1.05 ? 'front-bias' : ratio < 0.95 ? 'rear-bias' : 'balanced';
+      html += '<div style="text-align:center;margin-bottom:12px"><span style="font-size:11px;color:#555">F/R Ratio</span> <span class="ratio-badge '+cls+'">'+ratio+'</span></div>';
+    }
+  }
+
+  if (frontARB != null || rearARB != null) {
+    var maxARB = Math.max(frontARB || 0, rearARB || 0, 1);
+    html += '<h4>Anti-Roll Bars</h4>';
+    html += '<div class="bar-pair">';
+    html += '<div><div class="bar-pair-label">Front</div>'
+      + '<div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:'+(((frontARB||0)/maxARB*100).toFixed(0))+'%;background:#2196F3"></div></div></div>'
+      + '<div class="bar-pair-value" style="color:#64b5f6">'+(frontARB != null ? frontARB : '\u2014')+'</div></div>';
+    html += '<div><div class="bar-pair-label">Rear</div>'
+      + '<div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:'+(((rearARB||0)/maxARB*100).toFixed(0))+'%;background:#f44336"></div></div></div>'
+      + '<div class="bar-pair-value" style="color:#ef9a9a">'+(rearARB != null ? rearARB : '\u2014')+'</div></div>';
+    html += '</div>';
+  }
+
+  var frontBR = (corners.LF.bumpRubber != null && corners.RF.bumpRubber != null) ? (corners.LF.bumpRubber + corners.RF.bumpRubber) / 2 : null;
+  var rearBR = (corners.LR.bumpRubber != null && corners.RR.bumpRubber != null) ? (corners.LR.bumpRubber + corners.RR.bumpRubber) / 2 : null;
+  if (frontBR != null || rearBR != null) {
+    var maxBR = Math.max(frontBR || 0, rearBR || 0, 0.001);
+    html += '<h4>Bump Rubber Gap</h4>';
+    html += '<div class="bar-pair">';
+    html += '<div><div class="bar-pair-label">Front avg</div>'
+      + '<div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:'+(((frontBR||0)/maxBR*100).toFixed(0))+'%;background:#2196F3"></div></div></div>'
+      + '<div class="bar-pair-value" style="color:#64b5f6">'+(frontBR != null ? (frontBR*1000).toFixed(0) + ' mm' : '\u2014')+'</div></div>';
+    html += '<div><div class="bar-pair-label">Rear avg</div>'
+      + '<div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:'+(((rearBR||0)/maxBR*100).toFixed(0))+'%;background:#f44336"></div></div></div>'
+      + '<div class="bar-pair-value" style="color:#ef9a9a">'+(rearBR != null ? (rearBR*1000).toFixed(0) + ' mm' : '\u2014')+'</div></div>';
+    html += '</div>';
+  }
+
+  var damperModes = Object.entries(dampers);
+  var hasDampers = damperModes.some(function(entry) { return entry[1].front != null || entry[1].rear != null; });
+  if (hasDampers) {
+    html += '<h4>Damper Settings</h4>';
+    damperModes.forEach(function(entry) {
+      var mode = entry[0], d = entry[1];
+      if (d.front == null && d.rear == null) return;
+      var max = Math.max(d.front || 0, d.rear || 0, 1);
+      var short = mode.replace('Speed ', '').replace('damping', '').trim();
+      html += '<div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.3px;margin:6px 0 4px">'+short+'</div>';
+      html += '<div class="bar-pair">';
+      html += '<div><div class="bar-pair-label">Front</div>'
+        + '<div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:'+(((d.front||0)/max*100).toFixed(0))+'%;background:#2196F3"></div></div></div>'
+        + '<div class="bar-pair-value" style="color:#64b5f6">'+(d.front != null ? d.front + ' cl' : '\u2014')+'</div></div>';
+      html += '<div><div class="bar-pair-label">Rear</div>'
+        + '<div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:'+(((d.rear||0)/max*100).toFixed(0))+'%;background:#f44336"></div></div></div>'
+        + '<div class="bar-pair-value" style="color:#ef9a9a">'+(d.rear != null ? d.rear + ' cl' : '\u2014')+'</div></div>';
+      html += '</div>';
+    });
+  }
+
+  return html;
+}
+
+// ── SVG: Aero balance diagram ────────────────────────────────────────────────
+function renderAeroDiagram(analysis) {
+  var wing = analysis.wing, frontRHSpeed = analysis.frontRHSpeed, rearRHSpeed = analysis.rearRHSpeed;
+  if (wing == null && frontRHSpeed == null && rearRHSpeed == null) return '';
+
+  var html = '';
+  var W = 300, H = 160;
+  var svg = '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:300px;height:auto;display:block;margin:0 auto">';
+  svg += '<rect width="'+W+'" height="'+H+'" fill="#111" rx="6"/>';
+
+  if (wing != null) {
+    var cx = W/2, cy = 36;
+    var angleRad = wing * Math.PI / 180;
+    svg += '<text x="'+cx+'" y="16" fill="#555" font-size="9" text-anchor="middle" font-weight="700">WING ANGLE</text>';
+    svg += '<line x1="'+(cx - 50)+'" y1="'+cy+'" x2="'+(cx + 50)+'" y2="'+cy+'" stroke="#2a2a2a" stroke-width="1"/>';
+    svg += '<line x1="'+(cx - 30)+'" y1="'+cy+'" x2="'+(cx + 30)+'" y2="'+(cy - Math.tan(angleRad)*30)+'" stroke="#2196F3" stroke-width="3" stroke-linecap="round"/>';
+    svg += '<text x="'+cx+'" y="'+(cy + 16)+'" fill="#64b5f6" font-size="14" font-weight="700" text-anchor="middle">'+wing+'\u00b0</text>';
+  }
+
+  if (frontRHSpeed != null && rearRHSpeed != null) {
+    var baseY = H - 20;
+    var groundY = baseY - 8;
+    var maxRH = Math.max(frontRHSpeed, rearRHSpeed, 1);
+    var scale = 40 / maxRH;
+    var fH = frontRHSpeed * scale;
+    var rH = rearRHSpeed * scale;
+
+    svg += '<line x1="40" y1="'+groundY+'" x2="'+(W-40)+'" y2="'+groundY+'" stroke="#333" stroke-width="1"/>';
+    svg += '<text x="40" y="'+(groundY + 12)+'" fill="#444" font-size="8" text-anchor="start">GROUND</text>';
+
+    svg += '<rect x="60" y="'+(groundY - fH)+'" width="30" height="'+fH+'" fill="#2196F3" opacity="0.4" rx="2"/>';
+    svg += '<text x="75" y="'+(groundY - fH - 6)+'" fill="#64b5f6" font-size="11" font-weight="700" text-anchor="middle">'+frontRHSpeed+' mm</text>';
+    svg += '<text x="75" y="'+(groundY - fH - 18)+'" fill="#555" font-size="9" text-anchor="middle">FRONT</text>';
+
+    svg += '<rect x="'+(W-90)+'" y="'+(groundY - rH)+'" width="30" height="'+rH+'" fill="#f44336" opacity="0.4" rx="2"/>';
+    svg += '<text x="'+(W-75)+'" y="'+(groundY - rH - 6)+'" fill="#ef9a9a" font-size="11" font-weight="700" text-anchor="middle">'+rearRHSpeed+' mm</text>';
+    svg += '<text x="'+(W-75)+'" y="'+(groundY - rH - 18)+'" fill="#555" font-size="9" text-anchor="middle">REAR</text>';
+
+    svg += '<line x1="75" y1="'+(groundY - fH)+'" x2="'+(W-75)+'" y2="'+(groundY - rH)+'" stroke="#ff9800" stroke-width="1.5" stroke-dasharray="4,3"/>';
+    var rake = rearRHSpeed - frontRHSpeed;
+    svg += '<text x="'+(W/2)+'" y="'+(Math.min(groundY - fH, groundY - rH) - 6)+'" fill="#ff9800" font-size="10" font-weight="700" text-anchor="middle">Rake: '+(rake > 0 ? '+' : '')+rake+' mm</text>';
+  }
+
+  svg += '</svg>';
+  html += svg;
+
+  if (frontRHSpeed != null && rearRHSpeed != null) {
+    var totalRH = frontRHSpeed + rearRHSpeed;
+    var frontPct = totalRH > 0 ? (rearRHSpeed / totalRH * 100) : 50;
+    html += '<div style="margin-top:10px;text-align:center">';
+    html += '<div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">Aero Balance Estimate</div>';
+    html += '<div class="aero-balance-indicator" style="justify-content:center">'
+      + '<span style="font-size:10px;color:#64b5f6;width:50px;text-align:right">Front</span>'
+      + '<div style="flex:1;max-width:200px;height:8px;background:#1e1e1e;border-radius:4px;overflow:hidden;display:flex">'
+      + '<div style="width:'+frontPct.toFixed(0)+'%;background:#2196F3;border-radius:4px 0 0 4px"></div>'
+      + '<div style="width:'+(100-frontPct).toFixed(0)+'%;background:#f44336;border-radius:0 4px 4px 0"></div>'
+      + '</div>'
+      + '<span style="font-size:10px;color:#ef9a9a;width:50px">Rear</span>'
+      + '</div>';
+    html += '</div>';
+  }
+
+  return html;
+}
+
+// ── SVG: Brake system overview ───────────────────────────────────────────────
+function renderBrakeDiagram(analysis) {
+  var brakeBias = analysis.brakeBias, frontMC = analysis.frontMC, rearMC = analysis.rearMC, brakePads = analysis.brakePads;
+  if (brakeBias == null && frontMC == null && rearMC == null) return '';
+
+  var html = '';
+
+  if (brakeBias != null) {
+    var rearBias = 100 - brakeBias;
+    html += '<div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">Brake Bias</div>';
+    html += '<div class="brake-bias-bar">'
+      + '<div class="brake-bias-front" style="width:'+brakeBias+'%">F '+brakeBias+'%</div>'
+      + '<div class="brake-bias-rear" style="width:'+rearBias+'%">R '+rearBias.toFixed(1)+'%</div>'
+      + '</div>';
+    var biasNote = brakeBias > 58 ? 'Forward bias \u2014 stable under braking, may understeer on entry'
+                   : brakeBias < 54 ? 'Rearward bias \u2014 aggressive, risk of rear lockup under heavy braking'
+                   : 'Moderate bias \u2014 good balance for most conditions';
+    html += '<div style="font-size:11px;color:#666;margin-top:4px;margin-bottom:12px">'+biasNote+'</div>';
+  }
+
+  if (frontMC != null || rearMC != null) {
+    html += '<div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;margin-top:8px">Master Cylinders</div>';
+    var maxMC = Math.max(frontMC || 0, rearMC || 0, 1);
+    html += '<div class="bar-pair">';
+    if (frontMC != null) {
+      html += '<div><div class="bar-pair-label">Front</div>'
+        + '<div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:'+(frontMC/maxMC*100).toFixed(0)+'%;background:#2196F3"></div></div></div>'
+        + '<div class="bar-pair-value" style="color:#64b5f6">'+frontMC+' mm</div></div>';
+    }
+    if (rearMC != null) {
+      html += '<div><div class="bar-pair-label">Rear</div>'
+        + '<div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:'+(rearMC/maxMC*100).toFixed(0)+'%;background:#f44336"></div></div></div>'
+        + '<div class="bar-pair-value" style="color:#ef9a9a">'+rearMC+' mm</div></div>';
+    }
+    html += '</div>';
+    if (frontMC != null && rearMC != null) {
+      var note = frontMC > rearMC ? 'Larger front MC = more front braking force & firmer pedal feel'
+                 : frontMC < rearMC ? 'Larger rear MC = more rear braking force'
+                 : 'Equal MC sizes \u2014 neutral pedal response';
+      html += '<div style="font-size:11px;color:#555;margin-top:4px">'+note+'</div>';
+    }
+  }
+
+  if (brakePads) {
+    html += '<div style="margin-top:8px;font-size:12px;color:#888">Brake pads: <span style="color:#ccc;font-weight:600">'+brakePads+'</span></div>';
+  }
+
+  return html;
+}
+
+// ── Render setup recommendations list ────────────────────────────────────────
+function renderSetupRecs(recs) {
+  if (!recs || !recs.length) return '<p style="color:#444;font-size:12px">No issues detected \u2014 setup parameters look well-balanced.</p>';
+  var order = {high: 0, medium: 1, low: 2};
+  var sorted = recs.slice().sort(function(a, b) { return (order[a.priority] || 3) - (order[b.priority] || 3); });
+  return sorted.map(function(r) {
+    return '<div class="setup-rec '+r.priority+'">'
+      + '<div class="setup-rec-head">'
+      + '<span class="setup-rec-cat">'+r.category+'</span>'
+      + '<span class="setup-rec-priority '+r.priority+'">'+r.priority+'</span>'
+      + '</div>'
+      + '<div class="setup-rec-text">'+r.text+'</div>'
+      + (r.action ? '<div class="setup-rec-action">\u2192 '+r.action+'</div>' : '')
+      + '</div>';
+  }).join('');
+}
+
+// ── Render handling tendency badge ───────────────────────────────────────────
+function renderTendencyBadge(tendency) {
+  var colors = {
+    understeer: {bg: '#0d47a1', text: '#64b5f6', icon: '\u21b0'},
+    oversteer:  {bg: '#b71c1c', text: '#ef9a9a', icon: '\u21b1'},
+    balanced:   {bg: '#1b5e20', text: '#81c784', icon: '\u2194'}
+  };
+  var c = colors[tendency] || colors.balanced;
+  return '<span style="display:inline-flex;align-items:center;gap:6px;background:'+c.bg+';color:'+c.text+';padding:4px 12px;border-radius:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.3px">'+c.icon+' '+tendency+'</span>';
+}
+
+</script>
+<script>
+// ── Populate dropdowns & preview lookups ─────────────────────────────────────
+var carData   = {};   // id → {name, class, image_url}
+var trackData = {};   // id → {name, country, map_url}
+
+async function loadOptions() {
+  var resp = await Promise.all([
+    fetch('/api/cars').then(function(r) { return r.json(); }),
+    fetch('/api/tracks').then(function(r) { return r.json(); }),
+  ]);
+  var cars = resp[0], tracks = resp[1];
+
+  var carSel   = document.getElementById('car-select');
+  var trackSel = document.getElementById('track-select');
+
+  cars.forEach(function(c) {
+    carData[c.id] = c;
+    var opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.name + (c.class ? ' ('+c.class+')' : '');
+    carSel.appendChild(opt);
+  });
+
+  tracks.forEach(function(t) {
+    trackData[t.id] = t;
+    var opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = t.name + (t.country ? ' \u2014 '+t.country : '');
+    trackSel.appendChild(opt);
+  });
+  // URL params from Setup Library take priority, then fall back to localStorage
+  var urlParams  = new URLSearchParams(window.location.search);
+  var urlCar     = urlParams.get('car');
+  var urlTrack   = urlParams.get('track');
+  var savedCar   = urlCar   || localStorage.getItem('iracing-car');
+  var savedTrack = urlTrack || localStorage.getItem('iracing-track');
+  if (savedCar)   document.getElementById('car-select').value   = savedCar;
+  if (savedTrack) document.getElementById('track-select').value = savedTrack;
+  if (urlCar || urlTrack) {
+    document.getElementById('library-banner').style.display = 'flex';
+  }
+  updatePreview();
+}
+loadOptions();
+
+// ── Preview panel ─────────────────────────────────────────────────────────────
+function updatePreview() {
+  var carId   = document.getElementById('car-select').value;
+  var trackId = document.getElementById('track-select').value;
+  if (carId)   localStorage.setItem('iracing-car',   carId);
+  if (trackId) localStorage.setItem('iracing-track', trackId);
+  var bar     = document.getElementById('preview-bar');
+
+  var carCard   = document.getElementById('car-preview');
+  var trackCard = document.getElementById('track-preview');
+
+  if (carId && carData[carId]) {
+    var c = carData[carId];
+    document.getElementById('car-preview-name').textContent  = c.name;
+    document.getElementById('car-preview-class').textContent = c.class || '';
+    var img   = document.getElementById('car-img');
+    var noImg = document.getElementById('car-no-img');
+    if (c.image_url) {
+      img.src = c.image_url;
+      img.style.display    = 'block';
+      noImg.style.display  = 'none';
+    } else {
+      img.style.display    = 'none';
+      noImg.style.display  = 'flex';
+    }
+    carCard.classList.remove('hidden');
+  } else {
+    carCard.classList.add('hidden');
+  }
+
+  if (trackId && trackData[trackId]) {
+    var t = trackData[trackId];
+    document.getElementById('track-preview-name').textContent    = t.name;
+    document.getElementById('track-preview-country').textContent = t.country || '';
+    var img   = document.getElementById('track-img');
+    var noImg = document.getElementById('track-no-img');
+    if (t.map_url) {
+      img.src = t.map_url;
+      img.style.display    = 'block';
+      noImg.style.display  = 'none';
+    } else {
+      img.style.display    = 'none';
+      noImg.style.display  = 'flex';
+    }
+    trackCard.classList.remove('hidden');
+  } else {
+    trackCard.classList.add('hidden');
+  }
+
+  var anyVisible = (carId && carData[carId]) || (trackId && trackData[trackId]);
+  bar.classList.toggle('visible', !!anyVisible);
+}
+
+document.getElementById('car-select').addEventListener('change', updatePreview);
+document.getElementById('track-select').addEventListener('change', updatePreview);
+
+// ── File handling ─────────────────────────────────────────────────────────────
+var dz = document.getElementById('dz');
+var fi = document.getElementById('fi');
+
+dz.addEventListener('dragover',  function(e) { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', function() { dz.classList.remove('over'); });
+dz.addEventListener('drop', function(e) {
+  e.preventDefault(); dz.classList.remove('over');
+  if (e.dataTransfer.files[0]) {
+    window._excludedLaps = new Set();
+    var reBtn2 = document.getElementById('reanalyze-btn');
+    if (reBtn2) reBtn2.style.display = 'none';
+    go(e.dataTransfer.files[0]);
+  }
+});
+fi.addEventListener('change', function() {
+  if (fi.files[0]) {
+    window._excludedLaps = new Set();
+    var reBtn2 = document.getElementById('reanalyze-btn');
+    if (reBtn2) reBtn2.style.display = 'none';
+    go(fi.files[0]);
+  }
+});
+
+async function go(file) {
+  if (!file) return;
+  window._ibtFile = file;
+  var carId   = document.getElementById('car-select').value;
+  var trackId = document.getElementById('track-select').value;
+
+  setStatus('Parsing ' + file.name + ' \u2026');
+  document.getElementById('results').style.display = 'none';
+
+  var form = new FormData();
+  form.append('file',     file);
+  form.append('car',      carId);
+  form.append('track',    trackId);
+  form.append('air_temp_f', document.getElementById('air-temp').value || '');
+  form.append('excluded_laps', JSON.stringify(Array.from(window._excludedLaps)));
+
+  try {
+    var res  = await fetch('/api/analyze', { method: 'POST', body: form });
+    var data = await res.json();
+    if (data.error) { setStatus('Error: ' + data.error); return; }
+    setStatus('');
+    render(data);
+    var det = data.detected || {};
+    if (det.auto_detected_car && det.car_id) {
+      document.getElementById('car-select').value = det.car_id;
+    }
+    if (det.auto_detected_track && det.track_id) {
+      document.getElementById('track-select').value = det.track_id;
+    }
+    if (det.auto_detected_car || det.auto_detected_track) {
+      updatePreview();
+    }
+  } catch(e) { setStatus('Error: ' + e.message); }
+}
+
+function setStatus(msg) {
+  var el = document.getElementById('status');
+  el.textContent = msg;
+}
+
+window._selectedLap = null;
+window._excludedLaps = new Set();
+
+function toggleExcludeLap(lapNum) {
+  if (window._excludedLaps.has(lapNum)) {
+    window._excludedLaps.delete(lapNum);
+  } else {
+    window._excludedLaps.add(lapNum);
+  }
+  document.querySelectorAll('[data-lap="'+lapNum+'"]').forEach(function(el) {
+    el.classList.toggle('lap-excluded', window._excludedLaps.has(lapNum));
+  });
+  var btn = document.getElementById('reanalyze-btn');
+  if (btn) btn.style.display = window._excludedLaps.size > 0 ? 'inline-flex' : 'none';
+}
+
+function selectLap(lapNum) {
+  window._selectedLap = (window._selectedLap === lapNum) ? null : lapNum;
+  document.querySelectorAll('.lap-row[data-lap]').forEach(function(el) {
+    el.style.outline = (parseInt(el.dataset.lap) === window._selectedLap) ? '2px solid #2196F3' : '';
+    el.style.background = (parseInt(el.dataset.lap) === window._selectedLap) ? '#0d2a40' : '';
+  });
+  document.querySelectorAll('.tt-row[data-lap]').forEach(function(el) {
+    el.style.outline = (parseInt(el.dataset.lap) === window._selectedLap) ? '2px solid #2196F3' : '';
+    el.style.background = (parseInt(el.dataset.lap) === window._selectedLap) ? '#0d2a40' : '';
+  });
+  document.querySelectorAll('[data-lap-dot]').forEach(function(el) {
+    var isSelected = parseInt(el.dataset.lapDot) === window._selectedLap;
+    el.setAttribute('r', isSelected ? '7' : '4');
+    el.setAttribute('stroke-width', isSelected ? '2.5' : '1');
+  });
+}
+
+function reset() {
+  document.getElementById('results').style.display     = 'none';
+  document.getElementById('upload-wrap').style.display = '';
+  document.getElementById('fi').value = '';
+  setStatus('');
+  window._trackMapData = null;
+  updatePreview();
+}
+
+// ── Rendering helpers ─────────────────────────────────────────────────────────
+function tempClass(t) {
+  return t < 167 ? 'tc-cold' : t < 203 ? 'tc-ok' : t < 230 ? 'tc-warm' : 'tc-hot';
+}
+
+function fmtLap(s) {
+  if (!s) return null;
+  var m = Math.floor(s / 60);
+  var r = (s % 60).toFixed(3).padStart(6, '0');
+  return m + ':' + r;
+}
+
+function tyreCard(label, td, psi) {
+  if (!td) return '<div class="tyre-card"><h3>'+label+'</h3>'
+    + '<p style="color:#444;font-size:12px">No data in telemetry</p></div>';
+  var sStr = (td.spread >= 0 ? '+' : '') + td.spread.toFixed(1) + ' \u00b0F';
+  var pStr = psi != null ? psi.toFixed(1) + ' psi' : '\u2014';
+  return '<div class="tyre-card"><h3>'+label+'</h3>'
+    + '<div class="temp-bars">'
+    + ['inner','mid','outer'].map(function(k) {
+        return '<div class="temp-col">'
+          + '<div class="lbl">'+k+'</div>'
+          + '<div class="temp-box '+tempClass(td[k])+'">'+td[k].toFixed(0)+'\u00b0F</div>'
+          + '</div>';
+      }).join('')
+    + '</div>'
+    + '<div class="tyre-meta">'
+    + '<div>Avg <em>'+td.avg.toFixed(0)+' \u00b0F</em></div>'
+    + '<div>Spread <em>'+sStr+'</em></div>'
+    + '<div>Hot <em>'+pStr+'</em></div>'
+    + '</div></div>';
+}
+
+function renderTrackTempBadge(trackTempF, airTempF) {
+  if (!trackTempF && !airTempF) return '';
+  var parts = [];
+  if (trackTempF != null) {
+    var c = Math.round((trackTempF - 32) * 5 / 9);
+    var col  = trackTempF < 59  ? '#60a5fa' :
+               trackTempF < 77  ? '#86efac' :
+               trackTempF < 95  ? '#fbbf24' :
+                                  '#f87171';
+    var label = trackTempF < 59  ? 'Cold' :
+                trackTempF < 77  ? 'Cool' :
+                trackTempF < 95  ? 'Warm' : 'Hot';
+    parts.push('<span style="display:inline-flex;align-items:center;gap:6px;background:#181818;border:1px solid '+col+';border-radius:8px;padding:5px 14px;font-size:13px">'
+      + '<span style="font-size:16px">\ud83c\udf21</span>'
+      + '<span style="color:#888;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Track</span>'
+      + '<span style="color:'+col+';font-weight:700">'+trackTempF+' \u00b0F</span>'
+      + '<span style="color:#666;font-size:11px">('+c+' \u00b0C)</span>'
+      + '<span style="background:'+col+';color:#111;border-radius:4px;padding:1px 7px;font-size:11px;font-weight:700">'+label+'</span>'
+      + '</span>');
+  }
+  if (airTempF != null) {
+    var c = Math.round((airTempF - 32) * 5 / 9);
+    parts.push('<span style="display:inline-flex;align-items:center;gap:6px;background:#181818;border:1px solid #475569;border-radius:8px;padding:5px 14px;font-size:13px">'
+      + '<span style="font-size:16px">\ud83d\udca8</span>'
+      + '<span style="color:#888;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Air</span>'
+      + '<span style="color:#cbd5e1;font-weight:700">'+airTempF+' \u00b0F</span>'
+      + '<span style="color:#666;font-size:11px">('+c+' \u00b0C)</span>'
+      + '</span>');
+  }
+  var note = trackTempF != null
+    ? (trackTempF < 68 ? ' Cold track \u2014 start with pressures 0.5\u20131 psi higher than baseline.' :
+       trackTempF > 90 ? ' Hot track \u2014 pressures will build quickly; check hot readings carefully.' : '')
+    : '';
+  return '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px">'
+    + parts.join('')
+    + (note ? '<span style="font-size:12px;color:#94a3b8;font-style:italic">'+note+'</span>' : '')
+    + '</div>';
+}
+
+function renderBalance(b) {
+  if (!b || (!b.front_avg && !b.left_avg)) return '';
+  var frd = b.front_rear_diff;
+  var lrd = b.left_right_diff;
+  var items = [];
+  if (b.front_avg != null && b.rear_avg != null) {
+    var diff = frd > 0 ? '+'+frd.toFixed(1)+' rear' : (-frd).toFixed(1)+' front';
+    items.push('<div class="balance-item">'
+        + '<div class="lbl">Front / Rear</div>'
+        + '<div class="val">'+b.front_avg+'\u00b0F / '+b.rear_avg+'\u00b0F</div>'
+        + '<div class="balance-diff">'+diff+' hotter</div></div>');
+  }
+  if (b.left_avg != null && b.right_avg != null) {
+    var diff2 = lrd > 0 ? '+'+lrd.toFixed(1)+' right' : (-lrd).toFixed(1)+' left';
+    items.push('<div class="balance-item">'
+        + '<div class="lbl">Left / Right</div>'
+        + '<div class="val">'+b.left_avg+'\u00b0F / '+b.right_avg+'\u00b0F</div>'
+        + '<div class="balance-diff">'+diff2+' hotter</div></div>');
+  }
+  if (!items.length) return '';
+  return '<div class="section-label">Tyre balance</div>'
+    + '<div class="balance-row">'+items.join('')+'</div>';
+}
+
+function renderHandling(h) {
+  if (!h || !Object.keys(h).length) return '';
+  var rows = Object.entries(h).map(function(entry) {
+    var name = entry[0], d = entry[1];
+    var t   = d.tendency || 'no data';
+    var cls = t === 'understeer' ? 'b-us' : t === 'neutral' ? 'b-neu'
+              : t === 'oversteer'  ? 'b-os' : 'b-nd';
+    return '<div class="sector-row">'
+      + '<div class="s-name">'+name+'</div>'
+      + '<span class="badge '+cls+'">'+t+'</span>'
+      + '</div>';
+  }).join('');
+  return '<div class="section-label">Handling balance by sector</div>'
+    + '<div class="sector-table">'+rows+'</div>';
+}
+
+function renderBrake(b) {
+  if (!b || !Object.keys(b).length) return '';
+  var items = [];
+
+  if (b.avg_bias_front_pct != null) {
+    var rear = (100 - b.avg_bias_front_pct).toFixed(1);
+    items.push('<div class="brake-item"><div class="lbl">Bias Setting</div><div class="val">'+b.avg_bias_front_pct.toFixed(1)+'% Front</div><div class="sub">'+rear+'% Rear</div></div>');
+  }
+  if (b.actual_front_bias_pct != null) {
+    items.push('<div class="brake-item"><div class="lbl">Actual Split</div><div class="val">'+b.actual_front_bias_pct.toFixed(1)+'% Front</div><div class="sub">from line pressures</div></div>');
+  }
+  if (b.peak_brake_press_psi != null) {
+    items.push('<div class="brake-item"><div class="lbl">Peak Pressure</div><div class="val">'+b.peak_brake_press_psi+' psi</div></div>');
+  }
+  if (b.brake_events != null) {
+    items.push('<div class="brake-item"><div class="lbl">Brake Events</div><div class="val">'+b.brake_events+'</div></div>');
+  }
+  if (b.avg_peak_brake_pct != null) {
+    items.push('<div class="brake-item"><div class="lbl">Avg Peak Input</div><div class="val">'+b.avg_peak_brake_pct+'%</div></div>');
+  }
+  if (b.brake_consistency != null) {
+    var pct   = Math.min(b.brake_consistency * 3, 100);
+    var color = b.brake_consistency < 5 ? '#4caf50' : b.brake_consistency < 12 ? '#ff9800' : '#f44336';
+    var label = b.brake_consistency < 5 ? 'Consistent' : b.brake_consistency < 12 ? 'Moderate' : 'Inconsistent';
+    items.push('<div class="brake-item"><div class="lbl">Consistency (\u03c3)</div><div class="val">'+label+' <span style="color:'+color+';font-size:12px">\u00b1'+b.brake_consistency+'%</span></div><div class="consistency-bar"><div class="consistency-fill" style="width:'+pct+'%;background:'+color+'"></div></div></div>');
+  }
+  if (!items.length) return '';
+  return '<div class="section-label">Brake analysis</div><div class="brake-row">'+items.join('')+'</div>';
+}
+
+function renderOverlap(o) {
+  if (!o) return '';
+  var pct = o.overall_pct;
+  var color = pct < 3 ? '#4caf50' : pct < 8 ? '#ff9800' : '#f44336';
+  var desc  = pct < 3
+    ? 'Minimal overlap \u2014 clean pedal separation.'
+    : pct < 8
+    ? 'Moderate overlap \u2014 likely intentional trail braking. Check sector breakdown.'
+    : 'High overlap \u2014 review technique. May indicate unintentional input or a setup balance issue.';
+
+  var sectorHtml = '';
+  if (o.by_sector) {
+    var rows = Object.entries(o.by_sector).map(function(entry) {
+      var name = entry[0], p = entry[1];
+      var w     = Math.min(p * 5, 100);
+      var c     = p < 3 ? '#4caf50' : p < 8 ? '#ff9800' : '#f44336';
+      return '<div class="overlap-sector-row">'
+        + '<div class="overlap-sec-name">'+name+'</div>'
+        + '<div class="overlap-bar-wrap"><div class="overlap-bar-fill" style="width:'+w+'%;background:'+c+'"></div></div>'
+        + '<div class="overlap-sec-pct">'+p+'%</div>'
+        + '</div>';
+    }).join('');
+    sectorHtml = '<div class="overlap-sectors">'+rows+'</div>';
+  }
+
+  return '<div class="section-label">Throttle / brake overlap</div>'
+    + '<div class="overlap-summary">'
+    + '<div class="overlap-pct-big" style="color:'+color+'">'+pct+'%</div>'
+    + '<div class="overlap-desc">'+desc+'</div>'
+    + '</div>'
+    + sectorHtml;
+}
+
+function renderSetupCard(sc, car, track) {
+  if (!sc) return '';
+  var t = sc.tyres || {};
+  var pressures = t.pressures || [];
+  var cambers   = t.camber   || [];
+  var susp      = sc.suspension || [];
+
+  var psiCells = pressures.map(function(p) {
+    if (p.status === 'no_data') return '<div class="sc-psi-cell"><div class="sc-psi-corner">'+p.corner+'</div><div class="sc-psi-hot psi-ok" style="font-size:13px;color:#333">No data</div></div>';
+    var cls   = p.status === 'over' ? 'psi-over' : p.status === 'under' ? 'psi-under' : 'psi-ok';
+    var adjCls = p.status === 'over' ? 'adj-over' : p.status === 'under' ? 'adj-under' : 'adj-ok';
+    var adjStr = p.status === 'ok'
+      ? '\u2713 On target'
+      : (p.cold_adj > 0 ? '+'+p.cold_adj : ''+p.cold_adj) + ' psi cold';
+    return '<div class="sc-psi-cell"><div class="sc-psi-corner">'+p.corner+'</div><div class="sc-psi-hot '+cls+'">'+p.hot_psi+' <span style="font-size:11px;font-weight:400">psi</span></div><div class="sc-psi-target">target '+p.target_hot_psi+' psi hot</div><div class="sc-psi-adj '+adjCls+'">'+adjStr+'</div></div>';
+  }).join('');
+
+  var camberHtml = '';
+  if (cambers.length) {
+    var rows = cambers.map(function(c) {
+      var dir = c.direction === 'add' ? 'Add' : 'Reduce';
+      var why = c.direction === 'add'
+        ? 'outer '+Math.abs(c.spread_f)+'\u00b0F hotter \u2014 rolling onto outside edge'
+        : 'inner '+Math.abs(c.spread_f)+'\u00b0F hotter \u2014 too much negative camber';
+      return '<div class="sc-camber-row"><div class="sc-camber-corner">'+c.corner+'</div><div class="sc-camber-action">'+dir+' negative camber <b>'+c.range+'</b></div><div class="sc-camber-detail">'+why+'</div></div>';
+    }).join('');
+    camberHtml = '<div class="sc-section"><div class="sc-section-title">Camber</div>'+rows+'</div>';
+  }
+
+  var suspHtml = '';
+  if (susp.length) {
+    var sectorOrder = [];
+    var bySector = {};
+    susp.forEach(function(s) {
+      var sec = s.sector || 'ALL';
+      if (!bySector[sec]) { bySector[sec] = []; sectorOrder.push(sec); }
+      bySector[sec].push(s);
+    });
+    var groups = sectorOrder.map(function(sec) {
+      var items = bySector[sec].map(function(s) {
+        if (s.issue === 'neutral') {
+          return '<div class="sc-susp-item" style="color:#4caf50;font-size:.82rem;padding:6px 0">\u2713 No suspension changes needed</div>';
+        }
+        var optItems = s.options.map(function(o, i) {
+          return '<div class="sc-option"><span class="sc-opt-num">'+(i+1)+'</span><span class="sc-opt-text">'+o+'</span></div>';
+        }).join('');
+        return '<div class="sc-susp-item"><div class="sc-susp-label"><span class="sc-susp-name">'+s.label+'</span><span class="sc-priority-badge '+s.priority+'">'+s.priority+'</span></div><div class="sc-options">'+optItems+'</div></div>';
+      }).join('');
+      var secHeader = sec !== 'ALL'
+        ? '<div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;padding:6px 0 2px 0;margin-top:4px">'+sec+'</div>'
+        : '';
+      return secHeader + items;
+    }).join('');
+    suspHtml = '<div class="sc-section"><div class="sc-section-title">Suspension \u2014 by sector</div>'+groups+'</div>';
+  }
+
+  if (!psiCells && !camberHtml && !suspHtml) return '';
+
+  return '<div class="section-label">Setup card'
+    + '<button class="btn-print" onclick="printCard()" style="float:right;margin-top:-2px">&#128438; Print / Save PDF</button>'
+    + '</div>'
+    + '<div class="setup-card" id="setup-card-block">'
+    + '<div class="sc-header"><span class="sc-title">Garage adjustments \u2014 '+(car || 'Car')+' at '+(track || 'Track')+'</span></div>'
+    + '<div class="sc-section"><div class="sc-section-title">Tyre pressures \u2014 adjust cold to hit hot targets</div><div class="sc-psi-grid">'+psiCells+'</div></div>'
+    + camberHtml
+    + suspHtml
+    + '</div>';
+}
+
+function printCard() {
+  var card = document.getElementById('setup-card-block');
+  if (!card) return;
+  var win = window.open('', '_blank');
+  win.document.write('<!DOCTYPE html><html><head><title>Setup Card</title>'
+    + '<style>'
+    + 'body{font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif;background:#fff;color:#111;padding:24px;font-size:13px}'
+    + 'h2{font-size:16px;margin-bottom:16px}'
+    + '.sc-psi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}'
+    + '.sc-psi-cell{border:1px solid #ddd;border-radius:6px;padding:10px;text-align:center}'
+    + '.sc-psi-corner{font-size:10px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px}'
+    + '.sc-psi-hot{font-size:18px;font-weight:700}'
+    + '.sc-psi-hot.psi-over{color:#c00}.sc-psi-hot.psi-under{color:#00c}.sc-psi-hot.psi-ok{color:#080}'
+    + '.sc-psi-target{font-size:11px;color:#888;margin-top:2px}'
+    + '.sc-psi-adj{font-size:12px;font-weight:700;margin-top:6px}'
+    + '.adj-over{color:#c00}.adj-under{color:#00c}.adj-ok{color:#080}'
+    + '.section{margin:16px 0}'
+    + '.sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#999;margin-bottom:8px}'
+    + '.camber-row{display:flex;gap:10px;padding:4px 0;border-bottom:1px solid #eee}'
+    + '.susp-item{padding:8px 0;border-bottom:1px solid #eee}'
+    + '.susp-label{font-weight:600;margin-bottom:4px}'
+    + '.option{display:flex;gap:6px;font-size:12px;color:#444;margin:2px 0}'
+    + '.opt-num{color:#7c3aed;font-weight:700;width:16px}'
+    + '@media print{body{padding:0}}'
+    + '</style></head><body>' + card.innerHTML + '</body></html>');
+  win.document.close();
+  win.print();
 }
 
 // ── Stints ─────────────────────────────────────────────────────────────────────
 function renderStints(stints) {
   if (!stints || stints.length < 2) return '';
-  const rows = stints.map(s => `
-    <div class="stint-row">
-      <div style="font-weight:700;color:#aaa">Stint ${s.stint}</div>
-      <div>L${s.start_lap}–${s.end_lap}</div>
-      <div>${s.lap_count} laps</div>
-      <div>${fmtLap(s.avg_lap_s) || '—'}</div>
-      <div style="color:#c084fc">${fmtLap(s.best_lap_s) || '—'}</div>
-      <div>${s.fuel_used_gal != null ? s.fuel_used_gal.toFixed(2) + ' gal' : '—'}</div>
-    </div>`).join('');
-  return `<div class="section-label">Stint analysis</div>
-<div class="stint-table">
-  <div class="stint-row stint-header">
-    <div>Stint</div><div>Laps</div><div>Count</div><div>Avg time</div><div>Best time</div><div>Fuel used</div>
-  </div>
-  ${rows}
-</div>`;
+  var rows = stints.map(function(s) {
+    return '<div class="stint-row">'
+      + '<div style="font-weight:700;color:#aaa">Stint '+s.stint+'</div>'
+      + '<div>L'+s.start_lap+'\u2013'+s.end_lap+'</div>'
+      + '<div>'+s.lap_count+' laps</div>'
+      + '<div>'+(fmtLap(s.avg_lap_s) || '\u2014')+'</div>'
+      + '<div style="color:#c084fc">'+(fmtLap(s.best_lap_s) || '\u2014')+'</div>'
+      + '<div>'+(s.fuel_used_gal != null ? s.fuel_used_gal.toFixed(2) + ' gal' : '\u2014')+'</div>'
+      + '</div>';
+  }).join('');
+  return '<div class="section-label">Stint analysis</div>'
+    + '<div class="stint-table">'
+    + '<div class="stint-row stint-header"><div>Stint</div><div>Laps</div><div>Count</div><div>Avg time</div><div>Best time</div><div>Fuel used</div></div>'
+    + rows
+    + '</div>';
 }
 
 // ── Compare ───────────────────────────────────────────────────────────────────
 function toggleCompare() {
-  const wrap = document.getElementById('compare-wrap');
+  var wrap = document.getElementById('compare-wrap');
   wrap.classList.toggle('visible');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  ['a','b'].forEach(id => {
-    const fi = document.getElementById(`cmp-fi-${id}`);
-    const btn = document.getElementById(`cmp-btn-${id}`);
+function toggleStoPanel() {
+  var p = document.getElementById('sto-panel');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+
+async function handleStoDrop(e) {
+  e.preventDefault();
+  var file = e.dataTransfer.files[0];
+  if (file) await handleStoFile(file);
+}
+
+async function handleStoFile(file) {
+  if (!file || !file.name.endsWith('.sto')) {
+    alert('Please drop a .sto iRacing setup file.'); return;
+  }
+  document.getElementById('sto-drop').style.display    = 'none';
+  document.getElementById('sto-loading').style.display = 'block';
+  document.getElementById('sto-analysis-output').style.display = 'none';
+
+  var fd = new FormData();
+  fd.append('file', file);
+  var data;
+  try {
+    var res = await fetch('/api/sto-decode', {method: 'POST', body: fd});
+    data = await res.json();
+  } catch (e) {
+    document.getElementById('sto-loading').style.display = 'none';
+    document.getElementById('sto-drop').style.display = '';
+    alert('Error decoding setup file: ' + e.message);
+    return;
+  }
+  document.getElementById('sto-loading').style.display = 'none';
+
+  if (data.error) {
+    document.getElementById('sto-drop').style.display = '';
+    var msg = data.error === 'unsupported_car'
+      ? 'This car is not supported by the decoder (setupdelta does not have a mapping for it).'
+      : 'Could not decode this setup file: ' + data.error;
+    alert(msg);
+    return;
+  }
+
+  var lastResult = window._lastAnalysisResult || null;
+
+  var tabs   = data.tabs || {};
+  var tabNames = Object.keys(tabs);
+
+  var setupAnalysis = analyzeSetup(tabs, data.car_config || null);
+  window._lastSetupAnalysis = setupAnalysis;
+
+  var html = '<div class="sto-analysis">';
+  html += '<div class="sto-analysis-header">'
+    + '<span class="sto-analysis-title">\ud83d\udd27 '+file.name+'</span>'
+    + '<div style="display:flex;align-items:center;gap:8px">'
+    + renderTendencyBadge(setupAnalysis.tendencySummary)
+    + (data.car_name ? '<span class="sto-car-badge">'+data.car_name+'</span>' : '')
+    + '</div></div>';
+
+  if (!lastResult) {
+    html += '<div style="padding:10px 20px;font-size:11px;color:#555;border-bottom:1px solid #1a1a1a">'
+      + '\ud83d\udca1 Analyze a telemetry file first to get cross-referenced setup insights.'
+      + '</div>';
+  } else {
+    html += '<div style="padding:10px 20px;font-size:11px;color:#4caf50;border-bottom:1px solid #1a1a1a">'
+      + '\u2713 Cross-referencing with current telemetry session'
+      + '</div>';
+  }
+
+  var allTabNames = ['Setup Analysis'].concat(tabNames);
+  html += '<div class="sto-tabs" id="sto-tab-nav">';
+  allTabNames.forEach(function(t, i) {
+    html += '<button class="sto-tab-btn'+(i===0?' active':'')+'" onclick="switchStoTab(\''+t+'\')" data-tab="'+t+'">'+t+'</button>';
+  });
+  html += '</div>';
+
+  html += '<div class="sto-tab-content" id="sto-tab-Setup_Analysis" style="display:block;max-height:none">';
+
+  html += '<div class="setup-viz-section" style="border-bottom:1px solid #1a1a1a">';
+  html += '<div class="setup-viz-title">Car Overview \u2014 Pressures, Camber & Ride Heights</div>';
+  html += '<div class="car-outline-wrap">'+renderCarOutlineSVG(setupAnalysis)+'</div>';
+  html += '</div>';
+
+  html += '<div class="setup-viz-section" style="border-bottom:1px solid #1a1a1a">';
+  html += '<div class="setup-viz-title">Suspension & Damper Balance</div>';
+  html += renderSuspensionBars(setupAnalysis);
+  html += '</div>';
+
+  var aeroHtml = renderAeroDiagram(setupAnalysis);
+  var brakeHtml = renderBrakeDiagram(setupAnalysis);
+  if (aeroHtml || brakeHtml) {
+    html += '<div class="setup-viz-section" style="border-bottom:1px solid #1a1a1a">';
+    html += '<div class="setup-viz-grid">';
+    if (aeroHtml) {
+      html += '<div class="setup-viz-card"><h4>Aero Balance</h4>'+aeroHtml+'</div>';
+    }
+    if (brakeHtml) {
+      html += '<div class="setup-viz-card"><h4>Brake System</h4>'+brakeHtml+'</div>';
+    }
+    html += '</div></div>';
+  }
+
+  html += '<div class="setup-viz-section">';
+  html += '<div class="setup-viz-title">Setup Recommendations</div>';
+  html += '<div class="setup-rec-list">'+renderSetupRecs(setupAnalysis.recs)+'</div>';
+  html += '</div>';
+
+  html += '</div>';
+
+  if (tabNames.length) {
+    tabNames.forEach(function(tabName) {
+      html += '<div class="sto-tab-content" id="sto-tab-'+tabName.replace(/\s+/g,'_')+'" style="display:none">';
+      var sections = tabs[tabName];
+      Object.entries(sections).forEach(function(entry) {
+        var sectName = entry[0], params = entry[1];
+        html += '<div class="sto-section-title">'+sectName+'</div>';
+        params.forEach(function(p) {
+          var insight = _crossRef(p.label, p.value, lastResult, setupAnalysis);
+          var rangeHtml = (p.range_min != null && p.range_max != null)
+            ? '<span class="sto-param-range">'+p.range_min+'\u2013'+p.range_max+'</span>' : '';
+          html += '<div class="sto-param-row"><span class="sto-param-label">'+p.label+'</span><span>'+rangeHtml+'<span class="sto-param-value">'+p.value+'</span></span></div>';
+          if (insight) {
+            html += '<div class="sto-insight '+insight.type+'">\u26a1 '+insight.text+'</div>';
+          }
+        });
+      });
+      html += '</div>';
+    });
+  }
+
+  if (data.notes) {
+    html += '<div class="sto-notes-block">'
+      + '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#444;margin-bottom:8px">Setup Notes</div>'
+      + '<pre class="sto-notes-pre">'+data.notes.replace(/</g,'&lt;')+'</pre>'
+      + '</div>';
+  }
+
+  html += '</div>';
+
+  var out = document.getElementById('sto-analysis-output');
+  out.innerHTML = html;
+  out.style.display = 'block';
+}
+
+function switchStoTab(name) {
+  document.querySelectorAll('.sto-tab-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.tab === name); });
+  document.querySelectorAll('.sto-tab-content').forEach(function(p) {
+    p.style.display = p.id === 'sto-tab-' + name.replace(/\s+/g,'_') ? 'block' : 'none';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  ['a','b'].forEach(function(id) {
+    var fi = document.getElementById('cmp-fi-'+id);
+    var btn = document.getElementById('cmp-btn-'+id);
     if (!fi || !btn) return;
-    fi.addEventListener('change', () => {
+    fi.addEventListener('change', function() {
       if (fi.files[0]) {
         btn.textContent = fi.files[0].name;
         btn.classList.add('has-file');
       }
-      const fa = document.getElementById('cmp-fi-a').files[0];
-      const fb = document.getElementById('cmp-fi-b').files[0];
+      var fa = document.getElementById('cmp-fi-a').files[0];
+      var fb = document.getElementById('cmp-fi-b').files[0];
       document.getElementById('btn-cmp-go').disabled = !(fa && fb);
     });
   });
 });
 
 async function runCompare() {
-  const fa = window._compareFileA;
-  const fb = window._compareFileB;
-  if (!fa || !fb) { alert('Drop both files first.'); return; }
+  var fa = document.getElementById('cmp-fi-a').files[0];
+  var fb = document.getElementById('cmp-fi-b').files[0];
+  if (!fa || !fb) return;
+  var btn = document.getElementById('btn-cmp-go');
+  btn.disabled = true; btn.textContent = 'Comparing\u2026';
+  var form = new FormData();
+  form.append('file_a', fa);
+  form.append('file_b', fb);
+  try {
+    var res  = await fetch('/api/compare', {method: 'POST', body: form});
+    var data = await res.json();
+    if (data.error) { document.getElementById('compare-results').innerHTML = '<p style="color:#f44336">'+data.error+'</p>'; return; }
+    document.getElementById('compare-results').innerHTML = renderComparison(data.a, data.b);
+  } catch(e) {
+    document.getElementById('compare-results').innerHTML = '<p style="color:#f44336">'+e.message+'</p>';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Compare \u2192';
+  }
+}
 
-  const carIdA  = document.getElementById('compare-car-a')?.value   || '';
-  const trackIdA = document.getElementById('compare-track-a')?.value || '';
-  const carIdB  = document.getElementById('compare-car-b')?.value   || '';
-  const trackIdB = document.getElementById('compare-track-b')?.value || '';
+function renderComparison(a, b) {
+  function statRow(label, aVal, bVal, lowerIsBetter) {
+    if (aVal == null && bVal == null) return '';
+    var aStr = aVal != null ? aVal : '\u2014';
+    var bStr = bVal != null ? bVal : '\u2014';
+    var aCls = '', bCls = '';
+    if (aVal != null && bVal != null && aVal !== bVal) {
+      var aWins = lowerIsBetter ? aVal < bVal : aVal > bVal;
+      aCls = aWins ? 'compare-better' : 'compare-worse';
+      bCls = aWins ? 'compare-worse'  : 'compare-better';
+    }
+    return '<div class="compare-stat-row"><span class="compare-stat-label">'+label+'</span><span class="compare-stat-val '+aCls+'">'+aStr+'</span><span class="compare-stat-val '+bCls+'">'+bStr+'</span></div>';
+  }
+  var sa = a.summary || {}, sb = b.summary || {};
+  var ma = a.meta    || {}, mb = b.meta    || {};
+  var statsHtml = '<div class="compare-stat-row" style="background:#111;border-radius:4px;padding:4px 0">'
+    + '<span class="compare-stat-label" style="font-size:10px;color:#444;text-transform:uppercase">Metric</span>'
+    + '<span style="font-size:10px;color:#2196F3;font-weight:700">A: '+(ma.filename || '?')+'</span>'
+    + '<span style="font-size:10px;color:#ff9800;font-weight:700">B: '+(mb.filename || '?')+'</span>'
+    + '</div>'
+    + statRow('Best lap', sa.best_lap_s ? fmtLap(sa.best_lap_s) : null, sb.best_lap_s ? fmtLap(sb.best_lap_s) : null, true)
+    + statRow('Avg lap',  sa.avg_lap_s  ? fmtLap(sa.avg_lap_s)  : null, sb.avg_lap_s  ? fmtLap(sb.avg_lap_s)  : null, true)
+    + statRow('Consistency', sa.lap_consistency_s ? '\u00b1'+sa.lap_consistency_s+'s' : null, sb.lap_consistency_s ? '\u00b1'+sb.lap_consistency_s+'s' : null, true)
+    + statRow('Top speed', sa.max_speed_mph ? sa.max_speed_mph+' mph' : null, sb.max_speed_mph ? sb.max_speed_mph+' mph' : null)
+    + statRow('Fuel/lap',  sa.fuel_per_lap_gal ? sa.fuel_per_lap_gal+' gal' : null, sb.fuel_per_lap_gal ? sb.fuel_per_lap_gal+' gal' : null, true)
+    + statRow('Peak lat G', sa.peak_lat_g ? sa.peak_lat_g+'g' : null, sb.peak_lat_g ? sb.peak_lat_g+'g' : null);
+  var ha = a.handling || {}, hb = b.handling || {};
+  var sectorNames = Object.keys(ha).concat(Object.keys(hb)).filter(function(v, i, a) { return a.indexOf(v) === i; });
+  var sectorRows = sectorNames.map(function(name) {
+    var da = ha[name] || {}, db = hb[name] || {};
+    var ta = da.tendency || '\u2014', tb = db.tendency || '\u2014';
+    var clsA = ta === 'understeer' ? '#2196F3' : ta === 'oversteer' ? '#f44336' : '#4caf50';
+    var clsB = tb === 'understeer' ? '#2196F3' : tb === 'oversteer' ? '#f44336' : '#4caf50';
+    return '<div class="compare-stat-row"><span class="compare-stat-label" style="font-size:11px">'+name.replace(/ \(.*\)/,'')+'</span><span style="color:'+clsA+';font-size:11px;font-weight:700">'+ta+'</span><span style="color:'+clsB+';font-size:11px;font-weight:700">'+tb+'</span></div>';
+  }).join('');
+  return '<div style="margin-top:16px">'
+    + '<div class="section-label" style="margin-top:0">Summary comparison</div>'
+    + '<div style="background:#181818;border-radius:10px;padding:14px 18px">'+statsHtml+'</div>'
+    + (sectorRows.length ? '<div class="section-label">Handling by sector</div><div style="background:#181818;border-radius:10px;padding:14px 18px">'+sectorRows+'</div>' : '')
+    + '</div>';
+}
 
-  const cfgA = { car: window.CARS_DATA[carIdA] || null, track: window.TRACKS_DATA[trackIdA] || null };
-  const cfgB = { car: window.CARS_DATA[carIdB] || null, track: window.TRACKS_DATA[trackIdB] || null };
+function renderDownforceRec(summary) {
+  if (!summary || !summary.downforce_rec) return '';
+  var dr  = summary.downforce_rec;
+  var col = dr.trim === 'High' ? '#3b82f6'
+            : dr.trim === 'Medium' ? '#8b5cf6'
+            : '#f59e0b';
+  var icon = dr.trim === 'High' ? '\u25b2\u25b2' : dr.trim === 'Medium' ? '\u25b2' : '\u25bc';
+  return '<div style="display:flex;align-items:center;gap:12px;background:#1e293b;border-left:3px solid '+col+';border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:12px">'
+    + '<span style="color:'+col+';font-size:1.1rem;font-weight:700">'+icon+'</span>'
+    + '<div>'
+    + '<span style="color:'+col+';font-weight:700;font-size:.9rem">'+dr.trim+' Downforce</span>'
+    + '<span style="color:#64748b;font-size:.8rem;margin-left:8px">recommended</span>'
+    + '<div style="color:#94a3b8;font-size:.82rem;margin-top:2px">'+dr.note+'</div>'
+    + '</div></div>';
+}
 
-  setStatus('Comparing…', 'info');
+function renderTechStatus(ts) {
+  if (!ts || !ts.corners || !Object.keys(ts.corners).length) return '';
+  var overall = ts.pass;
+  var badge   = overall
+    ? '<span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:4px;font-size:.8rem;font-weight:700">PASS</span>'
+    : '<span style="background:#dc2626;color:#fff;padding:2px 10px;border-radius:4px;font-size:.8rem;font-weight:700">FAIL</span>';
+
+  var rows = Object.entries(ts.corners).map(function(entry) {
+    var corner = entry[0], c = entry[1];
+    var col = c.status === 'fail'    ? '#ef4444'
+              : c.status === 'warning' ? '#f59e0b'
+              :                          '#22c55e';
+    var icon = c.status === 'fail' ? '\u2716' : c.status === 'warning' ? '\u26a0' : '\u2714';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #1e293b">'
+      + '<span style="color:#94a3b8;font-size:.85rem;width:36px">'+corner+'</span>'
+      + '<span style="color:#e2e8f0;font-size:.85rem">'+c.measured_mm+' mm measured</span>'
+      + '<span style="color:#64748b;font-size:.8rem">min '+c.min_mm+' mm</span>'
+      + '<span style="color:#64748b;font-size:.8rem">+'+c.margin_mm+' mm margin</span>'
+      + '<span style="color:'+col+';font-size:.9rem;font-weight:700;width:20px;text-align:right">'+icon+'</span>'
+      + '</div>';
+  }).join('');
+
+  var note = ts.series_note
+    ? '<div style="color:#64748b;font-size:.75rem;margin-top:8px;line-height:1.4">'+ts.series_note+'</div>'
+    : '';
+
+  return '<div class="section-block">'
+    + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
+    + '<h3 style="margin:0;color:#e2e8f0;font-size:.95rem">Tech Inspection \u2014 Ride Heights</h3>'
+    + badge
+    + '</div>'
+    + rows
+    + note
+    + '</div>';
+}
+
+function renderRideHeights(rh) {
+  if (!rh) return '';
+  var corners = ['LF','RF','LR','RR'];
+  var vals = corners.map(function(c) { return rh[c]; });
+  if (vals.every(function(v) { return v == null; })) return '';
+  var cells = corners.map(function(c) {
+    var v = rh[c];
+    if (v == null) return '<div style="text-align:center"><div style="font-size:11px;color:#555">'+c+'</div><div style="color:#444">\u2014</div></div>';
+    var col = v < 15 ? '#f44336' : v < 25 ? '#ff9800' : '#86efac';
+    return '<div style="text-align:center"><div style="font-size:11px;color:#777">'+c+'</div><div style="font-size:18px;font-weight:700;color:'+col+'">'+v.toFixed(1)+'</div><div style="font-size:10px;color:#555">mm</div></div>';
+  }).join('');
+  return '<div class="section-label">Ride heights</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#181818;border-radius:10px;padding:14px 18px;margin-bottom:12px">'+cells+'</div>';
+}
+
+function renderConfidence(conf, sigWarnings) {
+  var warns = (sigWarnings || []).concat((conf && conf.issues) || []);
+  if (!conf && !warns.length) return '';
+  var dq = conf ? conf.data_quality : 1;
+  var laps = conf ? conf.flying_laps : '?';
+  var barCol = dq >= 0.8 ? '#4caf50' : dq >= 0.6 ? '#ff9800' : '#f44336';
+  var labelCol = dq >= 0.8 ? '#86efac' : dq >= 0.6 ? '#fbbf24' : '#fca5a5';
+  var label = dq >= 0.8 ? 'Good' : dq >= 0.6 ? 'Fair' : 'Low';
+  var pct = Math.round(dq * 100);
+  var warnHtml = warns.length
+    ? '<ul style="margin:6px 0 0 0;padding-left:18px;color:#aaa;font-size:12px">'+warns.map(function(w) { return '<li>'+w+'</li>'; }).join('')+'</ul>'
+    : '';
+  return '<div style="background:#181818;border-radius:10px;padding:12px 18px;margin-bottom:12px;border-left:3px solid '+barCol+'">'
+    + '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+    + '<span style="font-size:12px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px">Data confidence</span>'
+    + '<span style="color:'+labelCol+';font-weight:700">'+label+' ('+pct+'%)</span>'
+    + '<span style="flex:1;height:4px;background:#222;border-radius:2px;min-width:60px"><span style="display:block;height:4px;background:'+barCol+';border-radius:2px;width:'+pct+'%"></span></span>'
+    + '<span style="color:#555;font-size:12px">'+laps+' flying lap'+(laps===1?'':'s')+'</span>'
+    + '</div>'
+    + warnHtml
+    + '</div>';
+}
+
+function renderLapTimes(lapTimes) {
+  if (!lapTimes || !lapTimes.length) return '';
+  var best = Math.min.apply(null, lapTimes.map(function(l) { return l.time_s; }));
+  var rows = lapTimes.map(function(l) {
+    var isBest   = l.time_s === best;
+    var delta    = l.time_s - best;
+    var deltaStr = isBest ? '\u2b24 Fastest' : '+' + delta.toFixed(3) + 's';
+    var isExcluded = window._excludedLaps && window._excludedLaps.has(l.lap);
+    return '<div class="lap-row'+(isBest ? ' lap-fastest' : '')+(isExcluded ? ' lap-excluded' : '')+'" data-lap="'+l.lap+'" onclick="selectLap('+l.lap+')" style="cursor:pointer;grid-template-columns:56px 1fr 1fr 40px">'
+      + '<div class="lap-num">'+l.lap+'</div>'
+      + '<div class="lap-time">'+fmtLap(l.time_s)+'</div>'
+      + '<div class="lap-delta">'+deltaStr+'</div>'
+      + '<div style="padding:2px 6px;text-align:center">'
+      + '<button onclick="event.stopPropagation();toggleExcludeLap('+l.lap+')" title="Exclude lap from analysis" style="background:none;border:1px solid #333;color:#666;border-radius:3px;padding:1px 5px;cursor:pointer;font-size:.7rem;line-height:1.2">\u2715</button>'
+      + '</div></div>';
+  }).join('');
+  var _mn = best, _mx2 = Math.max.apply(null, lapTimes.map(function(l) { return l.time_s; })), _rng = _mx2 - _mn || 1;
+  var _SW = 400, _SH = 28, _SP = 3;
+  var _sparkSegs = lapTimes.map(function(l, i) {
+    if (i === 0) return '';
+    var x1 = _SP + ((i-1)/(lapTimes.length-1))*(_SW-2*_SP);
+    var y1 = _SH - _SP - ((lapTimes[i-1].time_s - _mn)/_rng)*(_SH-2*_SP);
+    var x2 = _SP + (i/(lapTimes.length-1))*(_SW-2*_SP);
+    var y2 = _SH - _SP - ((l.time_s - _mn)/_rng)*(_SH-2*_SP);
+    var d = l.time_s - _mn;
+    var col = d < 0.3 ? '#4caf50' : d < 1.5 ? '#ff9800' : '#f44336';
+    return '<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="'+col+'" stroke-width="2" stroke-linecap="round"/>';
+  }).join('');
+  return '<div class="section-label">Lap times</div>'
+    + '<svg viewBox="0 0 400 28" style="width:100%;height:28px;display:block;margin-bottom:6px;background:#111;border-radius:6px">'+_sparkSegs+'</svg>'
+    + '<div class="lap-table">'
+    + '<div class="lap-row lap-header" style="grid-template-columns:56px 1fr 1fr 40px"><div>Lap</div><div>Time</div><div>\u0394 Best</div><div></div></div>'
+    + rows
+    + '</div>';
+}
+
+function renderRecs(recs) {
+  if (!recs || !recs.length)
+    return '<p style="color:#444;font-size:13px">No issues flagged \u2014 data looks good, or insufficient data to analyse.</p>';
+  return recs.map(function(r) {
+    return '<div class="rec '+r.priority+'">'
+      + '<div class="rec-head">'
+      + '<span class="rec-cat">'+r.category+'</span>'
+      + '<span class="rec-corner">'+r.corner+'</span>'
+      + '</div>'
+      + '<div class="rec-issue">'+r.issue+'</div>'
+      + '<div class="rec-action">\u2192 '+r.action+'</div>'
+      + (r.toe_verify ? '<div style="color:#f59e0b;font-size:.75rem;margin-top:4px">\u26a0 Toe adjustment suggested \u2014 iRacing telemetry does not report current toe angle. Verify the change is within your series\' legal adjustment range before applying.</div>' : '')
+      + '</div>';
+  }).join('');
+}
+
+function exportJSON() {
+  if (!window._analysisData) return;
+  var blob = new Blob([JSON.stringify(window._analysisData, null, 2)], {type:'application/json'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  var fname = (window._analysisData.meta && window._analysisData.meta.filename) || 'telemetry';
+  a.download = fname.replace(/\.ibt$/i,'') + '_analysis.json';
+  a.click();
+}
+function exportCSV() {
+  if (!window._analysisData) return;
+  var laps = (window._analysisData.lap_times || []);
+  if (!laps.length) return;
+  var best = Math.min.apply(null, laps.map(function(l) { return l.time_s; }));
+  var rows = [['lap','time_s','delta_s']].concat(laps.map(function(l) { return [l.lap, l.time_s.toFixed(3), (l.time_s - best).toFixed(3)]; }));
+  var csv = rows.map(function(r) { return r.join(','); }).join('\n');
+  var blob = new Blob([csv], {type:'text/csv'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  var fname = (window._analysisData.meta && window._analysisData.meta.filename) || 'telemetry';
+  a.download = fname.replace(/\.ibt$/i,'') + '_laps.csv';
+  a.click();
+}
+
+function render(data) {
+  var reBtn = document.getElementById('reanalyze-btn');
+  if (!reBtn) {
+    reBtn = document.createElement('button');
+    reBtn.id = 'reanalyze-btn';
+    reBtn.className = 'btn';
+    reBtn.style.cssText = 'display:none;margin:8px 0;background:#b45309;color:#fff;';
+    reBtn.textContent = 'Re-analyze (excluding selected laps)';
+    reBtn.onclick = function() { go(window._ibtFile); };
+    var status = document.getElementById('status');
+    if (status) status.parentNode.insertBefore(reBtn, status.nextSibling);
+  }
+  reBtn.style.display = window._excludedLaps.size > 0 ? 'inline-flex' : 'none';
+
+  window._analysisData = data;
+  var t = data.tyre_temps     || {};
+  var p = data.tyre_pressures || {};
+  var m = data.meta           || {};
+  var s = data.summary        || {};
+  var det = data.detected     || {};
+
+  var dur  = s.duration_s;
+  var topv = s.max_speed_mph;
+  var laps = s.laps_analysed;
+
+  var carLabel   = (data.car   || '') + (det.auto_detected_car   ? ' <span class="auto-badge">auto</span>' : '');
+  var trackLabel = (data.track || '') + (det.auto_detected_track ? ' <span class="auto-badge">auto</span>' : '');
+
+  var autoDetectBanner = (det.auto_detected_car || det.auto_detected_track) ? '<div style="background:#0d2a40;border-left:3px solid #2196F3;padding:8px 28px;font-size:12px;color:#64b5f6">\u26a1 Auto-detected from telemetry'+(det.auto_detected_car ? ' \u00b7 Car: <b>'+(data.car || det.car_id)+'</b>' : '')+(det.auto_detected_track ? ' \u00b7 Track: <b>'+(data.track || det.track_id)+'</b>' : '')+'</div>' : '';
+
+  var carId_selected   = document.getElementById('car-select').value;
+  var trackId_selected = document.getElementById('track-select').value;
+  var missingBanner = (!det.auto_detected_car && !carId_selected) || (!det.auto_detected_track && !trackId_selected) ? '<div style="background:#1a1000;border-left:3px solid #ff9800;padding:8px 28px;font-size:12px;color:#ffb74d">\u26a0 Could not auto-detect from telemetry \u2014 '+(det.raw_car_path ? 'CarPath: <b>'+det.raw_car_path+'</b>' : 'CarPath: <b>not found</b>')+' &nbsp;\u00b7&nbsp; '+(det.raw_track_name ? 'TrackName: <b>'+det.raw_track_name+'</b>' : 'TrackName: <b>not found</b>')+' &nbsp;\u2014 select manually above or report this so the config can be updated.</div>' : '';
+
+  var sessionType = m.session_type || null;
+  var sessionBadge = sessionType
+    ? '<span style="background:'+(sessionType.toLowerCase().includes('race') ? '#7c2d12' : '#1a2a1a')+';color:'+(sessionType.toLowerCase().includes('race') ? '#fca5a5' : '#86efac')+';border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">'+sessionType+'</span>'
+    : '';
+  var raceWarning = sessionType && sessionType.toLowerCase().includes('race')
+    ? '<div style="background:#1a0a00;border-left:3px solid #f59e0b;padding:6px 28px;font-size:12px;color:#fbbf24">\u26a0 Race session detected \u2014 tyre data may include SC laps or early-stint anomalies. Recommendations are less reliable than practice/qual data.</div>' : '';
+
+  var html = autoDetectBanner + missingBanner + raceWarning + '<div class="meta-bar">'
+    + '<div style="display:flex;align-items:center;gap:8px"><b>'+(m.filename || '')+'</b> '+sessionBadge+'</div>'
+    + '<div class="meta-car-track">'+carLabel+' &nbsp;\u00b7&nbsp; '+trackLabel+'</div>'
+    + (m.ambient_temp_f ? '<div>Air temp: <b>'+m.ambient_temp_f+' \u00b0F</b></div>' : '')
+    + (m.track_temp_f   ? '<div>Track temp: <b>'+m.track_temp_f+' \u00b0F</b></div>' : '')
+    + (laps ? '<div>Laps: <b>'+laps+'</b></div>' : '')
+    + (dur  ? '<div>Duration: <b>'+Math.floor(dur/60)+'m '+dur%60+'s</b></div>' : '')
+    + (topv ? '<div>Top speed: <b>'+topv+' mph</b></div>' : '')
+    + (s.best_lap_s ? '<div>Best: <b>'+fmtLap(s.best_lap_s)+'</b></div>' : '')
+    + (s.avg_lap_s  ? '<div>Avg lap: <b>'+fmtLap(s.avg_lap_s)+'</b></div>' : '')
+    + (s.lap_consistency_s ? '<div>Consistency: <b>\u00b1'+s.lap_consistency_s+'s</b></div>' : '')
+    + (s.fuel_per_lap_gal ? '<div>Fuel/lap: <b>'+s.fuel_per_lap_gal+' gal</b></div>' : '')
+    + (s.laps_to_empty ? '<div>Laps to empty: <b>'+s.laps_to_empty+'</b></div>' : '')
+    + (s.peak_lat_g ? '<div>Peak lat G: <b>'+s.peak_lat_g+'g</b></div>' : '')
+    + (s.peak_brake_g ? '<div>Peak brake G: <b>'+s.peak_brake_g+'g</b></div>' : '')
+    + '<div>Sample rate: <b>'+(m.tick_rate || '?')+' Hz</b></div>'
+    + '<button class="btn-reset" onclick="reset()">\u2190 Analyse another file</button>'
+    + '<button class="btn-reset" onclick="exportJSON()" style="background:#1a2a3a;border-color:#2196F3;color:#64b5f6">\u2193 JSON</button>'
+    + '<button class="btn-reset" onclick="exportCSV()" style="background:#1a2a1a;border-color:#4caf50;color:#86efac">\u2193 CSV</button>'
+    + '</div>'
+    + '<div class="page">'
+    + renderDownforceRec(data.summary)
+    + renderConfidence(data.confidence, data.signal_warnings)
+    + '<div class="section-label">Tyre temperatures &amp; hot pressures</div>'
+    + renderTrackTempBadge(m.track_temp_f, m.ambient_temp_f)
+    + ((!m.track_temp_f && m.temp_debug) ? '<div style="background:#1a0a00;border-left:3px solid #555;padding:6px 12px;font-size:11px;color:#888;margin-bottom:10px;border-radius:4px"><b style="color:#aaa">Debug \u2014 temp lines from YAML:</b><br>'+(m.temp_debug||[]).map(function(l) { return '<code>'+l+'</code>'; }).join('<br>')+'</div>' : '')
+    + '<div class="tyre-grid">'
+    + tyreCard('LF \u2014 Left Front',  t.LF, p.LF)
+    + tyreCard('RF \u2014 Right Front', t.RF, p.RF)
+    + tyreCard('LR \u2014 Left Rear',   t.LR, p.LR)
+    + tyreCard('RR \u2014 Right Rear',  t.RR, p.RR)
+    + '</div>'
+    + renderTechStatus(data.tech_status)
+    + renderRideHeights(data.ride_heights)
+    + renderBalance(data.balance)
+    + renderTyreTrend(data.tyre_trend)
+    + renderTrackMap(data.track_map)
+    + renderInputTrace(data.speed_trace)
+    + renderSpeedTrace(data.speed_trace)
+    + renderHandling(data.handling)
+    + renderBrake(data.brake)
+    + renderOverlap(data.throttle_overlap)
+    + renderStints(data.stints)
+    + renderSectorSplits(data.sector_times)
+    + renderLapDelta(data.lap_times)
+    + renderLapTimes(data.lap_times)
+    + renderSetupCard(data.setup_card, data.car, data.track)
+    + '<div class="section-label">Full recommendations</div>'
+    + '<div class="rec-list">'+renderRecs(data.recommendations)+'</div>'
+    + renderLibrarySave(data)
+    + '</div>';
+
+  var resultsEl = document.getElementById('results');
+  resultsEl.innerHTML = html;
+  resultsEl.style.display = 'block';
+  document.getElementById('upload-wrap').style.display = 'none';
+  if (window._trackMapData) setTimeout(function() { drawTrackMap(localStorage.getItem('iracing-tm-mode') || 'speed'); }, 20);
+  window._lastAnalysisResult = data;
+}
+
+function renderLibrarySave(data) {
+  var carId   = document.getElementById('car-select').value;
+  var trackId = document.getElementById('track-select').value;
+  if (!carId || !trackId) return '';
+  var carName   = data.car   ? data.car.name   : carId;
+  var trackName = data.track ? data.track.name : trackId;
+  return '<div id="library-save-block" style="background:#0c1a3d;border:1px solid #1f3a7a;border-radius:8px;padding:20px;margin-top:16px;">'
+    + '<div style="font-size:15px;font-weight:600;color:#93c5fd;margin-bottom:6px;">Save to Setup Library</div>'
+    + '<div style="font-size:13px;color:#6b90c4;margin-bottom:14px;">Append these recommendations to your <strong>'+carName+'</strong> setup at <strong>'+trackName+'</strong> in the library.</div>'
+    + '<button onclick="saveToLibrary(\''+carId+'\',\''+trackId+'\')" style="background:#1d4ed8;color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;">Save to Library</button>'
+    + '<span id="library-save-status" style="margin-left:12px;font-size:13px;"></span>'
+    + '</div>';
+}
+
+async function saveToLibrary(carKey, trackKey) {
+  var statusEl = document.getElementById('library-save-status');
+  statusEl.textContent = 'Saving\u2026';
+  statusEl.style.color = '#6b90c4';
+
+  var recs  = (window._analysisData.recommendations || []);
+  var sc    = window._analysisData.setup_card || {};
+  var lines   = [];
+
+  if (sc.tyres && sc.tyres.pressures) {
+    lines.push('TYRE PRESSURES:');
+    sc.tyres.pressures.forEach(function(t) {
+      if (t.cold_adj) lines.push('  '+t.corner+': '+(t.cold_adj > 0 ? '+' : '')+t.cold_adj+' PSI cold (hot target: '+t.target_hot_psi+' PSI)');
+    });
+  }
+  if (sc.tyres && sc.tyres.camber && sc.tyres.camber.length) {
+    lines.push('CAMBER:');
+    sc.tyres.camber.forEach(function(c) { lines.push('  '+c.corner+': '+c.direction); });
+  }
+  if (sc.suspension && sc.suspension.length) {
+    lines.push('SUSPENSION:');
+    sc.suspension.forEach(function(s) { lines.push('  ['+s.priority+'] '+s.sector+' \u2014 '+s.label+': '+(s.options||[]).join(', ')); });
+  }
+  if (recs.length) {
+    lines.push('RECOMMENDATIONS:');
+    recs.forEach(function(r) { lines.push('  ['+r.priority+'] '+r.category+(r.corner ? ' '+r.corner : '')+': '+r.issue+' \u2192 '+r.action); });
+  }
+
+  var notes = lines.join('\n');
 
   try {
-    const py   = window._pyodide;
-    const bA   = new Uint8Array(await fa.arrayBuffer());
-    const bB   = new Uint8Array(await fb.arrayBuffer());
+    var resp = await fetch('http://localhost:5057/api/advisor-notes', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ car_key: carKey, track_key: trackKey, notes: notes }),
+    });
+    var result = await resp.json();
+    if (resp.ok) {
+      statusEl.textContent = 'Saved to "'+result.setup_filename+'"';
+      statusEl.style.color = '#3fb950';
+    } else {
+      statusEl.textContent = result.error || 'Save failed';
+      statusEl.style.color = '#fca5a5';
+    }
+  } catch (e) {
+    statusEl.textContent = 'Could not reach Setup Library (is it running?)';
+    statusEl.style.color = '#fca5a5';
+  }
+}
 
-    py.globals.set('_cmp_bytes_a',   bA);
-    py.globals.set('_cmp_bytes_b',   bB);
-    py.globals.set('_cmp_cfg_a_json', JSON.stringify(cfgA));
-    py.globals.set('_cmp_cfg_b_json', JSON.stringify(cfgB));
+
+// ── Pyodide overrides (replaces Flask fetch-based functions) ─────────────────
+function loadOptions() {
+  var carSel   = document.getElementById('car-select');
+  var trackSel = document.getElementById('track-select');
+
+  var cars = Object.entries(window.CARS_DATA)
+    .sort(function(a, b) { return (a[1].name || a[0]).localeCompare(b[1].name || b[0]); });
+  cars.forEach(function(entry) {
+    var id = entry[0], c = entry[1];
+    var o = document.createElement('option');
+    o.value = id;
+    o.textContent = c.name + (c['class'] ? ' (' + c['class'] + ')' : '');
+    carSel.appendChild(o);
+    carData[id] = {name: c.name, 'class': c['class'] || '', image_url: c.image_url || ''};
+  });
+
+  var trackEntries = Object.entries(window.TRACKS_DATA)
+    .sort(function(a, b) { return (a[1].name || a[0]).localeCompare(b[1].name || b[0]); });
+  trackEntries.forEach(function(entry) {
+    var id = entry[0], t = entry[1];
+    var o = document.createElement('option');
+    o.value = id;
+    o.textContent = t.name + (t.country ? ' \u2014 ' + t.country : '');
+    trackSel.appendChild(o);
+    trackData[id] = {name: t.name, country: t.country || '', map_url: t.map_url || ''};
+  });
+
+  var savedCar   = localStorage.getItem('iracing-car');
+  var savedTrack = localStorage.getItem('iracing-track');
+  if (savedCar   && carSel.querySelector('option[value="' + savedCar + '"]'))   carSel.value   = savedCar;
+  if (savedTrack && trackSel.querySelector('option[value="' + savedTrack + '"]')) trackSel.value = savedTrack;
+  updatePreview();
+}
+
+async function go() {
+  var file = window._ibtFile;
+  if (!file) { alert('Drop an .ibt file first.'); return; }
+
+  var carId    = document.getElementById('car-select').value;
+  var trackId  = document.getElementById('track-select').value;
+  var airTempRaw = document.getElementById('air-temp') ? document.getElementById('air-temp').value : '';
+
+  var carCfg   = window.CARS_DATA[carId]   || null;
+  var trackCfg = window.TRACKS_DATA[trackId] || null;
+
+  setStatus('Analyzing\u2026', 'info');
+  document.getElementById('results').innerHTML = '';
+
+  try {
+    var bytes = new Uint8Array(await file.arrayBuffer());
+    var py = window._pyodide;
+
+    py.globals.set('_ibt_bytes',       bytes);
+    py.globals.set('_car_cfg_json',    JSON.stringify(carCfg));
+    py.globals.set('_track_cfg_json',  JSON.stringify(trackCfg));
+    py.globals.set('_tracks_dict_json', JSON.stringify(window.TRACKS_DATA));
+    py.globals.set('_cars_dict_json',   JSON.stringify(window.CARS_DATA));
+    py.globals.set('_air_temp_raw',    airTempRaw);
+    py.globals.set('_excluded_laps_json', JSON.stringify(Array.from(window._excludedLaps)));
+
+    var resultJson = await py.runPythonAsync(
+      'import json\n' +
+      '_car   = json.loads(_car_cfg_json)\n' +
+      '_trk   = json.loads(_track_cfg_json)\n' +
+      '_cars  = json.loads(_cars_dict_json)\n' +
+      '_trks  = json.loads(_tracks_dict_json)\n' +
+      '_amb   = float(_air_temp_raw) if _air_temp_raw else None\n' +
+      '_excl  = json.loads(_excluded_laps_json)\n' +
+      'json.dumps(analyzer.analyze_ibt(bytes(_ibt_bytes), _car, _trk, _amb, _cars, _trks, _excl))'
+    );
+
+    var data = JSON.parse(resultJson);
+
+    if (data.detected) {
+      var d = data.detected;
+      if (d.auto_detected_car   && d.car_id)   document.getElementById('car-select').value   = d.car_id;
+      if (d.auto_detected_track && d.track_id) document.getElementById('track-select').value = d.track_id;
+    }
+
+    render(data);
+    setStatus('Analysis complete', 'ok');
+  } catch (e) {
+    setStatus('Error: ' + e.message, 'error');
+    console.error(e);
+  }
+}
+
+async function runCompare() {
+  var fa = window._compareFileA;
+  var fb = window._compareFileB;
+  if (!fa || !fb) { alert('Drop both files first.'); return; }
+
+  setStatus('Comparing\u2026', 'info');
+
+  try {
+    var py   = window._pyodide;
+    var bA   = new Uint8Array(await fa.arrayBuffer());
+    var bB   = new Uint8Array(await fb.arrayBuffer());
+
+    var carId   = document.getElementById('car-select').value;
+    var trackId = document.getElementById('track-select').value;
+    var carCfg   = window.CARS_DATA[carId]   || null;
+    var trackCfg = window.TRACKS_DATA[trackId] || null;
+
+    py.globals.set('_cmp_bytes_a',    bA);
+    py.globals.set('_cmp_bytes_b',    bB);
+    py.globals.set('_cmp_car_json',   JSON.stringify(carCfg));
+    py.globals.set('_cmp_track_json', JSON.stringify(trackCfg));
     py.globals.set('_cars_dict_json',  JSON.stringify(window.CARS_DATA));
     py.globals.set('_tracks_dict_json', JSON.stringify(window.TRACKS_DATA));
 
-    const resultJson = await py.runPythonAsync(`
-import json
-_cfgA  = json.loads(_cmp_cfg_a_json)
-_cfgB  = json.loads(_cmp_cfg_b_json)
-_cars  = json.loads(_cars_dict_json)
-_trks  = json.loads(_tracks_dict_json)
-_a = analyzer.analyze_ibt(bytes(_cmp_bytes_a), _cfgA['car'], _cfgA['track'], None, _cars, _trks)
-_b = analyzer.analyze_ibt(bytes(_cmp_bytes_b), _cfgB['car'], _cfgB['track'], None, _cars, _trks)
-json.dumps({'a': _a, 'b': _b})
-`);
+    var resultJson = await py.runPythonAsync(
+      'import json\n' +
+      '_car  = json.loads(_cmp_car_json)\n' +
+      '_trk  = json.loads(_cmp_track_json)\n' +
+      '_cars = json.loads(_cars_dict_json)\n' +
+      '_trks = json.loads(_tracks_dict_json)\n' +
+      '_a = analyzer.analyze_ibt(bytes(_cmp_bytes_a), _car, _trk, None, _cars, _trks)\n' +
+      '_b = analyzer.analyze_ibt(bytes(_cmp_bytes_b), _car, _trk, None, _cars, _trks)\n' +
+      'json.dumps({"a": _a, "b": _b})'
+    );
 
-    const data = JSON.parse(resultJson);
+    var data = JSON.parse(resultJson);
     renderComparison(data.a, data.b);
     setStatus('Comparison complete', 'ok');
   } catch (e) {
@@ -1438,395 +2783,37 @@ json.dumps({'a': _a, 'b': _b})
   }
 }
 
-function renderComparison(a, b) {
-  function statRow(label, aVal, bVal, lowerIsBetter = false) {
-    if (aVal == null && bVal == null) return '';
-    const aStr = aVal != null ? aVal : '—';
-    const bStr = bVal != null ? bVal : '—';
-    let aCls = '', bCls = '';
-    if (aVal != null && bVal != null && aVal !== bVal) {
-      const aWins = lowerIsBetter ? aVal < bVal : aVal > bVal;
-      aCls = aWins ? 'compare-better' : 'compare-worse';
-      bCls = aWins ? 'compare-worse'  : 'compare-better';
-    }
-    return `<div class="compare-stat-row">
-      <span class="compare-stat-label">${label}</span>
-      <span class="compare-stat-val ${aCls}">${aStr}</span>
-      <span class="compare-stat-val ${bCls}">${bStr}</span>
-    </div>`;
-  }
-  const sa = a.summary || {}, sb = b.summary || {};
-  const ma = a.meta    || {}, mb = b.meta    || {};
-  const statsHtml = `
-    <div class="compare-stat-row" style="background:#111;border-radius:4px;padding:4px 0">
-      <span class="compare-stat-label" style="font-size:10px;color:#444;text-transform:uppercase">Metric</span>
-      <span style="font-size:10px;color:#2196F3;font-weight:700">A: ${ma.filename || '?'}</span>
-      <span style="font-size:10px;color:#ff9800;font-weight:700">B: ${mb.filename || '?'}</span>
-    </div>
-    ${statRow('Best lap', sa.best_lap_s ? fmtLap(sa.best_lap_s) : null, sb.best_lap_s ? fmtLap(sb.best_lap_s) : null, true)}
-    ${statRow('Avg lap',  sa.avg_lap_s  ? fmtLap(sa.avg_lap_s)  : null, sb.avg_lap_s  ? fmtLap(sb.avg_lap_s)  : null, true)}
-    ${statRow('Consistency', sa.lap_consistency_s ? '±'+sa.lap_consistency_s+'s' : null, sb.lap_consistency_s ? '±'+sb.lap_consistency_s+'s' : null, true)}
-    ${statRow('Top speed', sa.max_speed_mph ? sa.max_speed_mph+' mph' : null, sb.max_speed_mph ? sb.max_speed_mph+' mph' : null)}
-    ${statRow('Fuel/lap',  sa.fuel_per_lap_gal ? sa.fuel_per_lap_gal+' gal' : null, sb.fuel_per_lap_gal ? sb.fuel_per_lap_gal+' gal' : null, true)}
-    ${statRow('Peak lat G', sa.peak_lat_g ? sa.peak_lat_g+'g' : null, sb.peak_lat_g ? sb.peak_lat_g+'g' : null)}
-  `;
-  // Sector handling comparison
-  const ha = a.handling || {}, hb = b.handling || {};
-  const sectorNames = [...new Set([...Object.keys(ha), ...Object.keys(hb)])];
-  const sectorRows = sectorNames.map(name => {
-    const da = ha[name] || {}, db = hb[name] || {};
-    const ta = da.tendency || '—', tb = db.tendency || '—';
-    const clsA = ta === 'understeer' ? '#2196F3' : ta === 'oversteer' ? '#f44336' : '#4caf50';
-    const clsB = tb === 'understeer' ? '#2196F3' : tb === 'oversteer' ? '#f44336' : '#4caf50';
-    return `<div class="compare-stat-row">
-      <span class="compare-stat-label" style="font-size:11px">${name.replace(/ \(.*\)/,'')}</span>
-      <span style="color:${clsA};font-size:11px;font-weight:700">${ta}</span>
-      <span style="color:${clsB};font-size:11px;font-weight:700">${tb}</span>
-    </div>`;
-  }).join('');
-  return `<div style="margin-top:16px">
-  <div class="section-label" style="margin-top:0">Summary comparison</div>
-  <div style="background:#181818;border-radius:10px;padding:14px 18px">${statsHtml}</div>
-  ${sectorRows.length ? `<div class="section-label">Handling by sector</div>
-  <div style="background:#181818;border-radius:10px;padding:14px 18px">${sectorRows}</div>` : ''}
-</div>`;
-}
-
-function renderDownforceRec(summary) {
-  if (!summary || !summary.downforce_rec) return '';
-  const dr  = summary.downforce_rec;
-  const col = dr.trim === 'High' ? '#3b82f6'
-            : dr.trim === 'Medium' ? '#8b5cf6'
-            : '#f59e0b';
-  const icon = dr.trim === 'High' ? '▲▲' : dr.trim === 'Medium' ? '▲' : '▼';
-  return `<div style="display:flex;align-items:center;gap:12px;background:#1e293b;border-left:3px solid ${col};border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:12px">
-    <span style="color:${col};font-size:1.1rem;font-weight:700">${icon}</span>
-    <div>
-      <span style="color:${col};font-weight:700;font-size:.9rem">${dr.trim} Downforce</span>
-      <span style="color:#64748b;font-size:.8rem;margin-left:8px">recommended</span>
-      <div style="color:#94a3b8;font-size:.82rem;margin-top:2px">${dr.note}</div>
-    </div>
-  </div>`;
-}
-
-function renderTechStatus(ts) {
-  if (!ts || !ts.corners || !Object.keys(ts.corners).length) return '';
-  const overall = ts.pass;
-  const badge   = overall
-    ? '<span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:4px;font-size:.8rem;font-weight:700">PASS</span>'
-    : '<span style="background:#dc2626;color:#fff;padding:2px 10px;border-radius:4px;font-size:.8rem;font-weight:700">FAIL</span>';
-  const rows = Object.entries(ts.corners).map(([corner, c]) => {
-    const col = c.status === 'fail'    ? '#ef4444'
-              : c.status === 'warning' ? '#f59e0b'
-              :                          '#22c55e';
-    const icon = c.status === 'fail' ? '✖' : c.status === 'warning' ? '⚠' : '✔';
-    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #1e293b">
-      <span style="color:#94a3b8;font-size:.85rem;width:36px">${corner}</span>
-      <span style="color:#e2e8f0;font-size:.85rem">${c.measured_mm} mm measured</span>
-      <span style="color:#64748b;font-size:.8rem">min ${c.min_mm} mm</span>
-      <span style="color:#64748b;font-size:.8rem">+${c.margin_mm} mm margin</span>
-      <span style="color:${col};font-size:.9rem;font-weight:700;width:20px;text-align:right">${icon}</span>
-    </div>`;
-  }).join('');
-  const note = ts.series_note
-    ? `<div style="color:#64748b;font-size:.75rem;margin-top:8px;line-height:1.4">${ts.series_note}</div>`
-    : '';
-  return `<div class="section-block">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-      <h3 style="margin:0;color:#e2e8f0;font-size:.95rem">Tech Inspection — Ride Heights</h3>
-      ${badge}
-    </div>
-    ${rows}
-    ${note}
-  </div>`;
-}
-
-function renderRideHeights(rh) {
-  if (!rh) return '';
-  const corners = ['LF','RF','LR','RR'];
-  const vals = corners.map(c => rh[c]);
-  if (vals.every(v => v == null)) return '';
-  const cells = corners.map(c => {
-    const v = rh[c];
-    if (v == null) return `<div style="text-align:center"><div style="font-size:11px;color:#555">${c}</div><div style="color:#444">—</div></div>`;
-    const col = v < 15 ? '#f44336' : v < 25 ? '#ff9800' : '#86efac';
-    return `<div style="text-align:center"><div style="font-size:11px;color:#777">${c}</div><div style="font-size:18px;font-weight:700;color:${col}">${v.toFixed(1)}</div><div style="font-size:10px;color:#555">mm</div></div>`;
-  }).join('');
-  return `<div class="section-label">Ride heights</div>
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#181818;border-radius:10px;padding:14px 18px;margin-bottom:12px">${cells}</div>`;
-}
-
-function renderConfidence(conf, sigWarnings) {
-  const warns = (sigWarnings || []).concat((conf && conf.issues) || []);
-  if (!conf && !warns.length) return '';
-  const dq = conf ? conf.data_quality : 1;
-  const laps = conf ? conf.flying_laps : '?';
-  const barCol = dq >= 0.8 ? '#4caf50' : dq >= 0.6 ? '#ff9800' : '#f44336';
-  const labelCol = dq >= 0.8 ? '#86efac' : dq >= 0.6 ? '#fbbf24' : '#fca5a5';
-  const label = dq >= 0.8 ? 'Good' : dq >= 0.6 ? 'Fair' : 'Low';
-  const pct = Math.round(dq * 100);
-  const warnHtml = warns.length
-    ? `<ul style="margin:6px 0 0 0;padding-left:18px;color:#aaa;font-size:12px">${warns.map(w=>`<li>${w}</li>`).join('')}</ul>`
-    : '';
-  return `<div style="background:#181818;border-radius:10px;padding:12px 18px;margin-bottom:12px;border-left:3px solid ${barCol}">
-  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-    <span style="font-size:12px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px">Data confidence</span>
-    <span style="color:${labelCol};font-weight:700">${label} (${pct}%)</span>
-    <span style="flex:1;height:4px;background:#222;border-radius:2px;min-width:60px">
-      <span style="display:block;height:4px;background:${barCol};border-radius:2px;width:${pct}%"></span>
-    </span>
-    <span style="color:#555;font-size:12px">${laps} flying lap${laps===1?'':'s'}</span>
-  </div>
-  ${warnHtml}
-</div>`;
-}
-
-function renderLapTimes(lapTimes) {
-  if (!lapTimes || !lapTimes.length) return '';
-  const best = Math.min(...lapTimes.map(l => l.time_s));
-  const rows = lapTimes.map(l => {
-    const isBest   = l.time_s === best;
-    const delta    = l.time_s - best;
-    const deltaStr = isBest ? '⬤ Fastest' : '+' + delta.toFixed(3) + 's';
-    const isExcluded = window._excludedLaps && window._excludedLaps.has(l.lap);
-    return `<div class="lap-row${isBest ? ' lap-fastest' : ''}${isExcluded ? ' lap-excluded' : ''}" data-lap="${l.lap}" onclick="selectLap(${l.lap})" style="cursor:pointer;grid-template-columns:56px 1fr 1fr 40px">
-      <div class="lap-num">${l.lap}</div>
-      <div class="lap-time">${fmtLap(l.time_s)}</div>
-      <div class="lap-delta">${deltaStr}</div>
-      <div style="padding:2px 6px;text-align:center">
-        <button onclick="event.stopPropagation();toggleExcludeLap(${l.lap})"
-          title="Exclude lap from analysis"
-          style="background:none;border:1px solid #333;color:#666;border-radius:3px;padding:1px 5px;cursor:pointer;font-size:.7rem;line-height:1.2">✕</button>
-      </div>
-    </div>`;
-  }).join('');
-  const _mn = best, _mx2 = Math.max(...lapTimes.map(l => l.time_s)), _rng = _mx2 - _mn || 1;
-  const _SW = 400, _SH = 28, _SP = 3;
-  const _sparkSegs = lapTimes.map((l, i) => {
-    if (i === 0) return '';
-    const x1 = _SP + ((i-1)/(lapTimes.length-1))*(_SW-2*_SP);
-    const y1 = _SH - _SP - ((lapTimes[i-1].time_s - _mn)/_rng)*(_SH-2*_SP);
-    const x2 = _SP + (i/(lapTimes.length-1))*(_SW-2*_SP);
-    const y2 = _SH - _SP - ((l.time_s - _mn)/_rng)*(_SH-2*_SP);
-    const d = l.time_s - _mn;
-    const col = d < 0.3 ? '#4caf50' : d < 1.5 ? '#ff9800' : '#f44336';
-    return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${col}" stroke-width="2" stroke-linecap="round"/>`;
-  }).join('');
-  return `<div class="section-label">Lap times</div>
-<svg viewBox="0 0 400 28" style="width:100%;height:28px;display:block;margin-bottom:6px;background:#111;border-radius:6px">${_sparkSegs}</svg>
-<div class="lap-table">
-  <div class="lap-row lap-header" style="grid-template-columns:56px 1fr 1fr 40px">
-    <div>Lap</div><div>Time</div><div>Δ Best</div><div></div>
-  </div>
-  ${rows}
-</div>`;
-}
-
-function renderLapDelta(lapTimes) {
-  if (!lapTimes || lapTimes.length < 2) return '';
-  const best = Math.min(...lapTimes.map(l => l.time_s));
-  const deltas = lapTimes.map(l => l.time_s - best);
-  const maxD = Math.max(...deltas, 0.001);
-  const W = 500, H = 80, PL = 36, PR = 8, PT = 8, PB = 18;
-  const iW = W - PL - PR, iH = H - PT - PB;
-  const n = lapTimes.length;
-  const xScale = i => PL + (i / Math.max(n - 1, 1)) * iW;
-  const yScale = d => PT + iH - (d / maxD) * iH;
-  let svg = `<line x1="${PL}" y1="${PT+iH}" x2="${PL+iW}" y2="${PT+iH}" stroke="#333" stroke-width="1"/>`;
-  svg += `<text x="${PL-2}" y="${PT+4}" fill="#555" font-size="9" text-anchor="end">+${maxD.toFixed(1)}s</text>`;
-  svg += `<text x="${PL-2}" y="${PT+iH+4}" fill="#555" font-size="9" text-anchor="end">±0</text>`;
-  for (let i = 1; i < n; i++) {
-    const x1 = xScale(i-1), y1 = yScale(deltas[i-1]);
-    const x2 = xScale(i),   y2 = yScale(deltas[i]);
-    svg += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#444" stroke-width="1.5"/>`;
-  }
-  lapTimes.forEach((l, i) => {
-    const d = deltas[i];
-    const col = d < 0.001 ? '#4caf50' : d < 0.3 ? '#4caf50' : d < 1.5 ? '#ff9800' : '#f44336';
-    const cx = xScale(i).toFixed(1), cy = yScale(d).toFixed(1);
-    svg += `<circle cx="${cx}" cy="${cy}" r="4" fill="${col}" stroke="#111" stroke-width="1" data-lap-dot="${l.lap}"/>`;
-    svg += `<text x="${cx}" y="${(PT+iH+12).toFixed(0)}" fill="#555" font-size="9" text-anchor="middle">${l.lap}</text>`;
-  });
-  return `<div class="section-label">Lap delta vs best</div>
-<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;display:block;background:#111;border-radius:6px;margin-bottom:12px">${svg}</svg>`;
-}
-
-function renderRecs(recs) {
-  if (!recs || !recs.length)
-    return `<p style="color:#444;font-size:13px">No issues flagged — data looks good, or insufficient data to analyse.</p>`;
-  return recs.map(r => `
-<div class="rec ${r.priority}">
-  <div class="rec-head">
-    <span class="rec-cat">${r.category}</span>
-    <span class="rec-corner">${r.corner}</span>
-  </div>
-  <div class="rec-issue">${r.issue}</div>
-  <div class="rec-action">→ ${r.action}</div>
-</div>`).join('');
-}
-
-function exportJSON() {
-  if (!window._analysisData) return;
-  const blob = new Blob([JSON.stringify(window._analysisData, null, 2)], {type:'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = (window._analysisData.meta?.filename || 'telemetry').replace(/\.ibt$/i,'') + '_analysis.json';
-  a.click();
-}
-function exportCSV() {
-  if (!window._analysisData) return;
-  const laps = (window._analysisData.lap_times || []);
-  if (!laps.length) return;
-  const best = Math.min(...laps.map(l => l.time_s));
-  const rows = [['lap','time_s','delta_s'], ...laps.map(l => [l.lap, l.time_s.toFixed(3), (l.time_s - best).toFixed(3)])];
-  const csv = rows.map(r => r.join(',')).join('\n');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = (window._analysisData.meta?.filename || 'telemetry').replace(/\.ibt$/i,'') + '_laps.csv';
-  a.click();
-}
-function render(data) {
-  // Show re-analyze button if laps are excluded
-  let reBtn = document.getElementById('reanalyze-btn');
-  if (!reBtn) {
-    reBtn = document.createElement('button');
-    reBtn.id = 'reanalyze-btn';
-    reBtn.className = 'btn';
-    reBtn.style.cssText = 'display:none;margin:8px 0;background:#b45309;color:#fff;';
-    reBtn.textContent = 'Re-analyze (excluding selected laps)';
-    reBtn.onclick = () => go(window._ibtFile);
-    const status = document.getElementById('status');
-    if (status) status.parentNode.insertBefore(reBtn, status.nextSibling);
-  }
-  reBtn.style.display = window._excludedLaps.size > 0 ? 'inline-flex' : 'none';
-
-  window._analysisData = data;
-  const t = data.tyre_temps     || {};
-  const p = data.tyre_pressures || {};
-  const m = data.meta           || {};
-  const s = data.summary        || {};
-  const det = data.detected     || {};
-
-  const dur  = s.duration_s;
-  const topv = s.max_speed_mph;
-  const laps = s.laps_analysed;
-
-  const carLabel   = (data.car   || '') + (det.auto_detected_car   ? ' <span class="auto-badge">auto</span>' : '');
-  const trackLabel = (data.track || '') + (det.auto_detected_track ? ' <span class="auto-badge">auto</span>' : '');
-
-  const autoDetectBanner = (det.auto_detected_car || det.auto_detected_track) ? `
-  <div style="background:#0d2a40;border-left:3px solid #2196F3;padding:8px 28px;font-size:12px;color:#64b5f6">
-    ⚡ Auto-detected from telemetry${det.auto_detected_car ? ' · Car: <b>' + (data.car || det.car_id) + '</b>' : ''}${det.auto_detected_track ? ' · Track: <b>' + (data.track || det.track_id) + '</b>' : ''}
-  </div>` : '';
-
-  const carId_selected   = document.getElementById('car-select').value;
-  const trackId_selected = document.getElementById('track-select').value;
-  const missingBanner = (!det.auto_detected_car && !carId_selected) || (!det.auto_detected_track && !trackId_selected) ? `
-  <div style="background:#1a1000;border-left:3px solid #ff9800;padding:8px 28px;font-size:12px;color:#ffb74d">
-    ⚠ Could not auto-detect from telemetry —
-    ${det.raw_car_path   ? 'CarPath: <b>' + det.raw_car_path   + '</b>' : 'CarPath: <b>not found</b>'}
-    &nbsp;·&nbsp;
-    ${det.raw_track_name ? 'TrackName: <b>' + det.raw_track_name + '</b>' : 'TrackName: <b>not found</b>'}
-    &nbsp;— select manually above or report this so the config can be updated.
-  </div>` : '';
-
-  const sessionType = m.session_type || null;
-  const sessionBadge = sessionType
-    ? `<span style="background:${sessionType.toLowerCase().includes('race') ? '#7c2d12' : '#1a2a1a'};
-                    color:${sessionType.toLowerCase().includes('race') ? '#fca5a5' : '#86efac'};
-                    border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;
-                    text-transform:uppercase;letter-spacing:.5px">${sessionType}</span>`
-    : '';
-  const raceWarning = sessionType && sessionType.toLowerCase().includes('race')
-    ? `<div style="background:#1a0a00;border-left:3px solid #f59e0b;padding:6px 28px;font-size:12px;color:#fbbf24">
-         ⚠ Race session detected — tyre data may include SC laps or early-stint anomalies. Recommendations are less reliable than practice/qual data.
-       </div>` : '';
-
-  let html = `${autoDetectBanner}${missingBanner}${raceWarning}<div class="meta-bar">
-    <div style="display:flex;align-items:center;gap:8px"><b>${m.filename || ''}</b> ${sessionBadge}</div>
-    <div class="meta-car-track">${carLabel} &nbsp;·&nbsp; ${trackLabel}</div>
-    ${m.ambient_temp_f ? `<div>Air temp: <b>${m.ambient_temp_f} °F</b></div>` : ''}
-    ${m.track_temp_f   ? `<div>Track temp: <b>${m.track_temp_f} °F</b></div>` : ''}
-    ${laps ? `<div>Laps: <b>${laps}</b></div>` : ''}
-    ${dur  ? `<div>Duration: <b>${Math.floor(dur/60)}m ${dur%60}s</b></div>` : ''}
-    ${topv ? `<div>Top speed: <b>${topv} mph</b></div>` : ''}
-    ${s.best_lap_s ? `<div>Best: <b>${fmtLap(s.best_lap_s)}</b></div>` : ''}
-    ${s.avg_lap_s  ? `<div>Avg lap: <b>${fmtLap(s.avg_lap_s)}</b></div>` : ''}
-    ${s.lap_consistency_s ? `<div>Consistency: <b>±${s.lap_consistency_s}s</b></div>` : ''}
-    ${s.fuel_per_lap_gal ? `<div>Fuel/lap: <b>${s.fuel_per_lap_gal} gal</b></div>` : ''}
-    ${s.laps_to_empty ? `<div>Laps to empty: <b>${s.laps_to_empty}</b></div>` : ''}
-    ${s.peak_lat_g ? `<div>Peak lat G: <b>${s.peak_lat_g}g</b></div>` : ''}
-    ${s.peak_brake_g ? `<div>Peak brake G: <b>${s.peak_brake_g}g</b></div>` : ''}
-    <div>Sample rate: <b>${m.tick_rate || '?'} Hz</b></div>
-    <button class="btn-reset" onclick="reset()">&#8592; Analyse another file</button>
-    <button class="btn-reset" onclick="exportJSON()" style="background:#1a2a3a;border-color:#2196F3;color:#64b5f6">&#8595; JSON</button>
-    <button class="btn-reset" onclick="exportCSV()" style="background:#1a2a1a;border-color:#4caf50;color:#86efac">&#8595; CSV</button>
-  </div>
-  <div class="page">
-    ${renderDownforceRec(data.summary)}
-    ${renderConfidence(data.confidence, data.signal_warnings)}
-    <div class="section-label">Tyre temperatures &amp; hot pressures</div>
-    <div class="tyre-grid">
-      ${tyreCard('LF — Left Front',  t.LF, p.LF)}
-      ${tyreCard('RF — Right Front', t.RF, p.RF)}
-      ${tyreCard('LR — Left Rear',   t.LR, p.LR)}
-      ${tyreCard('RR — Right Rear',  t.RR, p.RR)}
-    </div>
-    ${renderTechStatus(data.tech_status)}
-    ${renderRideHeights(data.ride_heights)}
-    ${renderBalance(data.balance)}
-    ${renderTyreTrend(data.tyre_trend)}
-    ${renderTrackMap(data.track_map)}
-    ${renderInputTrace(data.speed_trace)}
-    ${renderSpeedTrace(data.speed_trace)}
-    ${renderHandling(data.handling)}
-    ${renderBrake(data.brake)}
-    ${renderOverlap(data.throttle_overlap)}
-    ${renderStints(data.stints)}
-    ${renderSectorSplits(data.sector_times)}
-    ${renderLapDelta(data.lap_times)}
-    ${renderLapTimes(data.lap_times)}
-    ${renderSetupCard(data.setup_card, data.car, data.track)}
-    <div class="section-label">Full recommendations</div>
-    <div class="rec-list">${renderRecs(data.recommendations)}</div>
-  </div>`;
-
-  const resultsEl = document.getElementById('results');
-  resultsEl.innerHTML = html;
-  resultsEl.style.display = 'block';
-  document.getElementById('upload-wrap').style.display = 'none';
-  if (window._trackMapData) setTimeout(() => drawTrackMap(localStorage.getItem('iracing-tm-mode') || 'speed'), 20);
-}
 
 // ── Pyodide initialisation ────────────────────────────────────────────────────
 async function initPyodide() {
-  const overlay = document.getElementById('py-loading');
-  const prog    = document.getElementById('py-progress');
-  const bar     = document.getElementById('py-bar');
+  var overlay = document.getElementById('py-loading');
+  var prog    = document.getElementById('py-progress');
+  var bar     = document.getElementById('py-bar');
 
-  const step = (msg, pct) => {
+  function step(msg, pct) {
     prog.textContent = msg;
     bar.style.width  = pct + '%';
-  };
+  }
 
   try {
-    step('Loading Pyodide runtime…', 10);
+    step('Loading Pyodide runtime\u2026', 10);
     window._pyodide = await loadPyodide({
       indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.27.0/full/',
     });
 
-    step('Loading numpy…', 40);
+    step('Loading numpy\u2026', 40);
     await window._pyodide.loadPackage('numpy');
 
-    step('Loading analysis modules…', 70);
-    const [ibtCode, analyzerCode] = await Promise.all([
-      fetch('ibt_parser.py').then(r => r.text()),
-      fetch('analyzer.py').then(r => r.text()),
+    step('Loading analysis modules\u2026', 70);
+    var results = await Promise.all([
+      fetch('ibt_parser.py').then(function(r) { return r.text(); }),
+      fetch('analyzer.py').then(function(r) { return r.text(); }),
     ]);
 
-    window._pyodide.FS.writeFile('/ibt_parser.py', ibtCode);
-    window._pyodide.FS.writeFile('/analyzer.py',   analyzerCode);
+    window._pyodide.FS.writeFile('/ibt_parser.py', results[0]);
+    window._pyodide.FS.writeFile('/analyzer.py',   results[1]);
 
-    step('Initialising modules…', 90);
+    step('Initialising modules\u2026', 90);
     await window._pyodide.runPythonAsync(
       "import sys; sys.path.insert(0, '/'); import ibt_parser, analyzer"
     );
@@ -1845,6 +2832,7 @@ async function initPyodide() {
 }
 
 initPyodide();
+
 </script>
 </body>
 </html>

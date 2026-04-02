@@ -831,6 +831,11 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
     for _sec, _sd in out['handling'].items():
         _t = _sd.get('tendency')
         if _t not in ('understeer', 'oversteer'):
+            sc['suspension'].append({
+                'priority': 'ok', 'sector': _sec, 'issue': 'neutral',
+                'label': 'neutral',
+                'options': [],
+            })
             continue
         _phases = _sd.get('phases', {})
         _issue_phases = [p for p, pd in _phases.items() if pd.get('tendency') == _t]
@@ -839,11 +844,11 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
         _phase_suffix = f' — {_phase_key}' if _phase_key else ''
         sc['suspension'].append({
             'priority': 'medium', 'sector': _sec, 'issue': _t,
-            'label': f'{_sec}{_phase_suffix} — {_t}',
+            'label': f'{_phase_suffix.lstrip(" — ") or _t} — {_t}' if _phase_suffix else _t,
             'options': _opts_map[_phase_key],
         })
 
-    _pri2 = {'high': 0, 'medium': 1, 'low': 2}
+    _pri2 = {'high': 0, 'medium': 1, 'low': 2, 'ok': 3}
     sc['suspension'].sort(key=lambda x: _pri2.get(x['priority'], 3))
     out['setup_card'] = sc
 
@@ -1083,9 +1088,29 @@ def analyze(channels, tick_rate, car_cfg=None, track_cfg=None, ambient_temp_f=No
     # ── 19. Per-lap tyre temperature trend ───────────────────────────────────────
     if lap is not None and out.get('lap_times'):
         _lap_int_tt = lap.astype(np.int32)
+        # Build a set of flying lap numbers using same 15% duration filter
+        _tt_changes = np.where(np.diff(_lap_int_tt) > 0)[0] + 1
+        _tt_starts  = np.concatenate([[0], _tt_changes])
+        _tt_ends    = np.concatenate([_tt_changes, [len(_lap_int_tt)]])
+        _tt_durs    = _tt_ends - _tt_starts
+        _inner_durs = _tt_durs[1:-1] if len(_tt_durs) > 2 else _tt_durs
+        _tt_med     = float(np.median(_inner_durs)) if len(_inner_durs) else 0
+        _excl_set_tt = set(int(x) for x in (excluded_laps or []))
+        _flying_lap_nums = set()
+        for _i, (_ts, _te) in enumerate(zip(_tt_starts, _tt_ends)):
+            if _i == 0 or _i == len(_tt_starts) - 1:
+                continue
+            _lnum = int(_lap_int_tt[_ts]) if _ts < len(_lap_int_tt) else -1
+            if _lnum in _excl_set_tt:
+                continue
+            if _tt_med > 0 and not (_tt_med * 0.85 <= (_te - _ts) <= _tt_med * 1.15):
+                continue
+            _flying_lap_nums.add(_lnum)
         _trend_rows = []
         for _tl_tt in out['lap_times']:
             _ln_tt = _tl_tt['lap']
+            if _ln_tt not in _flying_lap_nums:
+                continue
             _lm_tt = _lap_int_tt == _ln_tt
             if _lm_tt.sum() < 20:
                 continue

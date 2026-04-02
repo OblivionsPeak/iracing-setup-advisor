@@ -1155,6 +1155,29 @@ window.TRACKS_DATA = {
       "watkins glen"
     ]
   },
+  "watkins_glen_cup": {
+    "name": "Watkins Glen International — Cup",
+    "short": "Watkins Glen Cup",
+    "country": "USA",
+    "sectors": [
+      {
+        "name": "S1 — T1 to the Esses",
+        "start": 0.0,
+        "end": 0.4
+      },
+      {
+        "name": "S2 — Inner loop",
+        "start": 0.4,
+        "end": 1.0
+      }
+    ],
+    "iracing_track_name": [
+      "watkins glen international cup",
+      "watkins glen cup",
+      "watkins glen international - cup",
+      "watkins glen - cup"
+    ]
+  },
   "zandvoort": {
     "name": "Circuit Zandvoort",
     "short": "Zandvoort",
