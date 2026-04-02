@@ -117,6 +117,79 @@
     <div id="sto-analysis-output" style="display:none"></div>
   </div>
 </div>
+<!-- Tire Pressure Calculator -->
+<div id="tire-calc-wrap" style="margin-top:16px">
+  <button onclick="toggleTireCalcPanel()" class="btn" style="background:#1e3a5f;font-size:.8rem;padding:6px 14px">
+    Tire Pressure Calculator
+  </button>
+  <div id="tire-calc-panel" style="display:none;margin-top:10px">
+    <div class="tire-calc">
+      <div class="tire-calc-header">
+        <span class="tire-calc-title">Tire Pressure Calculator</span>
+        <span class="tire-calc-subtitle">Recommended cold starting pressures</span>
+      </div>
+
+      <div class="tire-calc-inputs">
+        <div class="tire-calc-input-group">
+          <label>Car</label>
+          <select id="tire-calc-car">
+            <option value="">— Select car —</option>
+          </select>
+        </div>
+        <div class="tire-calc-input-group" style="flex:0;min-width:160px">
+          <label>Ambient Temp</label>
+          <div class="tire-calc-temp-row">
+            <input type="number" id="tire-calc-temp" placeholder="75" min="0" max="130" step="1">
+            <button class="tire-calc-unit-btn" id="tire-calc-unit-btn" onclick="toggleTireCalcUnit()">°F</button>
+          </div>
+        </div>
+        <div class="tire-calc-input-group" style="flex:0;min-width:160px">
+          <label>Heat Gain (PSI)</label>
+          <input type="number" id="tire-calc-heat-gain" value="5.0" min="2" max="10" step="0.5"
+                 style="background:#1e1e1e;border:1px solid #333;color:#e0e0e0;padding:8px 10px;border-radius:6px;font-size:13px;width:80px">
+        </div>
+      </div>
+
+      <div class="tire-calc-targets" id="tire-calc-targets" style="display:none">
+        <div class="tire-calc-section-title">Target Hot Pressures (from car config)</div>
+        <div class="tire-calc-psi-grid" id="tire-calc-target-grid"></div>
+      </div>
+
+      <div class="tire-calc-cold-inputs" id="tire-calc-cold-inputs" style="display:none">
+        <div class="tire-calc-section-title">
+          Current Cold Pressures (from setup)
+          <span id="tire-calc-sto-badge" class="tire-calc-sto-badge" style="display:none">from .sto</span>
+        </div>
+        <div class="tire-calc-psi-grid">
+          <div class="tire-calc-psi-cell">
+            <div class="tire-calc-corner-label">LF</div>
+            <input type="number" id="tire-calc-cold-lf" placeholder="—" step="0.1" class="tire-calc-cold-input">
+          </div>
+          <div class="tire-calc-psi-cell">
+            <div class="tire-calc-corner-label">RF</div>
+            <input type="number" id="tire-calc-cold-rf" placeholder="—" step="0.1" class="tire-calc-cold-input">
+          </div>
+          <div class="tire-calc-psi-cell">
+            <div class="tire-calc-corner-label">LR</div>
+            <input type="number" id="tire-calc-cold-lr" placeholder="—" step="0.1" class="tire-calc-cold-input">
+          </div>
+          <div class="tire-calc-psi-cell">
+            <div class="tire-calc-corner-label">RR</div>
+            <input type="number" id="tire-calc-cold-rr" placeholder="—" step="0.1" class="tire-calc-cold-input">
+          </div>
+        </div>
+      </div>
+
+      <div id="tire-calc-results" style="display:none">
+        <div class="tire-calc-section-title">Recommended Cold Pressures</div>
+        <div class="tire-calc-psi-grid" id="tire-calc-results-grid"></div>
+        <div id="tire-calc-deltas"></div>
+        <div class="tire-calc-explanation" id="tire-calc-explanation"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="tm-tooltip"></div>
 <div id="results" style="display:none"></div>
 

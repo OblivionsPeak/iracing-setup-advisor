@@ -338,5 +338,59 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .lap-fastest .lap-delta{color:#a855f7;font-weight:700}
 .lap-excluded { opacity: 0.4; text-decoration: line-through; }
 .lap-excluded td { color: #555 !important; }
+/* ── Tire Pressure Calculator ── */
+.tire-calc{background:#141414;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden}
+.tire-calc-header{background:#181818;padding:12px 20px;border-bottom:1px solid #222}
+.tire-calc-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#777}
+.tire-calc-subtitle{font-size:11px;color:#555;margin-left:10px}
+.tire-calc-inputs{padding:16px 20px;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;border-bottom:1px solid #1a1a1a}
+.tire-calc-input-group{display:flex;flex-direction:column;gap:6px;flex:1;min-width:180px}
+.tire-calc-input-group label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
+.tire-calc-input-group select{background:#1e1e1e;border:1px solid #333;color:#e0e0e0;padding:8px 12px;
+                               border-radius:6px;font-size:13px;cursor:pointer}
+.tire-calc-input-group select:focus{outline:none;border-color:#2196F3}
+.tire-calc-temp-row{display:flex;align-items:center;gap:6px}
+.tire-calc-temp-row input{background:#1e1e1e;border:1px solid #333;color:#e0e0e0;padding:8px 10px;
+                          border-radius:6px;font-size:13px;width:80px}
+.tire-calc-unit-btn{background:#1e3a5f;border:1px solid #2196F3;color:#64b5f6;padding:6px 10px;
+                    border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.tire-calc-unit-btn:hover{background:#0d2a40}
+.tire-calc-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;
+                          color:#555;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.tire-calc-targets,.tire-calc-cold-inputs{padding:14px 20px;border-bottom:1px solid #1a1a1a}
+.tire-calc-psi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tire-calc-psi-cell{background:#181818;border-radius:8px;padding:12px;text-align:center}
+.tire-calc-corner-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+                         color:#666;margin-bottom:6px}
+.tire-calc-target-val{font-size:16px;font-weight:700;color:#ccc}
+.tire-calc-unit{font-size:10px;color:#555;font-weight:400}
+.tire-calc-cold-input{background:#1e1e1e;border:1px solid #333;color:#e0e0e0;padding:8px;border-radius:6px;
+                      font-size:14px;font-weight:600;width:100%;text-align:center;box-sizing:border-box}
+.tire-calc-cold-input:focus{outline:none;border-color:#2196F3}
+.tire-calc-sto-badge{background:#0d2a40;color:#64b5f6;font-size:10px;font-weight:700;padding:2px 8px;
+                     border-radius:8px;letter-spacing:.3px;text-transform:uppercase}
+.tire-calc-result-cell{background:#0a1a0a;border:1px solid #1b5e20}
+.tire-calc-rec-val{font-size:18px;font-weight:700;color:#4caf50}
+#tire-calc-results{padding:14px 20px;border-bottom:1px solid #1a1a1a}
+.tire-calc-delta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.tire-calc-delta-item{background:#181818;border-radius:8px;padding:10px;text-align:center;border-left:3px solid #333}
+.tire-calc-delta-item.delta-ok{border-left-color:#4caf50}
+.tire-calc-delta-item.delta-increase{border-left-color:#2196F3}
+.tire-calc-delta-item.delta-decrease{border-left-color:#ff9800}
+.tire-calc-delta-corner{display:block;font-size:10px;font-weight:700;color:#666;text-transform:uppercase;
+                         letter-spacing:.5px;margin-bottom:4px}
+.tire-calc-delta-val{display:block;font-size:15px;font-weight:700;color:#ccc}
+.tire-calc-delta-item.delta-ok .tire-calc-delta-val{color:#4caf50}
+.tire-calc-delta-item.delta-increase .tire-calc-delta-val{color:#64b5f6}
+.tire-calc-delta-item.delta-decrease .tire-calc-delta-val{color:#ff9800}
+.tire-calc-delta-label{display:block;font-size:10px;color:#555;margin-top:2px}
+.tire-calc-explanation{background:#111;border-radius:8px;padding:14px;margin-top:14px}
+.tire-calc-explain-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;
+                          color:#444;margin-bottom:8px}
+.tire-calc-explain-formula{font-family:monospace;font-size:12px;color:#64b5f6;background:#0a1520;
+                            padding:8px 12px;border-radius:6px;margin-bottom:10px}
+.tire-calc-explain-items{font-size:12px;color:#777;line-height:1.8}
+.tire-calc-explain-label{color:#999;font-weight:600}
+
 .btn{display:inline-flex;align-items:center;justify-content:center;padding:7px 16px;
      border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none}

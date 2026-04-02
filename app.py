@@ -200,6 +200,20 @@ def list_cars():
     ])
 
 
+@app.route('/api/car-config/<car_id>')
+def car_config(car_id):
+    cfg = CARS.get(car_id)
+    if not cfg:
+        return jsonify({'error': 'Car not found'}), 404
+    return jsonify({
+        'id': car_id,
+        'name': cfg.get('name', car_id),
+        'class': cfg.get('class', ''),
+        'target_hot_psi': cfg.get('target_hot_psi'),
+        'notes': cfg.get('notes', ''),
+    })
+
+
 @app.route('/api/tracks')
 def list_tracks():
     return jsonify([

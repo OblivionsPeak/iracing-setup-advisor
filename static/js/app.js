@@ -644,6 +644,9 @@ async function handleStoFile(file) {
   var out = document.getElementById('sto-analysis-output');
   out.innerHTML = html;
   out.style.display = 'block';
+
+  // Auto-populate tire pressure calculator from decoded setup
+  populateTireCalcFromSto(tabs, data.car_config || null);
 }
 
 function switchStoTab(name) {
@@ -1010,6 +1013,255 @@ function renderLibrarySave(data) {
     + '<button onclick="saveToLibrary(\''+carId+'\',\''+trackId+'\')" style="background:#1d4ed8;color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;">Save to Library</button>'
     + '<span id="library-save-status" style="margin-left:12px;font-size:13px;"></span>'
     + '</div>';
+}
+
+// ── Tire Pressure Calculator ─────────────────────────────────────────────────
+var _tireCalcUnit = 'F'; // 'F' or 'C'
+var _tireCalcConfig = null; // loaded car config with target_hot_psi
+
+function toggleTireCalcPanel() {
+  var p = document.getElementById('tire-calc-panel');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+  if (p.style.display === 'block') initTireCalcDropdown();
+}
+
+function initTireCalcDropdown() {
+  var sel = document.getElementById('tire-calc-car');
+  if (sel.options.length > 1) return; // already populated
+  Object.keys(carData).sort(function(a, b) {
+    return (carData[a].name || a).localeCompare(carData[b].name || b);
+  }).forEach(function(id) {
+    var c = carData[id];
+    var opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = c.name + (c.class ? ' (' + c.class + ')' : '');
+    sel.appendChild(opt);
+  });
+  // Sync with main car selector
+  var mainCar = document.getElementById('car-select').value;
+  if (mainCar) sel.value = mainCar;
+  // Sync ambient temp from main input
+  var mainTemp = document.getElementById('air-temp').value;
+  if (mainTemp) document.getElementById('tire-calc-temp').value = mainTemp;
+
+  sel.addEventListener('change', loadTireCalcCarConfig);
+  document.getElementById('tire-calc-temp').addEventListener('input', recalcTirePressures);
+  document.getElementById('tire-calc-heat-gain').addEventListener('input', recalcTirePressures);
+  document.querySelectorAll('.tire-calc-cold-input').forEach(function(inp) {
+    inp.addEventListener('input', recalcTirePressures);
+  });
+
+  if (mainCar) loadTireCalcCarConfig();
+}
+
+async function loadTireCalcCarConfig() {
+  var carId = document.getElementById('tire-calc-car').value;
+  _tireCalcConfig = null;
+  document.getElementById('tire-calc-targets').style.display = 'none';
+  document.getElementById('tire-calc-cold-inputs').style.display = 'none';
+  document.getElementById('tire-calc-results').style.display = 'none';
+
+  if (!carId) return;
+
+  try {
+    var resp = await fetch('/api/car-config/' + encodeURIComponent(carId));
+    var data = await resp.json();
+    if (data.error || !data.target_hot_psi) {
+      document.getElementById('tire-calc-target-grid').innerHTML =
+        '<div style="grid-column:1/-1;color:#666;font-size:12px">No target hot pressures configured for this car.</div>';
+      document.getElementById('tire-calc-targets').style.display = 'block';
+      return;
+    }
+    _tireCalcConfig = data;
+  } catch (e) {
+    return;
+  }
+
+  var targets = _tireCalcConfig.target_hot_psi;
+  var grid = document.getElementById('tire-calc-target-grid');
+  grid.innerHTML = ['LF', 'RF', 'LR', 'RR'].map(function(c) {
+    var val = targets[c] != null ? targets[c].toFixed(1) : '—';
+    return '<div class="tire-calc-psi-cell">'
+      + '<div class="tire-calc-corner-label">' + c + '</div>'
+      + '<div class="tire-calc-target-val">' + val + ' <span class="tire-calc-unit">psi</span></div>'
+      + '</div>';
+  }).join('');
+
+  document.getElementById('tire-calc-targets').style.display = 'block';
+  document.getElementById('tire-calc-cold-inputs').style.display = 'block';
+  recalcTirePressures();
+}
+
+function toggleTireCalcUnit() {
+  var btn = document.getElementById('tire-calc-unit-btn');
+  var inp = document.getElementById('tire-calc-temp');
+  var curVal = parseFloat(inp.value);
+
+  if (_tireCalcUnit === 'F') {
+    _tireCalcUnit = 'C';
+    btn.textContent = '\u00b0C';
+    if (!isNaN(curVal)) inp.value = Math.round((curVal - 32) * 5 / 9);
+    inp.placeholder = '24';
+  } else {
+    _tireCalcUnit = 'F';
+    btn.textContent = '\u00b0F';
+    if (!isNaN(curVal)) inp.value = Math.round(curVal * 9 / 5 + 32);
+    inp.placeholder = '75';
+  }
+  recalcTirePressures();
+}
+
+function _getTireCalcAmbientF() {
+  var val = parseFloat(document.getElementById('tire-calc-temp').value);
+  if (isNaN(val)) return null;
+  return _tireCalcUnit === 'C' ? val * 9 / 5 + 32 : val;
+}
+
+function recalcTirePressures() {
+  var resultsDiv = document.getElementById('tire-calc-results');
+  if (!_tireCalcConfig || !_tireCalcConfig.target_hot_psi) {
+    resultsDiv.style.display = 'none';
+    return;
+  }
+
+  var ambientF = _getTireCalcAmbientF();
+  var heatGain = parseFloat(document.getElementById('tire-calc-heat-gain').value);
+  if (isNaN(heatGain)) heatGain = 5.0;
+  var targets = _tireCalcConfig.target_hot_psi;
+  var baselineF = 75;
+  var tempCorrectionPerF = 0.1;
+
+  var corners = ['LF', 'RF', 'LR', 'RR'];
+  var recommended = {};
+  var tempCorrection = 0;
+  if (ambientF != null) {
+    tempCorrection = (baselineF - ambientF) * tempCorrectionPerF;
+  }
+
+  corners.forEach(function(c) {
+    if (targets[c] == null) return;
+    recommended[c] = targets[c] - heatGain + tempCorrection;
+  });
+
+  // Render recommended pressures
+  var grid = document.getElementById('tire-calc-results-grid');
+  grid.innerHTML = corners.map(function(c) {
+    var val = recommended[c] != null ? recommended[c].toFixed(1) : '—';
+    return '<div class="tire-calc-psi-cell tire-calc-result-cell">'
+      + '<div class="tire-calc-corner-label">' + c + '</div>'
+      + '<div class="tire-calc-rec-val">' + val + ' <span class="tire-calc-unit">psi</span></div>'
+      + '</div>';
+  }).join('');
+
+  // Render deltas from current cold pressures (if entered)
+  var deltasDiv = document.getElementById('tire-calc-deltas');
+  var hasCold = false;
+  var deltaHtml = '';
+  var deltaItems = corners.map(function(c) {
+    var coldInput = document.getElementById('tire-calc-cold-' + c.toLowerCase());
+    var coldVal = coldInput ? parseFloat(coldInput.value) : NaN;
+    if (isNaN(coldVal) || recommended[c] == null) return null;
+    hasCold = true;
+    var delta = recommended[c] - coldVal;
+    var sign = delta >= 0 ? '+' : '';
+    var cls = Math.abs(delta) < 0.3 ? 'delta-ok' : delta > 0 ? 'delta-increase' : 'delta-decrease';
+    var label = Math.abs(delta) < 0.3 ? 'On target' : (delta > 0 ? 'Increase' : 'Decrease');
+    return '<div class="tire-calc-delta-item ' + cls + '">'
+      + '<span class="tire-calc-delta-corner">' + c + '</span>'
+      + '<span class="tire-calc-delta-val">' + sign + delta.toFixed(1) + ' psi</span>'
+      + '<span class="tire-calc-delta-label">' + label + '</span>'
+      + '</div>';
+  }).filter(Boolean);
+
+  if (hasCold) {
+    deltasDiv.innerHTML = '<div class="tire-calc-section-title">Adjustment from Current</div>'
+      + '<div class="tire-calc-delta-grid">' + deltaItems.join('') + '</div>';
+    deltasDiv.style.display = 'block';
+  } else {
+    deltasDiv.innerHTML = '';
+  }
+
+  // Render explanation
+  var explDiv = document.getElementById('tire-calc-explanation');
+  var tempStr = ambientF != null ? ambientF.toFixed(0) + '\u00b0F' : 'not set';
+  var corrStr = ambientF != null
+    ? (tempCorrection >= 0 ? '+' : '') + tempCorrection.toFixed(1) + ' psi'
+    : 'N/A (no temp entered)';
+  var corrDir = ambientF != null
+    ? (ambientF > baselineF ? 'Above baseline \u2014 tires heat more, so start lower.'
+       : ambientF < baselineF ? 'Below baseline \u2014 tires heat less, so start higher.'
+       : 'At baseline \u2014 no correction needed.')
+    : '';
+  explDiv.innerHTML = '<div class="tire-calc-explain-title">How it works</div>'
+    + '<div class="tire-calc-explain-formula">'
+    + 'recommended_cold = target_hot - heat_gain + temp_correction'
+    + '</div>'
+    + '<div class="tire-calc-explain-items">'
+    + '<div><span class="tire-calc-explain-label">Target hot:</span> From car config (varies per corner)</div>'
+    + '<div><span class="tire-calc-explain-label">Expected heat gain:</span> ' + heatGain.toFixed(1) + ' psi (tires gain ~4\u20136 psi from cold to hot in iRacing)</div>'
+    + '<div><span class="tire-calc-explain-label">Ambient temp:</span> ' + tempStr + '</div>'
+    + '<div><span class="tire-calc-explain-label">Temp correction:</span> ' + corrStr + ' (0.1 psi per 1\u00b0F from 75\u00b0F baseline)</div>'
+    + (corrDir ? '<div style="color:#888;font-style:italic;margin-top:2px">' + corrDir + '</div>' : '')
+    + '</div>';
+
+  resultsDiv.style.display = 'block';
+}
+
+// Auto-populate tire calculator from decoded .sto data
+function populateTireCalcFromSto(tabs, carConfig) {
+  if (!tabs) return;
+
+  // Extract cold pressures from setup params
+  var corners = {LF: 'left front', RF: 'right front', LR: 'left rear', RR: 'right rear'};
+  var foundAny = false;
+
+  Object.entries(corners).forEach(function(entry) {
+    var corner = entry[0], searchKey = entry[1];
+    var input = document.getElementById('tire-calc-cold-' + corner.toLowerCase());
+    if (!input) return;
+
+    // Search through tabs for pressure values
+    Object.values(tabs).forEach(function(sections) {
+      Object.values(sections).forEach(function(params) {
+        params.forEach(function(p) {
+          var label = p.label.toLowerCase();
+          if (label.includes(searchKey) && (label.includes('pressure') || label.includes('psi'))) {
+            var match = p.value.match(/([\d.]+)\s*(?:kPa|psi)/i);
+            if (match) {
+              var val = parseFloat(match[1]);
+              // Convert kPa to PSI if needed
+              if (p.value.toLowerCase().includes('kpa')) {
+                val = val * 0.14503773773;
+              }
+              input.value = val.toFixed(1);
+              foundAny = true;
+            }
+          }
+        });
+      });
+    });
+  });
+
+  if (foundAny) {
+    document.getElementById('tire-calc-sto-badge').style.display = 'inline';
+    // Open the calculator panel if not already open
+    var panel = document.getElementById('tire-calc-panel');
+    if (panel.style.display === 'none') panel.style.display = 'block';
+    // If car config was returned, sync the car dropdown
+    if (carConfig && carConfig.name) {
+      var sel = document.getElementById('tire-calc-car');
+      if (sel.options.length <= 1) initTireCalcDropdown();
+      // Try to match by name
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].textContent.includes(carConfig.name)) {
+          sel.value = sel.options[i].value;
+          loadTireCalcCarConfig();
+          break;
+        }
+      }
+    }
+    recalcTirePressures();
+  }
 }
 
 async function saveToLibrary(carKey, trackKey) {
