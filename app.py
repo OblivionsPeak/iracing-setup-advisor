@@ -266,10 +266,10 @@ def analyze_route():
         # Auto ambient + track temp from session YAML
         track_temp_f = None
         if session_info:
-            _at_m = re.search(r'AirTemp:\s*([\d.]+)\s*C', session_info)
+            _at_m = re.search(r'AirTemp:\s*([\d.]+)', session_info)
             if _at_m and ambient_temp_f is None:
                 ambient_temp_f = round(float(_at_m.group(1)) * 9/5 + 32, 1)
-            _tt_m = re.search(r'TrackTemp:\s*([\d.]+)\s*C', session_info)
+            _tt_m = re.search(r'TrackTemp:\s*([\d.]+)', session_info)
             if _tt_m:
                 track_temp_f = round(float(_tt_m.group(1)) * 9/5 + 32, 1)
 
