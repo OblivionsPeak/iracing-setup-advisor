@@ -1122,6 +1122,45 @@ function tyreCard(label, td, psi) {
 </div>`;
 }
 
+function renderTrackTempBadge(trackTempF, airTempF) {
+  if (!trackTempF && !airTempF) return '';
+  const parts = [];
+  if (trackTempF != null) {
+    const c = Math.round((trackTempF - 32) * 5 / 9);
+    const col  = trackTempF < 59  ? '#60a5fa' :   // cold — blue
+                 trackTempF < 77  ? '#86efac' :   // cool — green
+                 trackTempF < 95  ? '#fbbf24' :   // warm — amber
+                                    '#f87171';    // hot  — red
+    const label = trackTempF < 59  ? 'Cold' :
+                  trackTempF < 77  ? 'Cool' :
+                  trackTempF < 95  ? 'Warm' : 'Hot';
+    parts.push(`<span style="display:inline-flex;align-items:center;gap:6px;background:#181818;border:1px solid ${col};border-radius:8px;padding:5px 14px;font-size:13px">
+      <span style="font-size:16px">🌡</span>
+      <span style="color:#888;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Track</span>
+      <span style="color:${col};font-weight:700">${trackTempF} °F</span>
+      <span style="color:#666;font-size:11px">(${c} °C)</span>
+      <span style="background:${col};color:#111;border-radius:4px;padding:1px 7px;font-size:11px;font-weight:700">${label}</span>
+    </span>`);
+  }
+  if (airTempF != null) {
+    const c = Math.round((airTempF - 32) * 5 / 9);
+    parts.push(`<span style="display:inline-flex;align-items:center;gap:6px;background:#181818;border:1px solid #475569;border-radius:8px;padding:5px 14px;font-size:13px">
+      <span style="font-size:16px">💨</span>
+      <span style="color:#888;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Air</span>
+      <span style="color:#cbd5e1;font-weight:700">${airTempF} °F</span>
+      <span style="color:#666;font-size:11px">(${c} °C)</span>
+    </span>`);
+  }
+  const note = trackTempF != null
+    ? (trackTempF < 68 ? ' Cold track — start with pressures 0.5–1 psi higher than baseline.' :
+       trackTempF > 90 ? ' Hot track — pressures will build quickly; check hot readings carefully.' : '')
+    : '';
+  return `<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+    ${parts.join('')}
+    ${note ? `<span style="font-size:12px;color:#94a3b8;font-style:italic">${note}</span>` : ''}
+  </div>`;
+}
+
 function renderBalance(b) {
   if (!b || (!b.front_avg && !b.left_avg)) return '';
   const frd = b.front_rear_diff;
@@ -2427,6 +2466,7 @@ function render(data) {
     ${renderDownforceRec(data.summary)}
     ${renderConfidence(data.confidence, data.signal_warnings)}
     <div class="section-label">Tyre temperatures &amp; hot pressures</div>
+    ${renderTrackTempBadge(m.track_temp_f, m.ambient_temp_f)}
     <div class="tyre-grid">
       ${tyreCard('LF — Left Front',  t.LF, p.LF)}
       ${tyreCard('RF — Right Front', t.RF, p.RF)}
