@@ -203,6 +203,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .brake-bias-front{background:#2196F3;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
 .brake-bias-rear{background:#f44336;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
 
+/* ── Damper sweet spot ── */
+.damper-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;font-size:11px;color:#666}
+.damper-legend-item{display:flex;align-items:center;gap:4px}
+.damper-legend-swatch{width:12px;height:12px;border-radius:2px;flex-shrink:0}
+.damper-legend-band{background:rgba(76,175,80,0.15);border:1px dashed rgba(76,175,80,0.4);width:16px;height:10px}
+.damper-sweet-band{position:absolute;top:0;height:100%;background:rgba(76,175,80,0.12);
+                   border-left:1px dashed rgba(76,175,80,0.35);border-right:1px dashed rgba(76,175,80,0.35);
+                   pointer-events:none;z-index:0}
+.bar-chart-row .bar-fill{position:relative;z-index:1}
+.damper-status{display:block;font-size:10px;font-weight:600;text-align:center;margin-top:2px;letter-spacing:.2px}
+.damper-status-good{color:#4caf50}
+.damper-status-warn{color:#ff9800}
+.damper-status-bad{color:#f44336}
+
 /* ── Setup card ── */
 .setup-card{background:#141414;border:1px solid #222;border-radius:12px;overflow:hidden;margin-bottom:8px}
 .sc-header{background:#181818;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222}

@@ -280,6 +280,46 @@ function analyzeSetup(tabs, carConfig) {
     }
   });
 
+  // ── Damper sweet spot analysis ──────────────────────────────────────────────
+  if (carConfig && carConfig.damper_sweet_spot) {
+    var sweetSpot = carConfig.damper_sweet_spot;
+    var damperKeyMap = {
+      'Low Speed Compression': 'ls_compression',
+      'High Speed Compression': 'hs_compression',
+      'Low Speed Rebound': 'ls_rebound',
+      'High Speed Rebound': 'hs_rebound'
+    };
+    Object.entries(dampers).forEach(function(entry) {
+      var mode = entry[0], d = entry[1];
+      var ssKey = damperKeyMap[mode];
+      if (!ssKey) return;
+      ['front', 'rear'].forEach(function(end) {
+        var val = d[end];
+        if (val == null) return;
+        var ss = sweetSpot[end] && sweetSpot[end][ssKey];
+        if (!ss) return;
+        var endLabel = end.charAt(0).toUpperCase() + end.slice(1);
+        if (val >= ss.min && val <= ss.max) {
+          if (val === ss.min || val === ss.max) {
+            recs.push({category:'Damper Sweet Spot', priority:'low',
+              text:endLabel+' '+mode+' ('+val+' clicks) is at the edge of the sweet spot ('+ss.min+'\u2013'+ss.max+')',
+              action:'Currently at the boundary \u2014 consider moving 1\u20132 clicks toward the center of the range for more consistent platform control.'});
+          }
+        } else {
+          var diff = val < ss.min ? ss.min - val : val - ss.max;
+          var direction = val < ss.min ? 'low' : 'high';
+          var priority = diff > 3 ? 'medium' : 'low';
+          var actionText = direction === 'low'
+            ? 'Consider increasing by '+diff+' click'+(diff>1?'s':'')+' for more damping force and better platform control.'
+            : 'Consider decreasing by '+diff+' click'+(diff>1?'s':'')+' to avoid over-damping and improve mechanical grip.';
+          recs.push({category:'Damper Sweet Spot', priority:priority,
+            text:endLabel+' '+mode+' ('+val+' clicks) is '+diff+' click'+(diff>1?'s':'')+' '+direction+' of the sweet spot ('+ss.min+'\u2013'+ss.max+')',
+            action:actionText});
+        }
+      });
+    });
+  }
+
   if (frontARB != null && rearARB != null) {
     if (frontARB > rearARB + 2) {
       recs.push({category:'Front/Rear Balance', priority:'low',
@@ -363,7 +403,8 @@ function analyzeSetup(tabs, carConfig) {
     wing: wing, frontRHSpeed: frontRHSpeed, rearRHSpeed: rearRHSpeed,
     brakeBias: brakeBias, frontMC: frontMC, rearMC: rearMC, brakePads: brakePads,
     frontSpring: frontSpring, rearSpring: rearSpring,
-    tendencySummary: tendencySummary
+    tendencySummary: tendencySummary,
+    carConfig: carConfig || null
   };
 }
 
@@ -477,20 +518,83 @@ function renderSuspensionBars(analysis) {
   var damperModes = Object.entries(dampers);
   var hasDampers = damperModes.some(function(entry) { return entry[1].front != null || entry[1].rear != null; });
   if (hasDampers) {
+    var sweetSpot = (analysis.carConfig && analysis.carConfig.damper_sweet_spot) || null;
+    var damperKeyMap = {
+      'Low Speed Compression': 'ls_compression',
+      'High Speed Compression': 'hs_compression',
+      'Low Speed Rebound': 'ls_rebound',
+      'High Speed Rebound': 'hs_rebound'
+    };
+
     html += '<h4>Damper Settings</h4>';
+    if (sweetSpot) {
+      html += '<div class="damper-legend">'
+        + '<span class="damper-legend-item"><span class="damper-legend-swatch" style="background:#4caf50"></span> In sweet spot</span>'
+        + '<span class="damper-legend-item"><span class="damper-legend-swatch" style="background:#ff9800"></span> Within 1 click</span>'
+        + '<span class="damper-legend-item"><span class="damper-legend-swatch" style="background:#f44336"></span> Outside range</span>'
+        + '<span class="damper-legend-item"><span class="damper-legend-swatch damper-legend-band"></span> Sweet spot range</span>'
+        + '</div>';
+    }
     damperModes.forEach(function(entry) {
       var mode = entry[0], d = entry[1];
       if (d.front == null && d.rear == null) return;
-      var max = Math.max(d.front || 0, d.rear || 0, 1);
+      var ssKey = damperKeyMap[mode];
+      var frontSS = sweetSpot && ssKey && sweetSpot.front ? sweetSpot.front[ssKey] : null;
+      var rearSS = sweetSpot && ssKey && sweetSpot.rear ? sweetSpot.rear[ssKey] : null;
+
+      var rangeMax = 1;
+      if (d.frontRange && d.frontRange.max != null) rangeMax = Math.max(rangeMax, d.frontRange.max);
+      if (d.rearRange && d.rearRange.max != null) rangeMax = Math.max(rangeMax, d.rearRange.max);
+      if (frontSS) rangeMax = Math.max(rangeMax, frontSS.max);
+      if (rearSS) rangeMax = Math.max(rangeMax, rearSS.max);
+      rangeMax = Math.max(rangeMax, d.front || 0, d.rear || 0);
+
       var short = mode.replace('Speed ', '').replace('damping', '').trim();
       html += '<div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.3px;margin:6px 0 4px">'+short+'</div>';
       html += '<div class="bar-pair">';
-      html += '<div><div class="bar-pair-label">Front</div>'
-        + '<div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:'+(((d.front||0)/max*100).toFixed(0))+'%;background:#2196F3"></div></div></div>'
-        + '<div class="bar-pair-value" style="color:#64b5f6">'+(d.front != null ? d.front + ' cl' : '\u2014')+'</div></div>';
-      html += '<div><div class="bar-pair-label">Rear</div>'
-        + '<div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:'+(((d.rear||0)/max*100).toFixed(0))+'%;background:#f44336"></div></div></div>'
-        + '<div class="bar-pair-value" style="color:#ef9a9a">'+(d.rear != null ? d.rear + ' cl' : '\u2014')+'</div></div>';
+
+      ['front', 'rear'].forEach(function(end) {
+        var val = d[end];
+        var ss = end === 'front' ? frontSS : rearSS;
+        var endLabel = end.charAt(0).toUpperCase() + end.slice(1);
+        var baseColor = end === 'front' ? '#2196F3' : '#f44336';
+        var baseTextColor = end === 'front' ? '#64b5f6' : '#ef9a9a';
+
+        var barColor = baseColor;
+        var statusText = '';
+        if (val != null && ss) {
+          if (val >= ss.min && val <= ss.max) {
+            barColor = '#4caf50';
+            statusText = '<span class="damper-status damper-status-good">In sweet spot</span>';
+          } else if (val >= ss.min - 1 && val <= ss.max + 1) {
+            barColor = '#ff9800';
+            var offBy = val < ss.min ? 'low' : 'high';
+            statusText = '<span class="damper-status damper-status-warn">1 click '+offBy+'</span>';
+          } else {
+            barColor = '#f44336';
+            var diff = val < ss.min ? ss.min - val : val - ss.max;
+            var offBy = val < ss.min ? 'low' : 'high';
+            statusText = '<span class="damper-status damper-status-bad">'+diff+' clicks '+offBy+'</span>';
+          }
+        }
+
+        var barPct = val != null ? ((val / rangeMax) * 100).toFixed(0) : '0';
+        var ssBandHtml = '';
+        if (ss) {
+          var ssLeft = ((ss.min / rangeMax) * 100).toFixed(1);
+          var ssWidth = (((ss.max - ss.min) / rangeMax) * 100).toFixed(1);
+          ssBandHtml = '<div class="damper-sweet-band" style="left:'+ssLeft+'%;width:'+ssWidth+'%"></div>';
+        }
+
+        html += '<div><div class="bar-pair-label">'+endLabel+'</div>'
+          + '<div class="bar-chart-row"><div class="bar-wrap">'
+          + ssBandHtml
+          + '<div class="bar-fill" style="width:'+barPct+'%;background:'+barColor+'"></div>'
+          + '</div></div>'
+          + '<div class="bar-pair-value" style="color:'+baseTextColor+'">'+(val != null ? val + ' cl' : '\u2014')+'</div>'
+          + statusText
+          + '</div>';
+      });
       html += '</div>';
     });
   }

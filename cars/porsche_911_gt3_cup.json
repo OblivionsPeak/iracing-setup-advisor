@@ -20,5 +20,19 @@
       "RR": 45
     },
     "series_note": "Porsche Carrera Cup. Ride height limits are strict \u2014 running near minimum requires corner weight check."
+  },
+  "damper_sweet_spot": {
+    "front": {
+      "ls_compression": {"min": 4, "max": 8},
+      "hs_compression": {"min": 5, "max": 10},
+      "ls_rebound": {"min": 5, "max": 9},
+      "hs_rebound": {"min": 5, "max": 9}
+    },
+    "rear": {
+      "ls_compression": {"min": 5, "max": 9},
+      "hs_compression": {"min": 3, "max": 7},
+      "ls_rebound": {"min": 6, "max": 11},
+      "hs_rebound": {"min": 4, "max": 8}
+    }
   }
 }

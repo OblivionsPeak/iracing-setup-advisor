@@ -26,5 +26,19 @@
     "front_max": 75,
     "rear_min": 60,
     "rear_max": 80
+  },
+  "damper_sweet_spot": {
+    "front": {
+      "ls_compression": {"min": 5, "max": 10},
+      "hs_compression": {"min": 8, "max": 14},
+      "ls_rebound": {"min": 4, "max": 9},
+      "hs_rebound": {"min": 6, "max": 12}
+    },
+    "rear": {
+      "ls_compression": {"min": 6, "max": 11},
+      "hs_compression": {"min": 2, "max": 6},
+      "ls_rebound": {"min": 8, "max": 14},
+      "hs_rebound": {"min": 5, "max": 10}
+    }
   }
 }
