@@ -372,8 +372,6 @@ def sto_notes_route():
         return jsonify({'error': 'No file'}), 400
     f = request.files['file']
     raw = f.read()
-    # iRacing STO files embed UTF-16LE text notes after a binary header.
-    # Scan for readable wide-character text blocks.
     notes = ''
     try:
         decoded = raw.decode('utf-16-le', errors='ignore')
@@ -385,6 +383,73 @@ def sto_notes_route():
     if not notes:
         return jsonify({'error': 'No readable notes found in this .sto file.'}), 200
     return jsonify({'notes': notes, 'filename': f.filename})
+
+
+@app.route('/api/sto-decode', methods=['POST'])
+def sto_decode_route():
+    """
+    Decode an iRacing .sto file via setupdelta API and return structured parameters
+    grouped by tab/section, plus embedded notes.
+    """
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file'}), 400
+    f    = request.files['file']
+    raw  = f.read()
+    name = f.filename
+
+    # ── Decode via setupdelta ──────────────────────────────────────────────────
+    try:
+        import requests as _req
+        resp = _req.post(
+            'https://www.setupdelta.com/api/setup/decode',
+            files={'file': (name, raw, 'application/octet-stream')},
+            headers={'Origin': 'https://www.setupdelta.com',
+                     'Referer': 'https://www.setupdelta.com/'},
+            timeout=20,
+        )
+        if resp.status_code == 422:
+            return jsonify({'error': 'unsupported_car'}), 400
+        if resp.status_code != 200:
+            return jsonify({'error': f'decode_api_error_{resp.status_code}'}), 400
+        decoded = resp.json()
+    except Exception as e:
+        return jsonify({'error': f'network_error: {e}'}), 500
+
+    rows = decoded.get('rows', [])
+    car_name = decoded.get('carName', '')
+
+    # ── Build grouped parameter dict (mapped rows only) ───────────────────────
+    tabs = {}
+    for row in rows:
+        if not row.get('is_mapped'):
+            continue
+        tab  = row.get('tab')  or 'Other'
+        sect = row.get('section') or 'General'
+        tabs.setdefault(tab, {}).setdefault(sect, [])
+        tabs[tab][sect].append({
+            'label':       row.get('label', ''),
+            'value':       row.get('metric_value', ''),
+            'range_min':   (row.get('range_metric') or {}).get('min'),
+            'range_max':   (row.get('range_metric') or {}).get('max'),
+        })
+
+    # ── Extract embedded notes ────────────────────────────────────────────────
+    notes = ''
+    try:
+        text = raw.decode('utf-16-le', errors='ignore')
+        blocks = re.findall(r'[ -~\n\r\t]{20,}', text)
+        notes  = '\n\n'.join(b.strip() for b in blocks if b.strip())
+    except Exception:
+        pass
+
+    return jsonify({
+        'filename':  name,
+        'car_name':  car_name,
+        'tabs':      tabs,
+        'notes':     notes,
+        'row_count': len(rows),
+        'mapped_count': sum(1 for r in rows if r.get('is_mapped')),
+    })
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -534,6 +599,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
             background:#0d2a40;padding:2px 10px;border-radius:10px}
 .rec-issue{font-size:13px;color:#ccc;margin-bottom:5px}
 .rec-action{font-size:13px;color:#66bb6a;font-style:italic}
+
+/* ── STO analysis panel ── */
+.sto-analysis{background:#141414;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;margin-top:14px}
+.sto-analysis-header{background:#181818;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222}
+.sto-analysis-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#777}
+.sto-car-badge{font-size:11px;color:#2196F3;background:#0d2a40;padding:2px 10px;border-radius:8px;font-weight:600}
+.sto-tabs{display:flex;gap:0;border-bottom:1px solid #222;overflow-x:auto}
+.sto-tab-btn{background:none;border:none;border-bottom:2px solid transparent;color:#555;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:color .15s}
+.sto-tab-btn:hover{color:#aaa}
+.sto-tab-btn.active{color:#2196F3;border-bottom-color:#2196F3}
+.sto-tab-content{padding:16px 20px;max-height:400px;overflow-y:auto}
+.sto-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#444;margin:12px 0 8px}
+.sto-section-title:first-child{margin-top:0}
+.sto-param-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #1a1a1a;font-size:12px}
+.sto-param-row:last-child{border-bottom:none}
+.sto-param-label{color:#666;flex:1}
+.sto-param-value{font-weight:700;color:#ccc;margin-left:12px;font-variant-numeric:tabular-nums}
+.sto-param-range{font-size:10px;color:#444;margin-left:8px}
+.sto-insight{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:6px;margin-top:4px;font-size:12px}
+.sto-insight.warn{background:#1a0f00;border-left:3px solid #ff9800;color:#ffb74d}
+.sto-insight.good{background:#0a1a0a;border-left:3px solid #4caf50;color:#81c784}
+.sto-insight.info{background:#0a1520;border-left:3px solid #2196F3;color:#64b5f6}
+.sto-notes-block{padding:14px 20px;border-top:1px solid #1a1a1a}
+.sto-notes-pre{color:#94a3b8;font-size:.75rem;white-space:pre-wrap;max-height:200px;overflow-y:auto;background:#0f172a;border-radius:6px;padding:12px;margin:0;line-height:1.5}
 
 /* ── Setup card ── */
 .setup-card{background:#141414;border:1px solid #222;border-radius:12px;overflow:hidden;margin-bottom:8px}
@@ -770,7 +859,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 </div>
 <div id="sto-wrap" style="margin-top:16px">
   <button onclick="toggleStoPanel()" class="btn" style="background:#374151;font-size:.8rem;padding:6px 14px">
-    📋 Load Setup Notes (.sto)
+    🔧 Analyze Setup (.sto)
   </button>
   <div id="sto-panel" style="display:none;margin-top:10px;background:#1e293b;border-radius:10px;padding:14px">
     <div id="sto-drop" style="border:2px dashed #374151;border-radius:8px;padding:20px;text-align:center;color:#64748b;font-size:.85rem;cursor:pointer"
@@ -778,12 +867,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
          ondragover="event.preventDefault()"
          ondrop="handleStoDrop(event)">
       Drop your .sto setup file here or click to browse
+      <div style="font-size:.75rem;margin-top:6px;color:#4b5563">Parameters decoded and cross-referenced with your telemetry</div>
     </div>
     <input type="file" id="sto-file-input" accept=".sto" style="display:none" onchange="handleStoFile(this.files[0])">
-    <div id="sto-notes-output" style="margin-top:12px;display:none">
-      <div style="color:#94a3b8;font-size:.75rem;margin-bottom:6px" id="sto-filename"></div>
-      <pre id="sto-notes-text" style="color:#cbd5e1;font-size:.75rem;white-space:pre-wrap;max-height:300px;overflow-y:auto;background:#0f172a;border-radius:6px;padding:12px;margin:0;line-height:1.5"></pre>
-    </div>
+    <div id="sto-loading" style="display:none;text-align:center;padding:16px;color:#555;font-size:13px">Decoding setup…</div>
+    <div id="sto-analysis-output" style="display:none"></div>
   </div>
 </div>
 <div id="tm-tooltip"></div>
@@ -1794,22 +1882,180 @@ async function handleStoDrop(e) {
   if (file) await handleStoFile(file);
 }
 
+// ── Telemetry cross-reference hints ──────────────────────────────────────────
+// Maps setup parameter label keywords → how to interpret them against telemetry.
+// Returns null if no relevant telemetry available, else {type, insight, priority}
+function _crossRef(label, value, lastAnalysis) {
+  if (!lastAnalysis) return null;
+  const l   = label.toLowerCase();
+  const val = parseFloat(value);
+  const recs = (lastAnalysis.recommendations || []);
+  const handling = lastAnalysis.handling || {};
+
+  // Determine overall balance tendency from handling sectors
+  const tendencies = Object.values(handling).map(h => h.tendency).filter(Boolean);
+  const usCount = tendencies.filter(t => t === 'understeer').length;
+  const osCount = tendencies.filter(t => t === 'oversteer').length;
+  const overallUS = usCount > osCount;
+  const overallOS = osCount > usCount;
+
+  // Front anti-roll bar
+  if (l.includes('front arb') || l.includes('front anti-roll') || (l.includes('arb') && l.includes('front'))) {
+    if (overallUS) return {type:'warn', text:`Telemetry shows understeer — consider increasing front ARB to add front grip response, or decreasing rear ARB to free the rear.`};
+    if (overallOS) return {type:'warn', text:`Telemetry shows oversteer — consider softening front ARB to reduce snap.`};
+  }
+  // Rear anti-roll bar
+  if (l.includes('rear arb') || l.includes('rear anti-roll') || (l.includes('arb') && l.includes('rear'))) {
+    if (overallUS) return {type:'info', text:`Understeer detected — softening rear ARB can free up rear rotation and reduce understeer.`};
+    if (overallOS) return {type:'warn', text:`Oversteer detected — stiffening rear ARB may add stability.`};
+  }
+  // Springs
+  if ((l.includes('spring') || l.includes('spring rate')) && l.includes('front')) {
+    if (overallUS) return {type:'info', text:`Front understeer — softening front spring rate can increase front mechanical grip.`};
+  }
+  if ((l.includes('spring') || l.includes('spring rate')) && l.includes('rear')) {
+    if (overallOS) return {type:'info', text:`Oversteer — stiffening rear spring rate can add rear stability.`};
+  }
+  // Tyre pressures — cross-ref with pressure recs
+  const cornerMap = {'lf':'LF','rf':'RF','lr':'LR','rr':'RR','left front':'LF','right front':'RF','left rear':'LR','right rear':'RR'};
+  for (const [kw, corner] of Object.entries(cornerMap)) {
+    if (l.includes(kw) && (l.includes('pressure') || l.includes('psi'))) {
+      const pRec = recs.find(r => r.category === 'Tyre Pressure' && r.corner === corner);
+      if (pRec) return {type:'warn', text:`Telemetry: ${pRec.issue}. Suggested action: ${pRec.action}.`};
+      const pressures = lastAnalysis.tyre_pressures || {};
+      if (pressures[corner] != null) {
+        return {type:'good', text:`Hot pressure measured at ${pressures[corner].toFixed(1)} psi at ${corner}.`};
+      }
+    }
+  }
+  // Camber
+  for (const [kw, corner] of Object.entries(cornerMap)) {
+    if (l.includes(kw) && l.includes('camber')) {
+      const cRec = recs.find(r => r.category === 'Camber' && r.corner === corner);
+      if (cRec) return {type:'warn', text:`Telemetry: ${cRec.issue}. ${cRec.action}.`};
+    }
+  }
+  // Brake bias
+  if (l.includes('brake bias') || l.includes('brake balance')) {
+    const brk = lastAnalysis.balance;
+    if (brk && brk.brake_balance_pct != null) {
+      return {type:'info', text:`Session average brake balance: ${brk.brake_balance_pct.toFixed(1)}%.`};
+    }
+  }
+  // Aero / downforce
+  if (l.includes('wing') || l.includes('downforce') || l.includes('aero')) {
+    if (overallUS) return {type:'info', text:`Understeer present — adding front aero (if available) can help balance.`};
+  }
+  return null;
+}
+
 async function handleStoFile(file) {
   if (!file || !file.name.endsWith('.sto')) {
     alert('Please drop a .sto iRacing setup file.'); return;
   }
+  document.getElementById('sto-drop').style.display    = 'none';
+  document.getElementById('sto-loading').style.display = 'block';
+  document.getElementById('sto-analysis-output').style.display = 'none';
+
   const fd = new FormData();
   fd.append('file', file);
+  let data;
   try {
-    const res  = await fetch('/api/sto-notes', {method: 'POST', body: fd});
-    const data = await res.json();
-    if (data.error && !data.notes) { alert(data.error); return; }
-    document.getElementById('sto-filename').textContent    = '📋 ' + file.name;
-    document.getElementById('sto-notes-text').textContent  = data.notes || '(no notes found)';
-    document.getElementById('sto-notes-output').style.display = 'block';
+    const res = await fetch('/api/sto-decode', {method: 'POST', body: fd});
+    data = await res.json();
   } catch (e) {
-    alert('Error reading setup file: ' + e.message);
+    document.getElementById('sto-loading').style.display = 'none';
+    document.getElementById('sto-drop').style.display = '';
+    alert('Error decoding setup file: ' + e.message);
+    return;
   }
+  document.getElementById('sto-loading').style.display = 'none';
+
+  if (data.error) {
+    document.getElementById('sto-drop').style.display = '';
+    const msg = data.error === 'unsupported_car'
+      ? 'This car is not supported by the decoder (setupdelta does not have a mapping for it).'
+      : 'Could not decode this setup file: ' + data.error;
+    alert(msg);
+    return;
+  }
+
+  // Get last telemetry analysis result if available
+  const lastResult = window._lastAnalysisResult || null;
+
+  const tabs   = data.tabs || {};
+  const tabNames = Object.keys(tabs);
+
+  // Build HTML
+  let html = `<div class="sto-analysis">`;
+  html += `<div class="sto-analysis-header">
+    <span class="sto-analysis-title">🔧 ${file.name}</span>
+    ${data.car_name ? `<span class="sto-car-badge">${data.car_name}</span>` : ''}
+  </div>`;
+
+  if (!lastResult) {
+    html += `<div style="padding:10px 20px;font-size:11px;color:#555;border-bottom:1px solid #1a1a1a">
+      💡 Analyze a telemetry file first to get cross-referenced setup insights.
+    </div>`;
+  } else {
+    html += `<div style="padding:10px 20px;font-size:11px;color:#4caf50;border-bottom:1px solid #1a1a1a">
+      ✓ Cross-referencing with current telemetry session
+    </div>`;
+  }
+
+  // Tab nav
+  if (tabNames.length) {
+    html += `<div class="sto-tabs" id="sto-tab-nav">`;
+    tabNames.forEach((t, i) => {
+      html += `<button class="sto-tab-btn${i===0?' active':''}" onclick="switchStoTab('${t}')" data-tab="${t}">${t}</button>`;
+    });
+    html += `</div>`;
+
+    // Tab panels
+    tabNames.forEach((tabName, i) => {
+      html += `<div class="sto-tab-content" id="sto-tab-${tabName.replace(/\s+/g,'_')}" style="display:${i===0?'block':'none'}">`;
+      const sections = tabs[tabName];
+      Object.entries(sections).forEach(([sectName, params]) => {
+        html += `<div class="sto-section-title">${sectName}</div>`;
+        params.forEach(p => {
+          const insight = _crossRef(p.label, p.value, lastResult);
+          const rangeHtml = (p.range_min != null && p.range_max != null)
+            ? `<span class="sto-param-range">${p.range_min}–${p.range_max}</span>` : '';
+          html += `<div class="sto-param-row">
+            <span class="sto-param-label">${p.label}</span>
+            <span>${rangeHtml}<span class="sto-param-value">${p.value}</span></span>
+          </div>`;
+          if (insight) {
+            html += `<div class="sto-insight ${insight.type}">⚡ ${insight.text}</div>`;
+          }
+        });
+      });
+      html += `</div>`;
+    });
+  } else {
+    html += `<div style="padding:20px;color:#555;font-size:13px;">No mapped parameters found.</div>`;
+  }
+
+  // Notes
+  if (data.notes) {
+    html += `<div class="sto-notes-block">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#444;margin-bottom:8px">Setup Notes</div>
+      <pre class="sto-notes-pre">${data.notes.replace(/</g,'&lt;')}</pre>
+    </div>`;
+  }
+
+  html += `</div>`;
+
+  const out = document.getElementById('sto-analysis-output');
+  out.innerHTML = html;
+  out.style.display = 'block';
+}
+
+function switchStoTab(name) {
+  document.querySelectorAll('.sto-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.sto-tab-content').forEach(p => {
+    p.style.display = p.id === 'sto-tab-' + name.replace(/\s+/g,'_') ? 'block' : 'none';
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2212,6 +2458,7 @@ function render(data) {
   resultsEl.style.display = 'block';
   document.getElementById('upload-wrap').style.display = 'none';
   if (window._trackMapData) setTimeout(() => drawTrackMap(localStorage.getItem('iracing-tm-mode') || 'speed'), 20);
+  window._lastAnalysisResult = data;
 }
 
 function renderLibrarySave(data) {
