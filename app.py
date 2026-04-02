@@ -265,13 +265,19 @@ def analyze_route():
 
         # Auto ambient + track temp from session YAML
         track_temp_f = None
+        _temp_debug = None
         if session_info:
             _at_m = re.search(r'AirTemp:\s*([\d.]+)', session_info)
             if _at_m and ambient_temp_f is None:
                 ambient_temp_f = round(float(_at_m.group(1)) * 9/5 + 32, 1)
-            _tt_m = re.search(r'TrackTemp:\s*([\d.]+)', session_info)
+            # Try TrackTemp first, then TrackSurfaceTemp as fallback
+            _tt_m = re.search(r'TrackTemp:\s*([\d.]+)', session_info) or \
+                    re.search(r'TrackSurfaceTemp:\s*([\d.]+)', session_info)
             if _tt_m:
                 track_temp_f = round(float(_tt_m.group(1)) * 9/5 + 32, 1)
+            # Grab raw temp lines for debug
+            _temp_lines = re.findall(r'.{0,4}[Tt]emp.{0,40}', session_info)
+            _temp_debug = _temp_lines[:8] if _temp_lines else ['(no temp lines found in YAML)']
 
         # Auto-detect car/track from session YAML if not manually specified
         detected_car_id, detected_track_id, raw_car_path, raw_track_name = \
@@ -306,6 +312,7 @@ def analyze_route():
             'session_type': session_type,
             'ambient_temp_f': ambient_temp_f,
             'track_temp_f':  track_temp_f,
+            'temp_debug':    _temp_debug,
         }
         result['detected'] = {
             'car_id':            car_id   if auto_detected_car   else None,
@@ -2467,6 +2474,7 @@ function render(data) {
     ${renderConfidence(data.confidence, data.signal_warnings)}
     <div class="section-label">Tyre temperatures &amp; hot pressures</div>
     ${renderTrackTempBadge(m.track_temp_f, m.ambient_temp_f)}
+    ${(!m.track_temp_f && m.temp_debug) ? `<div style="background:#1a0a00;border-left:3px solid #555;padding:6px 12px;font-size:11px;color:#888;margin-bottom:10px;border-radius:4px"><b style="color:#aaa">Debug — temp lines from YAML:</b><br>${(m.temp_debug||[]).map(l=>`<code>${l}</code>`).join('<br>')}</div>` : ''}
     <div class="tyre-grid">
       ${tyreCard('LF — Left Front',  t.LF, p.LF)}
       ${tyreCard('RF — Right Front', t.RF, p.RF)}
