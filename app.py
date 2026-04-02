@@ -450,6 +450,13 @@ def sto_decode_route():
     except Exception:
         pass
 
+    # ── Look up car config for recommendation engine ─────────────────────────
+    car_cfg = None
+    if car_name:
+        cfg_key = CAR_PATH_INDEX.get(car_name.lower())
+        if cfg_key and cfg_key in CARS:
+            car_cfg = CARS[cfg_key]
+
     return jsonify({
         'filename':  name,
         'car_name':  car_name,
@@ -457,6 +464,7 @@ def sto_decode_route():
         'notes':     notes,
         'row_count': len(rows),
         'mapped_count': sum(1 for r in rows if r.get('is_mapped')),
+        'car_config': car_cfg,
     })
 
 
@@ -669,6 +677,47 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .sto-insight.info{background:#0a1520;border-left:3px solid #2196F3;color:#64b5f6}
 .sto-notes-block{padding:14px 20px;border-top:1px solid #1a1a1a}
 .sto-notes-pre{color:#94a3b8;font-size:.75rem;white-space:pre-wrap;max-height:200px;overflow-y:auto;background:#0f172a;border-radius:6px;padding:12px;margin:0;line-height:1.5}
+
+/* ── Setup analysis visualizations ── */
+.setup-viz-section{padding:16px 20px;border-bottom:1px solid #1a1a1a}
+.setup-viz-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#555;margin-bottom:14px}
+.setup-viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.setup-viz-card{background:#181818;border-radius:10px;padding:16px 18px}
+.setup-viz-card h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#666;margin-bottom:12px}
+.car-outline-wrap{display:flex;justify-content:center;padding:8px 0}
+.corner-data{font-size:11px;color:#aaa}
+.corner-data .val{font-size:14px;font-weight:700;color:#ccc}
+.corner-data .unit{font-size:10px;color:#555}
+.bar-chart-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bar-chart-row .bar-label{font-size:11px;color:#666;width:80px;text-align:right;flex-shrink:0}
+.bar-chart-row .bar-wrap{flex:1;height:16px;background:#111;border-radius:3px;overflow:hidden;position:relative}
+.bar-chart-row .bar-fill{height:100%;border-radius:3px;transition:width .3s}
+.bar-chart-row .bar-val{font-size:11px;color:#aaa;width:60px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.bar-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.bar-pair-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;text-align:center}
+.bar-pair-value{font-size:13px;font-weight:700;text-align:center;margin-top:4px}
+.ratio-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;margin-left:8px}
+.ratio-badge.front-bias{background:#0d2a40;color:#64b5f6}
+.ratio-badge.rear-bias{background:#2d0a0a;color:#f44336}
+.ratio-badge.balanced{background:#0a1a0a;color:#4caf50}
+.setup-rec-list{display:flex;flex-direction:column;gap:8px}
+.setup-rec{background:#181818;border-radius:8px;padding:12px 16px;border-left:4px solid #333}
+.setup-rec.high{border-left-color:#f44336}
+.setup-rec.medium{border-left-color:#ff9800}
+.setup-rec.low{border-left-color:#4caf50}
+.setup-rec-head{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.setup-rec-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#666}
+.setup-rec-priority{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;padding:2px 6px;border-radius:6px}
+.setup-rec-priority.high{background:#2d0a0a;color:#f44336}
+.setup-rec-priority.medium{background:#1a1000;color:#ff9800}
+.setup-rec-priority.low{background:#0a1a0a;color:#4caf50}
+.setup-rec-text{font-size:12px;color:#ccc;line-height:1.5}
+.setup-rec-action{font-size:12px;color:#66bb6a;font-style:italic;margin-top:3px}
+.aero-balance-indicator{display:flex;align-items:center;gap:2px;margin:12px 0}
+.aero-balance-bar{height:8px;border-radius:4px;transition:width .3s}
+.brake-bias-bar{display:flex;height:24px;border-radius:6px;overflow:hidden;margin:8px 0}
+.brake-bias-front{background:#2196F3;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.brake-bias-rear{background:#f44336;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
 
 /* ── Setup card ── */
 .setup-card{background:#141414;border:1px solid #222;border-radius:12px;overflow:hidden;margin-bottom:8px}
@@ -1970,10 +2019,21 @@ async function handleStoDrop(e) {
 // ── Telemetry cross-reference hints ──────────────────────────────────────────
 // Maps setup parameter label keywords → how to interpret them against telemetry.
 // Returns null if no relevant telemetry available, else {type, insight, priority}
-function _crossRef(label, value, lastAnalysis) {
-  if (!lastAnalysis) return null;
+function _crossRef(label, value, lastAnalysis, setupAnalysis) {
   const l   = label.toLowerCase();
   const val = parseFloat(value);
+
+  // ── Setup-only insights (no telemetry needed) ──────────────────────────────
+  if (setupAnalysis) {
+    const sa = setupAnalysis;
+    // Range warnings from setup analysis
+    const rangeRec = (sa.recs || []).find(r => r.category === 'Range Limit' && r.text.toLowerCase().includes(label.toLowerCase().substring(0, 15)));
+    if (rangeRec) {
+      return {type: rangeRec.priority === 'high' ? 'warn' : 'info', text: `${rangeRec.text}. ${rangeRec.action}`};
+    }
+  }
+
+  if (!lastAnalysis) return null;
   const recs = (lastAnalysis.recommendations || []);
   const handling = lastAnalysis.handling || {};
 
@@ -1984,21 +2044,24 @@ function _crossRef(label, value, lastAnalysis) {
   const overallUS = usCount > osCount;
   const overallOS = osCount > usCount;
 
+  // Enhance with setup analysis tendency
+  const setupTendency = setupAnalysis ? setupAnalysis.tendencySummary : null;
+
   // Front anti-roll bar
   if (l.includes('front arb') || l.includes('front anti-roll') || (l.includes('arb') && l.includes('front'))) {
     if (overallUS) return {type:'warn', text:`Telemetry shows understeer — consider increasing front ARB to add front grip response, or decreasing rear ARB to free the rear.`};
     if (overallOS) return {type:'warn', text:`Telemetry shows oversteer — consider softening front ARB to reduce snap.`};
   }
   // Rear anti-roll bar
-  if (l.includes('rear arb') || l.includes('rear anti-roll') || (l.includes('arb') && l.includes('rear'))) {
+  if (l.includes('rear arb') || l.includes('rear anti-roll') || l.includes('rarb')) {
     if (overallUS) return {type:'info', text:`Understeer detected — softening rear ARB can free up rear rotation and reduce understeer.`};
     if (overallOS) return {type:'warn', text:`Oversteer detected — stiffening rear ARB may add stability.`};
   }
   // Springs
-  if ((l.includes('spring') || l.includes('spring rate')) && l.includes('front')) {
+  if ((l.includes('spring') || l.includes('spring rate')) && (l.includes('front') || l.includes('left front') || l.includes('right front'))) {
     if (overallUS) return {type:'info', text:`Front understeer — softening front spring rate can increase front mechanical grip.`};
   }
-  if ((l.includes('spring') || l.includes('spring rate')) && l.includes('rear')) {
+  if ((l.includes('spring') || l.includes('spring rate')) && (l.includes('rear') || l.includes('left rear') || l.includes('right rear'))) {
     if (overallOS) return {type:'info', text:`Oversteer — stiffening rear spring rate can add rear stability.`};
   }
   // Tyre pressures — cross-ref with pressure recs
@@ -2021,17 +2084,647 @@ function _crossRef(label, value, lastAnalysis) {
     }
   }
   // Brake bias
-  if (l.includes('brake bias') || l.includes('brake balance')) {
+  if (l.includes('brake bias') || l.includes('brake balance') || l.includes('brake pressure bias')) {
     const brk = lastAnalysis.balance;
     if (brk && brk.brake_balance_pct != null) {
-      return {type:'info', text:`Session average brake balance: ${brk.brake_balance_pct.toFixed(1)}%.`};
+      let extra = '';
+      if (setupAnalysis && setupAnalysis.brakeBias != null) {
+        const diff = setupAnalysis.brakeBias - brk.brake_balance_pct;
+        if (Math.abs(diff) > 0.5) {
+          extra = ` Setup bias ${setupAnalysis.brakeBias}% vs telemetry avg ${brk.brake_balance_pct.toFixed(1)}% — driver adjusted by ${diff > 0 ? '+' : ''}${diff.toFixed(1)}% during session.`;
+        }
+      }
+      return {type:'info', text:`Session average brake balance: ${brk.brake_balance_pct.toFixed(1)}%.${extra}`};
     }
   }
   // Aero / downforce
   if (l.includes('wing') || l.includes('downforce') || l.includes('aero')) {
     if (overallUS) return {type:'info', text:`Understeer present — adding front aero (if available) can help balance.`};
   }
+  // Combined insight: if telemetry and setup agree on tendency
+  if (setupTendency && setupTendency !== 'balanced') {
+    if (l.includes('spring') || l.includes('arb') || l.includes('damper')) {
+      if (setupTendency === 'understeer' && overallUS) {
+        return {type:'warn', text:`Both setup geometry and telemetry suggest understeer. This parameter contributes to the imbalance.`};
+      }
+      if (setupTendency === 'oversteer' && overallOS) {
+        return {type:'warn', text:`Both setup geometry and telemetry suggest oversteer. This parameter contributes to the imbalance.`};
+      }
+    }
+  }
   return null;
+}
+
+// ── Setup Recommendation Engine ──────────────────────────────────────────────
+// Analyzes decoded .sto parameters and generates intelligent recommendations.
+function analyzeSetup(tabs, carConfig) {
+  const recs = [];
+  const params = {};  // flat lookup by label-keyword
+
+  // Flatten all parameters for easy lookup
+  Object.values(tabs).forEach(sections => {
+    Object.entries(sections).forEach(([sect, pList]) => {
+      pList.forEach(p => {
+        const key = (sect + ' ' + p.label).toLowerCase();
+        params[key] = p;
+        // Also store by just label
+        params[p.label.toLowerCase()] = p;
+      });
+    });
+  });
+
+  // Helper: parse numeric value from metric_value string (e.g. "280 N/mm" → 280)
+  function numVal(p) {
+    if (!p || !p.value) return null;
+    const m = p.value.match(/-?[\d.]+/);
+    return m ? parseFloat(m[0]) : null;
+  }
+
+  // Helper: parse range bounds
+  function rangeVal(str) {
+    if (!str) return null;
+    const m = str.match(/-?[\d.]+/);
+    return m ? parseFloat(m[0]) : null;
+  }
+
+  // Helper: find parameter by partial label match
+  function findParam(keywords) {
+    const kws = keywords.map(k => k.toLowerCase());
+    for (const [key, p] of Object.entries(params)) {
+      if (kws.every(kw => key.includes(kw))) return p;
+    }
+    return null;
+  }
+
+  // Collect corner parameters
+  const corners = {
+    LF: {label:'Left Front'}, RF: {label:'Right Front'},
+    LR: {label:'Left Rear'}, RR: {label:'Right Rear'}
+  };
+  const cornerKeys = {LF:'left front', RF:'right front', LR:'left rear', RR:'right rear'};
+
+  Object.entries(cornerKeys).forEach(([corner, searchKey]) => {
+    corners[corner].pressure = numVal(findParam([searchKey, 'pressure']));
+    corners[corner].spring = numVal(findParam([searchKey, 'spring']));
+    corners[corner].rideHeight = numVal(findParam([searchKey, 'ride height']));
+    corners[corner].bumpRubber = numVal(findParam([searchKey, 'bump rubber']));
+    corners[corner].camber = numVal(findParam([searchKey, 'camber']));
+  });
+
+  // Front/rear parameters
+  const frontARB = numVal(findParam(['arb setting']));
+  const rearARB = numVal(findParam(['rarb setting']));
+  const wing = numVal(findParam(['wing setting']));
+  const frontRHSpeed = numVal(findParam(['front rh at speed']));
+  const rearRHSpeed = numVal(findParam(['rear rh at speed']));
+  const brakeBias = numVal(findParam(['brake pressure bias'])) || numVal(findParam(['brake bias']));
+  const frontMC = numVal(findParam(['front master']));
+  const rearMC = numVal(findParam(['rear master']));
+  const brakePads = (findParam(['brake pads']) || {}).value || '';
+
+  // Damper parameters
+  const dampers = {};
+  ['Low Speed Compression', 'High Speed Compression', 'Low Speed Rebound', 'High Speed Rebound'].forEach(mode => {
+    const frontP = findParam(['front dampers', mode.toLowerCase()]);
+    const rearP = findParam(['rear dampers', mode.toLowerCase()]);
+    dampers[mode] = {
+      front: numVal(frontP),
+      rear: numVal(rearP),
+      frontRange: frontP ? {min: rangeVal(frontP.range_min), max: rangeVal(frontP.range_max)} : null,
+      rearRange: rearP ? {min: rangeVal(rearP.range_min), max: rangeVal(rearP.range_max)} : null
+    };
+  });
+
+  // ── 1. Range validation ────────────────────────────────────────────────────
+  Object.values(tabs).forEach(sections => {
+    Object.values(sections).forEach(pList => {
+      pList.forEach(p => {
+        if (!p.range_min || !p.range_max) return;
+        const v = numVal(p);
+        const mn = rangeVal(p.range_min);
+        const mx = rangeVal(p.range_max);
+        if (v == null || mn == null || mx == null) return;
+        const range = mx - mn;
+        if (range <= 0) return;
+        if (v <= mn) {
+          recs.push({category:'Range Limit', priority:'medium', text:`${p.label} is at minimum (${p.value})`, action:`Consider increasing — currently at the lowest possible setting.`});
+        } else if (v >= mx) {
+          recs.push({category:'Range Limit', priority:'medium', text:`${p.label} is at maximum (${p.value})`, action:`Consider decreasing — currently at the highest possible setting. You may be compensating for another issue.`});
+        } else if ((v - mn) / range < 0.05) {
+          recs.push({category:'Range Limit', priority:'low', text:`${p.label} is near minimum (${p.value}, range ${p.range_min}–${p.range_max})`, action:`Very close to the limit — check if this is intentional.`});
+        } else if ((mx - v) / range < 0.05) {
+          recs.push({category:'Range Limit', priority:'low', text:`${p.label} is near maximum (${p.value}, range ${p.range_min}–${p.range_max})`, action:`Very close to the limit — check if this is intentional.`});
+        }
+      });
+    });
+  });
+
+  // ── 2. Cross-corner balance ────────────────────────────────────────────────
+  // Springs: LF vs RF, LR vs RR
+  if (corners.LF.spring != null && corners.RF.spring != null && corners.LF.spring !== corners.RF.spring) {
+    const diff = Math.abs(corners.LF.spring - corners.RF.spring);
+    recs.push({category:'Cross-Corner Balance', priority: diff > 20 ? 'high' : 'medium',
+      text:`Front spring asymmetry: LF ${corners.LF.spring} vs RF ${corners.RF.spring} N/mm (Δ${diff})`,
+      action:`Asymmetric front springs are unusual unless compensating for a specific track characteristic. Verify this is intentional.`});
+  }
+  if (corners.LR.spring != null && corners.RR.spring != null && corners.LR.spring !== corners.RR.spring) {
+    const diff = Math.abs(corners.LR.spring - corners.RR.spring);
+    recs.push({category:'Cross-Corner Balance', priority: diff > 20 ? 'high' : 'medium',
+      text:`Rear spring asymmetry: LR ${corners.LR.spring} vs RR ${corners.RR.spring} N/mm (Δ${diff})`,
+      action:`Asymmetric rear springs create an uneven platform — verify this is intentional.`});
+  }
+
+  // Ride heights: LF vs RF, LR vs RR
+  if (corners.LF.rideHeight != null && corners.RF.rideHeight != null) {
+    const diff = Math.abs(corners.LF.rideHeight - corners.RF.rideHeight);
+    if (diff > 0.001) {
+      recs.push({category:'Cross-Corner Balance', priority:'medium',
+        text:`Front ride height asymmetry: LF ${(corners.LF.rideHeight*1000).toFixed(1)} vs RF ${(corners.RF.rideHeight*1000).toFixed(1)} mm`,
+        action:`Asymmetric ride heights affect aero balance. Usually indicates a track with more load on one side.`});
+    }
+  }
+  if (corners.LR.rideHeight != null && corners.RR.rideHeight != null) {
+    const diff = Math.abs(corners.LR.rideHeight - corners.RR.rideHeight);
+    if (diff > 0.001) {
+      recs.push({category:'Cross-Corner Balance', priority:'medium',
+        text:`Rear ride height asymmetry: LR ${(corners.LR.rideHeight*1000).toFixed(1)} vs RR ${(corners.RR.rideHeight*1000).toFixed(1)} mm`,
+        action:`Asymmetric rear ride heights affect mechanical grip balance. May be intentional for oval-style setups.`});
+    }
+  }
+
+  // Camber: should be mirrored (LF positive ≈ RF negative, etc.)
+  if (corners.LF.camber != null && corners.RF.camber != null) {
+    const diff = Math.abs(corners.LF.camber + corners.RF.camber);
+    if (diff > 0.2) {
+      recs.push({category:'Cross-Corner Balance', priority:'medium',
+        text:`Front camber asymmetry: LF ${corners.LF.camber}° vs RF ${corners.RF.camber}° (should mirror)`,
+        action:`On road courses, front camber is typically symmetric (LF ≈ -RF). A difference suggests intentional oval compensation or a possible error.`});
+    }
+  }
+  if (corners.LR.camber != null && corners.RR.camber != null) {
+    const diff = Math.abs(corners.LR.camber + corners.RR.camber);
+    if (diff > 0.2) {
+      recs.push({category:'Cross-Corner Balance', priority:'medium',
+        text:`Rear camber asymmetry: LR ${corners.LR.camber}° vs RR ${corners.RR.camber}° (should mirror)`,
+        action:`Symmetric rear camber is standard for road courses. Review if this asymmetry is intentional.`});
+    }
+  }
+
+  // Pressures: cross-corner
+  if (corners.LF.pressure != null && corners.RF.pressure != null) {
+    const diff = Math.abs(corners.LF.pressure - corners.RF.pressure);
+    if (diff > 3) {
+      recs.push({category:'Cross-Corner Balance', priority:'medium',
+        text:`Front pressure asymmetry: LF ${corners.LF.pressure} vs RF ${corners.RF.pressure} kPa`,
+        action:`Starting pressures are usually equal across an axle. Split pressures are uncommon unless compensating for asymmetric track load.`});
+    }
+  }
+  if (corners.LR.pressure != null && corners.RR.pressure != null) {
+    const diff = Math.abs(corners.LR.pressure - corners.RR.pressure);
+    if (diff > 3) {
+      recs.push({category:'Cross-Corner Balance', priority:'medium',
+        text:`Rear pressure asymmetry: LR ${corners.LR.pressure} vs RR ${corners.RR.pressure} kPa`,
+        action:`Starting pressures are usually equal across an axle. Verify this split is intentional.`});
+    }
+  }
+
+  // ── 3. Front-to-rear balance analysis ──────────────────────────────────────
+  const frontSpring = (corners.LF.spring != null && corners.RF.spring != null) ? (corners.LF.spring + corners.RF.spring) / 2 : null;
+  const rearSpring = (corners.LR.spring != null && corners.RR.spring != null) ? (corners.LR.spring + corners.RR.spring) / 2 : null;
+
+  if (frontSpring != null && rearSpring != null) {
+    const ratio = frontSpring / rearSpring;
+    if (ratio > 1.15) {
+      recs.push({category:'Front/Rear Balance', priority:'medium',
+        text:`Front springs significantly stiffer than rear (${frontSpring} vs ${rearSpring} N/mm, ratio ${ratio.toFixed(2)})`,
+        action:`A stiff front relative to rear tends toward understeer. Soften front springs or stiffen rear for more neutral balance.`});
+    } else if (ratio < 0.85) {
+      recs.push({category:'Front/Rear Balance', priority:'medium',
+        text:`Rear springs significantly stiffer than front (${rearSpring} vs ${frontSpring} N/mm, ratio ${(1/ratio).toFixed(2)})`,
+        action:`A stiff rear relative to front tends toward oversteer. Stiffen front or soften rear for more stability.`});
+    }
+  }
+
+  // Damper ratios
+  Object.entries(dampers).forEach(([mode, d]) => {
+    if (d.front != null && d.rear != null && d.front !== d.rear) {
+      const diff = d.front - d.rear;
+      if (Math.abs(diff) > 4) {
+        const stiffer = diff > 0 ? 'Front' : 'Rear';
+        const tendency = mode.includes('Compression')
+          ? (diff > 0 ? 'understeer on bump' : 'oversteer on bump')
+          : (diff > 0 ? 'understeer on rebound' : 'oversteer on rebound');
+        recs.push({category:'Front/Rear Balance', priority:'low',
+          text:`${mode}: front ${d.front} vs rear ${d.rear} clicks — ${stiffer} is stiffer`,
+          action:`Large damper split contributes to ${tendency}. ${mode.includes('Compression') ? 'Compression affects weight transfer rate into corners.' : 'Rebound affects weight transfer rate out of corners.'}`});
+      }
+    }
+  });
+
+  // ARB ratio
+  if (frontARB != null && rearARB != null) {
+    if (frontARB > rearARB + 2) {
+      recs.push({category:'Front/Rear Balance', priority:'low',
+        text:`Front ARB stiffer than rear (${frontARB} vs ${rearARB})`,
+        action:`Stiffer front ARB reduces front grip in corners → tends toward understeer. Consider softening front or stiffening rear ARB.`});
+    } else if (rearARB > frontARB + 2) {
+      recs.push({category:'Front/Rear Balance', priority:'low',
+        text:`Rear ARB stiffer than front (${rearARB} vs ${frontARB})`,
+        action:`Stiffer rear ARB reduces rear grip in corners → tends toward oversteer. Consider softening rear or stiffening front ARB.`});
+    }
+  }
+
+  // ── 4. Contextual recommendations (car config aware) ───────────────────────
+  if (carConfig) {
+    // Tire pressure vs target
+    const targetPsi = carConfig.target_hot_psi;
+    if (targetPsi) {
+      Object.entries(cornerKeys).forEach(([corner, searchKey]) => {
+        const pKpa = corners[corner].pressure;
+        if (pKpa == null) return;
+        const pPsi = pKpa * 0.14503773773;  // kPa → psi
+        const target = targetPsi[corner];
+        if (!target) return;
+        const diff = pPsi - target;
+        // Cold pressure is what we have; target is hot. Cold is typically 4-6 psi below hot.
+        // So we can't directly compare, but we can note the starting pressure.
+      });
+    }
+  }
+
+  // Wing angle context
+  if (wing != null) {
+    const wingParam = findParam(['wing setting']);
+    if (wingParam && wingParam.range_min && wingParam.range_max) {
+      const wMin = rangeVal(wingParam.range_min);
+      const wMax = rangeVal(wingParam.range_max);
+      if (wMin != null && wMax != null) {
+        const wRange = wMax - wMin;
+        const wPct = (wing - wMin) / wRange;
+        if (wPct > 0.8) {
+          recs.push({category:'Aero', priority:'low',
+            text:`Wing at ${wing}° — high downforce end (${(wPct*100).toFixed(0)}% of range)`,
+            action:`Good for technical tracks with lots of slow-medium corners. May sacrifice top speed on long straights.`});
+        } else if (wPct < 0.2) {
+          recs.push({category:'Aero', priority:'low',
+            text:`Wing at ${wing}° — low downforce end (${(wPct*100).toFixed(0)}% of range)`,
+            action:`Good for high-speed tracks. May lack rear grip in slow corners — compensate with mechanical grip (springs, dampers).`});
+        }
+      }
+    }
+  }
+
+  // Bump rubber gap
+  Object.entries(cornerKeys).forEach(([corner, searchKey]) => {
+    const gap = corners[corner].bumpRubber;
+    if (gap != null && gap < 0.02) {
+      recs.push({category:'Suspension', priority:'medium',
+        text:`${corners[corner].label} bump rubber gap very small (${(gap*1000).toFixed(0)} mm)`,
+        action:`A small gap means the car will frequently contact bump stops, creating a harsh, non-linear suspension response. Consider raising ride height or stiffening springs.`});
+    }
+  });
+
+  // Handling tendency summary
+  let tendencySummary = 'balanced';
+  let usScore = 0, osScore = 0;
+  if (frontSpring != null && rearSpring != null) {
+    if (frontSpring > rearSpring * 1.05) usScore++;
+    if (rearSpring > frontSpring * 1.05) osScore++;
+  }
+  if (frontARB != null && rearARB != null) {
+    if (frontARB > rearARB) usScore++;
+    if (rearARB > frontARB) osScore++;
+  }
+  if (brakeBias != null) {
+    if (brakeBias > 58) usScore++;
+    if (brakeBias < 54) osScore++;
+  }
+  if (usScore > osScore) tendencySummary = 'understeer';
+  else if (osScore > usScore) tendencySummary = 'oversteer';
+
+  return {
+    recs,
+    corners,
+    dampers,
+    frontARB, rearARB,
+    wing, frontRHSpeed, rearRHSpeed,
+    brakeBias, frontMC, rearMC, brakePads,
+    frontSpring, rearSpring,
+    tendencySummary
+  };
+}
+
+// ── SVG: Car outline with tire pressures, camber, ride heights ──────────────
+function renderCarOutlineSVG(analysis) {
+  const c = analysis.corners;
+  const W = 340, H = 440;
+  // Car body shape (top-down view)
+  const bodyX = 110, bodyY = 60, bodyW = 120, bodyH = 320;
+  const wheelW = 28, wheelH = 56;
+
+  function cornerColor(val, min, max) {
+    if (val == null || min == null || max == null) return '#555';
+    const range = max - min;
+    const pct = range > 0 ? (val - min) / range : 0.5;
+    if (pct < 0.15) return '#2196F3';
+    if (pct > 0.85) return '#f44336';
+    return '#4caf50';
+  }
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:340px;height:auto;display:block;margin:0 auto">`;
+  // Background
+  svg += `<rect width="${W}" height="${H}" fill="#111" rx="8"/>`;
+  // Car body
+  svg += `<rect x="${bodyX}" y="${bodyY}" width="${bodyW}" height="${bodyH}" rx="20" ry="20" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>`;
+  // Front window
+  svg += `<path d="M${bodyX+20} ${bodyY+40} L${bodyX+bodyW-20} ${bodyY+40} L${bodyX+bodyW-30} ${bodyY+80} L${bodyX+30} ${bodyY+80} Z" fill="#222" stroke="#333" stroke-width="1"/>`;
+  // Rear window
+  svg += `<path d="M${bodyX+25} ${bodyY+bodyH-80} L${bodyX+bodyW-25} ${bodyY+bodyH-80} L${bodyX+bodyW-20} ${bodyY+bodyH-45} L${bodyX+20} ${bodyY+bodyH-45} Z" fill="#222" stroke="#333" stroke-width="1"/>`;
+  // Center line
+  svg += `<line x1="${W/2}" y1="${bodyY+10}" x2="${W/2}" y2="${bodyY+bodyH-10}" stroke="#2a2a2a" stroke-width="1" stroke-dasharray="4,4"/>`;
+
+  // Wheels + corner data
+  const positions = {
+    LF: {wx: bodyX - wheelW - 4, wy: bodyY + 30, tx: 6, ty: bodyY + 20},
+    RF: {wx: bodyX + bodyW + 4, wy: bodyY + 30, tx: bodyX + bodyW + wheelW + 12, ty: bodyY + 20},
+    LR: {wx: bodyX - wheelW - 4, wy: bodyY + bodyH - 30 - wheelH, tx: 6, ty: bodyY + bodyH - 96},
+    RR: {wx: bodyX + bodyW + 4, wy: bodyY + bodyH - 30 - wheelH, tx: bodyX + bodyW + wheelW + 12, ty: bodyY + bodyH - 96}
+  };
+
+  Object.entries(positions).forEach(([corner, pos]) => {
+    const cd = c[corner];
+    const pKpa = cd.pressure;
+    const pPsi = pKpa != null ? (pKpa * 0.14503773773).toFixed(1) : '—';
+    const camber = cd.camber != null ? cd.camber.toFixed(1) + '°' : '—';
+    const rh = cd.rideHeight != null ? (cd.rideHeight * 1000).toFixed(1) : '—';
+
+    // Wheel rectangle
+    const wheelColor = pKpa != null ? '#2a2a2a' : '#1e1e1e';
+    svg += `<rect x="${pos.wx}" y="${pos.wy}" width="${wheelW}" height="${wheelH}" rx="4" fill="${wheelColor}" stroke="#444" stroke-width="1.5"/>`;
+    // Tire tread lines
+    for (let i = 0; i < 4; i++) {
+      const ly = pos.wy + 10 + i * 12;
+      svg += `<line x1="${pos.wx+4}" y1="${ly}" x2="${pos.wx+wheelW-4}" y2="${ly}" stroke="#555" stroke-width="1" opacity="0.5"/>`;
+    }
+
+    // Data labels
+    const isLeft = corner.startsWith('L');
+    const anchor = isLeft ? 'end' : 'start';
+    const labelX = isLeft ? pos.tx + 90 : pos.tx;
+
+    svg += `<text x="${labelX}" y="${pos.ty}" fill="#666" font-size="10" font-weight="700" text-anchor="${anchor}" letter-spacing=".5">${corner}</text>`;
+    svg += `<text x="${labelX}" y="${pos.ty + 16}" fill="#ccc" font-size="14" font-weight="700" text-anchor="${anchor}">${pPsi}<tspan fill="#555" font-size="10"> psi</tspan></text>`;
+    svg += `<text x="${labelX}" y="${pos.ty + 32}" fill="#aaa" font-size="11" text-anchor="${anchor}">⟨ ${camber}</text>`;
+    svg += `<text x="${labelX}" y="${pos.ty + 46}" fill="#888" font-size="11" text-anchor="${anchor}">↕ ${rh}<tspan fill="#555" font-size="9"> mm</tspan></text>`;
+  });
+
+  // Front/Rear labels
+  svg += `<text x="${W/2}" y="${bodyY - 8}" fill="#444" font-size="10" text-anchor="middle" font-weight="700">FRONT</text>`;
+  svg += `<text x="${W/2}" y="${bodyY + bodyH + 16}" fill="#444" font-size="10" text-anchor="middle" font-weight="700">REAR</text>`;
+
+  // Heading arrow
+  svg += `<path d="M${W/2} ${bodyY+12} L${W/2-6} ${bodyY+22} L${W/2+6} ${bodyY+22} Z" fill="#2196F3" opacity="0.6"/>`;
+
+  svg += `</svg>`;
+  return svg;
+}
+
+// ── SVG: Suspension & damper bar charts ──────────────────────────────────────
+function renderSuspensionBars(analysis) {
+  const {corners, dampers, frontARB, rearARB, frontSpring, rearSpring} = analysis;
+  let html = '';
+
+  // Springs bar chart
+  if (frontSpring != null || rearSpring != null) {
+    const maxSpring = Math.max(frontSpring || 0, rearSpring || 0, 1);
+    html += `<h4>Spring Rates</h4>`;
+    html += `<div class="bar-pair">`;
+    html += `<div><div class="bar-pair-label">Front avg</div>
+      <div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:${(frontSpring/maxSpring*100).toFixed(0)}%;background:#2196F3"></div></div></div>
+      <div class="bar-pair-value" style="color:#64b5f6">${frontSpring != null ? frontSpring + ' N/mm' : '—'}</div></div>`;
+    html += `<div><div class="bar-pair-label">Rear avg</div>
+      <div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:${(rearSpring/maxSpring*100).toFixed(0)}%;background:#f44336"></div></div></div>
+      <div class="bar-pair-value" style="color:#ef9a9a">${rearSpring != null ? rearSpring + ' N/mm' : '—'}</div></div>`;
+    html += `</div>`;
+    if (frontSpring && rearSpring) {
+      const ratio = (frontSpring / rearSpring).toFixed(2);
+      const cls = ratio > 1.05 ? 'front-bias' : ratio < 0.95 ? 'rear-bias' : 'balanced';
+      html += `<div style="text-align:center;margin-bottom:12px"><span style="font-size:11px;color:#555">F/R Ratio</span> <span class="ratio-badge ${cls}">${ratio}</span></div>`;
+    }
+  }
+
+  // ARB
+  if (frontARB != null || rearARB != null) {
+    const maxARB = Math.max(frontARB || 0, rearARB || 0, 1);
+    html += `<h4>Anti-Roll Bars</h4>`;
+    html += `<div class="bar-pair">`;
+    html += `<div><div class="bar-pair-label">Front</div>
+      <div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:${((frontARB||0)/maxARB*100).toFixed(0)}%;background:#2196F3"></div></div></div>
+      <div class="bar-pair-value" style="color:#64b5f6">${frontARB != null ? frontARB : '—'}</div></div>`;
+    html += `<div><div class="bar-pair-label">Rear</div>
+      <div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:${((rearARB||0)/maxARB*100).toFixed(0)}%;background:#f44336"></div></div></div>
+      <div class="bar-pair-value" style="color:#ef9a9a">${rearARB != null ? rearARB : '—'}</div></div>`;
+    html += `</div>`;
+  }
+
+  // Bump rubber gaps
+  const frontBR = (corners.LF.bumpRubber != null && corners.RF.bumpRubber != null) ? (corners.LF.bumpRubber + corners.RF.bumpRubber) / 2 : null;
+  const rearBR = (corners.LR.bumpRubber != null && corners.RR.bumpRubber != null) ? (corners.LR.bumpRubber + corners.RR.bumpRubber) / 2 : null;
+  if (frontBR != null || rearBR != null) {
+    const maxBR = Math.max(frontBR || 0, rearBR || 0, 0.001);
+    html += `<h4>Bump Rubber Gap</h4>`;
+    html += `<div class="bar-pair">`;
+    html += `<div><div class="bar-pair-label">Front avg</div>
+      <div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:${((frontBR||0)/maxBR*100).toFixed(0)}%;background:#2196F3"></div></div></div>
+      <div class="bar-pair-value" style="color:#64b5f6">${frontBR != null ? (frontBR*1000).toFixed(0) + ' mm' : '—'}</div></div>`;
+    html += `<div><div class="bar-pair-label">Rear avg</div>
+      <div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:${((rearBR||0)/maxBR*100).toFixed(0)}%;background:#f44336"></div></div></div>
+      <div class="bar-pair-value" style="color:#ef9a9a">${rearBR != null ? (rearBR*1000).toFixed(0) + ' mm' : '—'}</div></div>`;
+    html += `</div>`;
+  }
+
+  // Dampers
+  const damperModes = Object.entries(dampers);
+  const hasDampers = damperModes.some(([_, d]) => d.front != null || d.rear != null);
+  if (hasDampers) {
+    html += `<h4>Damper Settings</h4>`;
+    damperModes.forEach(([mode, d]) => {
+      if (d.front == null && d.rear == null) return;
+      const max = Math.max(d.front || 0, d.rear || 0, 1);
+      const short = mode.replace('Speed ', '').replace('damping', '').trim();
+      html += `<div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.3px;margin:6px 0 4px">${short}</div>`;
+      html += `<div class="bar-pair">`;
+      html += `<div><div class="bar-pair-label">Front</div>
+        <div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:${((d.front||0)/max*100).toFixed(0)}%;background:#2196F3"></div></div></div>
+        <div class="bar-pair-value" style="color:#64b5f6">${d.front != null ? d.front + ' cl' : '—'}</div></div>`;
+      html += `<div><div class="bar-pair-label">Rear</div>
+        <div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:${((d.rear||0)/max*100).toFixed(0)}%;background:#f44336"></div></div></div>
+        <div class="bar-pair-value" style="color:#ef9a9a">${d.rear != null ? d.rear + ' cl' : '—'}</div></div>`;
+      html += `</div>`;
+    });
+  }
+
+  return html;
+}
+
+// ── SVG: Aero balance diagram ────────────────────────────────────────────────
+function renderAeroDiagram(analysis) {
+  const {wing, frontRHSpeed, rearRHSpeed} = analysis;
+  if (wing == null && frontRHSpeed == null && rearRHSpeed == null) return '';
+
+  let html = '';
+  const W = 300, H = 160;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:300px;height:auto;display:block;margin:0 auto">`;
+  svg += `<rect width="${W}" height="${H}" fill="#111" rx="6"/>`;
+
+  // Wing angle indicator
+  if (wing != null) {
+    const wingP = analysis.wing;
+    const cx = W/2, cy = 36;
+    // Wing angle arc
+    const angleRad = wing * Math.PI / 180;
+    const wingLen = 50;
+    svg += `<text x="${cx}" y="16" fill="#555" font-size="9" text-anchor="middle" font-weight="700">WING ANGLE</text>`;
+    // Wing line
+    const x2 = cx + wingLen * Math.cos(-angleRad);
+    const y2 = cy - wingLen * Math.sin(-angleRad);
+    svg += `<line x1="${cx - wingLen}" y1="${cy}" x2="${cx + wingLen}" y2="${cy}" stroke="#2a2a2a" stroke-width="1"/>`;
+    svg += `<line x1="${cx - 30}" y1="${cy}" x2="${cx + 30}" y2="${cy - Math.tan(angleRad)*30}" stroke="#2196F3" stroke-width="3" stroke-linecap="round"/>`;
+    svg += `<text x="${cx}" y="${cy + 16}" fill="#64b5f6" font-size="14" font-weight="700" text-anchor="middle">${wing}°</text>`;
+  }
+
+  // Ride heights at speed
+  if (frontRHSpeed != null && rearRHSpeed != null) {
+    const baseY = H - 20;
+    const groundY = baseY - 8;
+    const maxRH = Math.max(frontRHSpeed, rearRHSpeed, 1);
+    const scale = 40 / maxRH;
+    const fH = frontRHSpeed * scale;
+    const rH = rearRHSpeed * scale;
+
+    svg += `<line x1="40" y1="${groundY}" x2="${W-40}" y2="${groundY}" stroke="#333" stroke-width="1"/>`;
+    svg += `<text x="40" y="${groundY + 12}" fill="#444" font-size="8" text-anchor="start">GROUND</text>`;
+
+    // Front RH
+    svg += `<rect x="60" y="${groundY - fH}" width="30" height="${fH}" fill="#2196F3" opacity="0.4" rx="2"/>`;
+    svg += `<text x="75" y="${groundY - fH - 6}" fill="#64b5f6" font-size="11" font-weight="700" text-anchor="middle">${frontRHSpeed} mm</text>`;
+    svg += `<text x="75" y="${groundY - fH - 18}" fill="#555" font-size="9" text-anchor="middle">FRONT</text>`;
+
+    // Rear RH
+    svg += `<rect x="${W-90}" y="${groundY - rH}" width="30" height="${rH}" fill="#f44336" opacity="0.4" rx="2"/>`;
+    svg += `<text x="${W-75}" y="${groundY - rH - 6}" fill="#ef9a9a" font-size="11" font-weight="700" text-anchor="middle">${rearRHSpeed} mm</text>`;
+    svg += `<text x="${W-75}" y="${groundY - rH - 18}" fill="#555" font-size="9" text-anchor="middle">REAR</text>`;
+
+    // Rake line
+    svg += `<line x1="75" y1="${groundY - fH}" x2="${W-75}" y2="${groundY - rH}" stroke="#ff9800" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+    const rake = rearRHSpeed - frontRHSpeed;
+    svg += `<text x="${W/2}" y="${Math.min(groundY - fH, groundY - rH) - 6}" fill="#ff9800" font-size="10" font-weight="700" text-anchor="middle">Rake: ${rake > 0 ? '+' : ''}${rake} mm</text>`;
+  }
+
+  svg += `</svg>`;
+  html += svg;
+
+  // Aero balance estimate
+  if (frontRHSpeed != null && rearRHSpeed != null) {
+    const totalRH = frontRHSpeed + rearRHSpeed;
+    const frontPct = totalRH > 0 ? (rearRHSpeed / totalRH * 100) : 50; // Lower front RH = more front DF
+    html += `<div style="margin-top:10px;text-align:center">`;
+    html += `<div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">Aero Balance Estimate</div>`;
+    html += `<div class="aero-balance-indicator" style="justify-content:center">
+      <span style="font-size:10px;color:#64b5f6;width:50px;text-align:right">Front</span>
+      <div style="flex:1;max-width:200px;height:8px;background:#1e1e1e;border-radius:4px;overflow:hidden;display:flex">
+        <div style="width:${frontPct.toFixed(0)}%;background:#2196F3;border-radius:4px 0 0 4px"></div>
+        <div style="width:${(100-frontPct).toFixed(0)}%;background:#f44336;border-radius:0 4px 4px 0"></div>
+      </div>
+      <span style="font-size:10px;color:#ef9a9a;width:50px">Rear</span>
+    </div>`;
+    html += `</div>`;
+  }
+
+  return html;
+}
+
+// ── SVG: Brake system overview ───────────────────────────────────────────────
+function renderBrakeDiagram(analysis) {
+  const {brakeBias, frontMC, rearMC, brakePads} = analysis;
+  if (brakeBias == null && frontMC == null && rearMC == null) return '';
+
+  let html = '';
+
+  // Brake bias bar
+  if (brakeBias != null) {
+    const rearBias = 100 - brakeBias;
+    html += `<div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">Brake Bias</div>`;
+    html += `<div class="brake-bias-bar">
+      <div class="brake-bias-front" style="width:${brakeBias}%">F ${brakeBias}%</div>
+      <div class="brake-bias-rear" style="width:${rearBias}%">R ${rearBias.toFixed(1)}%</div>
+    </div>`;
+    // Context
+    const biasNote = brakeBias > 58 ? 'Forward bias — stable under braking, may understeer on entry'
+                   : brakeBias < 54 ? 'Rearward bias — aggressive, risk of rear lockup under heavy braking'
+                   : 'Moderate bias — good balance for most conditions';
+    html += `<div style="font-size:11px;color:#666;margin-top:4px;margin-bottom:12px">${biasNote}</div>`;
+  }
+
+  // Master cylinders
+  if (frontMC != null || rearMC != null) {
+    html += `<div style="font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;margin-top:8px">Master Cylinders</div>`;
+    const maxMC = Math.max(frontMC || 0, rearMC || 0, 1);
+    html += `<div class="bar-pair">`;
+    if (frontMC != null) {
+      html += `<div><div class="bar-pair-label">Front</div>
+        <div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:${(frontMC/maxMC*100).toFixed(0)}%;background:#2196F3"></div></div></div>
+        <div class="bar-pair-value" style="color:#64b5f6">${frontMC} mm</div></div>`;
+    }
+    if (rearMC != null) {
+      html += `<div><div class="bar-pair-label">Rear</div>
+        <div class="bar-chart-row"><div class="bar-wrap"><div class="bar-fill" style="width:${(rearMC/maxMC*100).toFixed(0)}%;background:#f44336"></div></div></div>
+        <div class="bar-pair-value" style="color:#ef9a9a">${rearMC} mm</div></div>`;
+    }
+    html += `</div>`;
+    if (frontMC != null && rearMC != null) {
+      const note = frontMC > rearMC ? 'Larger front MC = more front braking force & firmer pedal feel'
+                 : frontMC < rearMC ? 'Larger rear MC = more rear braking force'
+                 : 'Equal MC sizes — neutral pedal response';
+      html += `<div style="font-size:11px;color:#555;margin-top:4px">${note}</div>`;
+    }
+  }
+
+  // Brake pads
+  if (brakePads) {
+    html += `<div style="margin-top:8px;font-size:12px;color:#888">Brake pads: <span style="color:#ccc;font-weight:600">${brakePads}</span></div>`;
+  }
+
+  return html;
+}
+
+// ── Render setup recommendations list ────────────────────────────────────────
+function renderSetupRecs(recs) {
+  if (!recs || !recs.length) return `<p style="color:#444;font-size:12px">No issues detected — setup parameters look well-balanced.</p>`;
+  // Sort by priority
+  const order = {high: 0, medium: 1, low: 2};
+  const sorted = [...recs].sort((a, b) => (order[a.priority] || 3) - (order[b.priority] || 3));
+  return sorted.map(r => `
+    <div class="setup-rec ${r.priority}">
+      <div class="setup-rec-head">
+        <span class="setup-rec-cat">${r.category}</span>
+        <span class="setup-rec-priority ${r.priority}">${r.priority}</span>
+      </div>
+      <div class="setup-rec-text">${r.text}</div>
+      ${r.action ? `<div class="setup-rec-action">→ ${r.action}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ── Render handling tendency badge ───────────────────────────────────────────
+function renderTendencyBadge(tendency) {
+  const colors = {
+    understeer: {bg: '#0d47a1', text: '#64b5f6', icon: '↰'},
+    oversteer:  {bg: '#b71c1c', text: '#ef9a9a', icon: '↱'},
+    balanced:   {bg: '#1b5e20', text: '#81c784', icon: '↔'}
+  };
+  const c = colors[tendency] || colors.balanced;
+  return `<span style="display:inline-flex;align-items:center;gap:6px;background:${c.bg};color:${c.text};padding:4px 12px;border-radius:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.3px">${c.icon} ${tendency}</span>`;
 }
 
 async function handleStoFile(file) {
@@ -2071,11 +2764,18 @@ async function handleStoFile(file) {
   const tabs   = data.tabs || {};
   const tabNames = Object.keys(tabs);
 
+  // Run setup analysis
+  const setupAnalysis = analyzeSetup(tabs, data.car_config || null);
+  window._lastSetupAnalysis = setupAnalysis;
+
   // Build HTML
   let html = `<div class="sto-analysis">`;
   html += `<div class="sto-analysis-header">
     <span class="sto-analysis-title">🔧 ${file.name}</span>
-    ${data.car_name ? `<span class="sto-car-badge">${data.car_name}</span>` : ''}
+    <div style="display:flex;align-items:center;gap:8px">
+      ${renderTendencyBadge(setupAnalysis.tendencySummary)}
+      ${data.car_name ? `<span class="sto-car-badge">${data.car_name}</span>` : ''}
+    </div>
   </div>`;
 
   if (!lastResult) {
@@ -2088,22 +2788,61 @@ async function handleStoFile(file) {
     </div>`;
   }
 
-  // Tab nav
-  if (tabNames.length) {
-    html += `<div class="sto-tabs" id="sto-tab-nav">`;
-    tabNames.forEach((t, i) => {
-      html += `<button class="sto-tab-btn${i===0?' active':''}" onclick="switchStoTab('${t}')" data-tab="${t}">${t}</button>`;
-    });
-    html += `</div>`;
+  // Master tab nav: Setup Analysis + original decode tabs
+  const allTabNames = ['Setup Analysis', ...tabNames];
+  html += `<div class="sto-tabs" id="sto-tab-nav">`;
+  allTabNames.forEach((t, i) => {
+    html += `<button class="sto-tab-btn${i===0?' active':''}" onclick="switchStoTab('${t}')" data-tab="${t}">${t}</button>`;
+  });
+  html += `</div>`;
 
-    // Tab panels
+  // ── Setup Analysis tab (new visualizations) ──────────────────────────────
+  html += `<div class="sto-tab-content" id="sto-tab-Setup_Analysis" style="display:block;max-height:none">`;
+
+  // Car outline with tire pressures
+  html += `<div class="setup-viz-section" style="border-bottom:1px solid #1a1a1a">`;
+  html += `<div class="setup-viz-title">Car Overview — Pressures, Camber & Ride Heights</div>`;
+  html += `<div class="car-outline-wrap">${renderCarOutlineSVG(setupAnalysis)}</div>`;
+  html += `</div>`;
+
+  // Suspension & Damper charts
+  html += `<div class="setup-viz-section" style="border-bottom:1px solid #1a1a1a">`;
+  html += `<div class="setup-viz-title">Suspension & Damper Balance</div>`;
+  html += renderSuspensionBars(setupAnalysis);
+  html += `</div>`;
+
+  // Aero + Brakes side by side
+  const aeroHtml = renderAeroDiagram(setupAnalysis);
+  const brakeHtml = renderBrakeDiagram(setupAnalysis);
+  if (aeroHtml || brakeHtml) {
+    html += `<div class="setup-viz-section" style="border-bottom:1px solid #1a1a1a">`;
+    html += `<div class="setup-viz-grid">`;
+    if (aeroHtml) {
+      html += `<div class="setup-viz-card"><h4>Aero Balance</h4>${aeroHtml}</div>`;
+    }
+    if (brakeHtml) {
+      html += `<div class="setup-viz-card"><h4>Brake System</h4>${brakeHtml}</div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  // Setup Recommendations
+  html += `<div class="setup-viz-section">`;
+  html += `<div class="setup-viz-title">Setup Recommendations</div>`;
+  html += `<div class="setup-rec-list">${renderSetupRecs(setupAnalysis.recs)}</div>`;
+  html += `</div>`;
+
+  html += `</div>`; // end Setup Analysis tab
+
+  // ── Original parameter tabs ──────────────────────────────────────────────
+  if (tabNames.length) {
     tabNames.forEach((tabName, i) => {
-      html += `<div class="sto-tab-content" id="sto-tab-${tabName.replace(/\s+/g,'_')}" style="display:${i===0?'block':'none'}">`;
+      html += `<div class="sto-tab-content" id="sto-tab-${tabName.replace(/\s+/g,'_')}" style="display:none">`;
       const sections = tabs[tabName];
       Object.entries(sections).forEach(([sectName, params]) => {
         html += `<div class="sto-section-title">${sectName}</div>`;
         params.forEach(p => {
-          const insight = _crossRef(p.label, p.value, lastResult);
+          const insight = _crossRef(p.label, p.value, lastResult, setupAnalysis);
           const rangeHtml = (p.range_min != null && p.range_max != null)
             ? `<span class="sto-param-range">${p.range_min}–${p.range_max}</span>` : '';
           html += `<div class="sto-param-row">
@@ -2117,8 +2856,6 @@ async function handleStoFile(file) {
       });
       html += `</div>`;
     });
-  } else {
-    html += `<div style="padding:20px;color:#555;font-size:13px;">No mapped parameters found.</div>`;
   }
 
   // Notes
