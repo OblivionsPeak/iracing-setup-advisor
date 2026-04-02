@@ -340,3 +340,180 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .lap-excluded td { color: #555 !important; }
 .btn{display:inline-flex;align-items:center;justify-content:center;padding:7px 16px;
      border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none}
+
+/* ── Export toolbar ── */
+.export-toolbar{display:flex;align-items:center;gap:10px;padding:10px 28px;
+                background:#111;border-bottom:1px solid #222}
+.export-toolbar-label{font-size:10px;font-weight:700;text-transform:uppercase;
+                      letter-spacing:.5px;color:#555;margin-right:4px}
+.export-btn{display:inline-flex;align-items:center;gap:6px;background:#1e1e1e;
+            border:1px solid #333;color:#aaa;padding:6px 14px;border-radius:6px;
+            font-size:12px;font-weight:600;cursor:pointer;transition:background .15s,color .15s}
+.export-btn:hover{background:#252525;color:#e0e0e0;border-color:#444}
+.export-btn-icon{font-size:14px}
+
+/* ── Export header & watermark (injected during capture) ── */
+.export-header{display:none;padding:16px 28px;font-size:14px;color:#333;
+               border-bottom:2px solid #ddd;background:#f5f5f5}
+.export-watermark{display:none;text-align:center;padding:12px;font-size:11px;
+                  color:#999;border-top:1px solid #ddd;background:#f5f5f5}
+
+/* ── Export mode: light theme for image capture ── */
+.export-mode .export-header,
+.export-mode .export-watermark{display:block}
+.export-mode{background:#f5f5f5 !important;color:#222 !important}
+.export-mode .meta-bar{background:#eee;border-color:#ddd;color:#555}
+.export-mode .meta-bar b{color:#222}
+.export-mode .meta-car-track{color:#1565C0}
+.export-mode .page{background:#f5f5f5}
+.export-mode .section-label{color:#555}
+.export-mode .tyre-card{background:#fff;border:1px solid #ddd}
+.export-mode .tyre-card h3{color:#555}
+.export-mode .tyre-meta{color:#555}
+.export-mode .tyre-meta em{color:#222}
+.export-mode .balance-row{background:#fff;border:1px solid #ddd;color:#555}
+.export-mode .balance-item .lbl{color:#888}
+.export-mode .balance-item .val{color:#222}
+.export-mode .sector-table{background:#fff;border:1px solid #ddd}
+.export-mode .sector-row{border-color:#eee;color:#555}
+.export-mode .s-name{color:#555}
+.export-mode .brake-row{background:#fff;border:1px solid #ddd;color:#555}
+.export-mode .brake-item .lbl{color:#888}
+.export-mode .brake-item .val{color:#222}
+.export-mode .brake-item .sub{color:#666}
+.export-mode .rec{background:#fff;border:1px solid #ddd}
+.export-mode .rec-cat{color:#555}
+.export-mode .rec-issue{color:#222}
+.export-mode .rec-action{color:#2e7d32}
+.export-mode .setup-card{background:#fff;border-color:#ddd}
+.export-mode .sc-header{background:#fafafa;border-color:#ddd}
+.export-mode .sc-title{color:#555}
+.export-mode .sc-section{border-color:#eee}
+.export-mode .sc-section-title{color:#888}
+.export-mode .sc-psi-cell{background:#fafafa;border:1px solid #ddd}
+.export-mode .sc-psi-corner{color:#888}
+.export-mode .sc-psi-target{color:#888}
+.export-mode .sc-camber-corner{color:#666}
+.export-mode .sc-camber-action{color:#222}
+.export-mode .sc-camber-detail{color:#666}
+.export-mode .sc-susp-name{color:#222}
+.export-mode .sc-option{color:#555}
+.export-mode .overlap-summary{background:#fff;border:1px solid #ddd}
+.export-mode .overlap-desc{color:#555}
+.export-mode .overlap-sec-name{color:#555}
+.export-mode .overlap-bar-wrap{background:#eee}
+.export-mode .overlap-sec-pct{color:#222}
+.export-mode .stint-table{background:#fff;border:1px solid #ddd}
+.export-mode .stint-row{border-color:#eee;color:#555}
+.export-mode .stint-header{background:#fafafa}
+.export-mode .stint-header div{color:#888}
+.export-mode .lap-table{background:#fff;border:1px solid #ddd}
+.export-mode .lap-row{border-color:#eee}
+.export-mode .lap-header{background:#fafafa}
+.export-mode .lap-header div{color:#888}
+.export-mode .lap-num{color:#555}
+.export-mode .lap-time{color:#222}
+.export-mode .lap-delta{color:#666}
+.export-mode .lap-fastest{background:#f3e8ff}
+.export-mode .lap-fastest .lap-num{color:#7c3aed}
+.export-mode .lap-fastest .lap-time{color:#7c3aed}
+.export-mode .compare-stat-row{border-color:#eee;color:#555}
+.export-mode .compare-stat-label{color:#666}
+.export-mode .compare-stat-val{color:#222}
+.export-mode .sector-splits-table{background:#fff;border:1px solid #ddd}
+.export-mode .ss-row{border-color:#eee;color:#555}
+.export-mode .ss-header{background:#fafafa}
+.export-mode .ss-header div{color:#888}
+.export-mode .tyre-trend-wrap{background:#fff;border:1px solid #ddd}
+.export-mode .speed-trace-wrap{background:#fff;border:1px solid #ddd}
+.export-mode .input-trace-wrap{background:#fff;border:1px solid #ddd}
+.export-mode .sto-analysis{background:#fff;border-color:#ddd}
+.export-mode .sto-analysis-header{background:#fafafa;border-color:#ddd}
+.export-mode .sto-analysis-title{color:#555}
+.export-mode .sto-tabs{border-color:#ddd}
+.export-mode .sto-tab-btn{color:#888}
+.export-mode .sto-tab-btn.active{color:#1565C0}
+.export-mode .sto-tab-content{color:#222}
+.export-mode .sto-section-title{color:#888}
+.export-mode .sto-param-row{border-color:#eee;color:#555}
+.export-mode .sto-param-label{color:#666}
+.export-mode .sto-param-value{color:#222}
+.export-mode .setup-viz-section{border-color:#eee}
+.export-mode .setup-viz-title{color:#555}
+.export-mode .setup-viz-card{background:#fff;border:1px solid #ddd}
+.export-mode .setup-viz-card h4{color:#555}
+.export-mode .setup-rec{background:#fff;border:1px solid #ddd}
+.export-mode .setup-rec-cat{color:#555}
+.export-mode .setup-rec-text{color:#222}
+.export-mode .setup-rec-action{color:#2e7d32}
+.export-mode .btn-reset,
+.export-mode .btn-print,
+.export-mode #library-save-block{display:none !important}
+
+/* ── Print stylesheet ── */
+@media print{
+  body{background:#fff !important;color:#222 !important}
+  .header,.config-bar,.preview-bar,.drop-wrap,#upload-wrap,#status,
+  #btn-compare-toggle,#sto-wrap,.compare-wrap,.export-toolbar,
+  .btn-reset,.btn-print,#library-save-block,#reanalyze-btn,
+  #library-banner,#tm-tooltip,.auto-badge{display:none !important}
+
+  #results{display:block !important}
+  .meta-bar{background:#f5f5f5 !important;border-color:#ddd !important;color:#333 !important;
+            flex-wrap:wrap;gap:8px !important;padding:8px 12px !important}
+  .meta-bar b{color:#111 !important}
+  .meta-car-track{color:#1565C0 !important}
+  .page{padding:8px 0 !important;max-width:none !important}
+
+  .section-label{color:#333 !important;page-break-after:avoid}
+  .tyre-grid{gap:8px !important}
+  .tyre-card{background:#fff !important;border:1px solid #ccc !important;page-break-inside:avoid}
+  .tyre-card h3{color:#333 !important}
+  .tyre-meta{color:#444 !important}
+  .tyre-meta em{color:#111 !important}
+  .temp-box{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+
+  .balance-row{background:#fff !important;border:1px solid #ccc !important;color:#444 !important}
+  .balance-item .lbl{color:#666 !important}
+  .balance-item .val{color:#111 !important}
+
+  .sector-table{background:#fff !important;border:1px solid #ccc !important}
+  .sector-row{border-color:#eee !important}
+  .badge{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+
+  .brake-row{background:#fff !important;border:1px solid #ccc !important;color:#444 !important}
+  .brake-item .val{color:#111 !important}
+  .consistency-fill{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+
+  .rec{background:#fff !important;border:1px solid #ccc !important;page-break-inside:avoid}
+  .rec-issue{color:#111 !important}
+  .rec-action{color:#2e7d32 !important}
+
+  .setup-card{background:#fff !important;border-color:#ccc !important;page-break-inside:avoid}
+  .sc-header{background:#f5f5f5 !important;border-color:#ddd !important}
+  .sc-section{border-color:#eee !important}
+  .sc-psi-cell{background:#fafafa !important;border:1px solid #ddd !important}
+  .sc-psi-adj{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+
+  .overlap-summary{background:#fff !important;border:1px solid #ccc !important}
+  .overlap-bar-fill{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+
+  .stint-table,.lap-table,.sector-splits-table{background:#fff !important;border:1px solid #ccc !important}
+  .stint-row,.lap-row,.ss-row{border-color:#eee !important;color:#444 !important}
+  .stint-header,.lap-header,.ss-header{background:#f5f5f5 !important}
+  .lap-fastest{background:#f3e8ff !important;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+
+  .tyre-trend-wrap,.speed-trace-wrap,.input-trace-wrap{background:#fff !important;border:1px solid #ccc !important}
+
+  .sto-analysis{background:#fff !important;border-color:#ccc !important}
+  .setup-viz-card{background:#fff !important;border:1px solid #ccc !important}
+  .setup-rec{background:#fff !important;border:1px solid #ccc !important}
+
+  /* Print header/footer */
+  #results::before{content:'iRacing Setup Advisor — Printed Report';display:block;
+                   font-size:16px;font-weight:700;color:#222;padding:12px 0;
+                   border-bottom:2px solid #1565C0;margin-bottom:12px}
+  #results::after{content:'Generated by iRacing Setup Advisor';display:block;
+                  text-align:center;font-size:10px;color:#999;padding:12px 0;
+                  border-top:1px solid #ddd;margin-top:16px}
+}
