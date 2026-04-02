@@ -38,6 +38,8 @@ pyinstaller ^
     --add-data "version.txt;." ^
     --add-data "cars;cars" ^
     --add-data "tracks;tracks" ^
+    --add-data "templates;templates" ^
+    --add-data "static;static" ^
     --hidden-import=flask ^
     --hidden-import=werkzeug ^
     --hidden-import=werkzeug.serving ^

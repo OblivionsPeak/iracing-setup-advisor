@@ -1,0 +1,342 @@
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+     background:#0f0f0f;color:#e0e0e0;min-height:100vh}
+
+.header{background:#181818;border-bottom:1px solid #2a2a2a;
+        padding:14px 28px;display:flex;align-items:center;gap:12px}
+.header h1{font-size:17px;font-weight:700}
+.header .sub{font-size:12px;color:#555;margin-left:6px}
+
+/* ── Config selectors ── */
+.config-bar{background:#141414;border-bottom:1px solid #222;
+            padding:16px 28px;display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end}
+.config-group{display:flex;flex-direction:column;gap:6px;flex:1;min-width:220px}
+.config-group label{font-size:11px;font-weight:700;text-transform:uppercase;
+                     letter-spacing:.5px;color:#555}
+.config-group select{background:#1e1e1e;border:1px solid #333;color:#e0e0e0;
+                      padding:8px 12px;border-radius:6px;font-size:13px;cursor:pointer}
+.config-group select:focus{outline:none;border-color:#2196F3}
+.config-hint{font-size:12px;color:#444;padding-top:6px}
+
+/* ── Preview panel ── */
+.preview-bar{background:#111;border-bottom:1px solid #1e1e1e;
+             padding:0 28px;display:none;gap:24px;align-items:stretch;min-height:0;
+             transition:all .2s}
+.preview-bar.visible{display:flex;padding:16px 28px}
+.preview-card{background:#181818;border-radius:10px;overflow:hidden;
+              display:flex;align-items:center;gap:0;flex:1;max-width:460px;min-height:110px}
+.preview-card.hidden{display:none}
+.preview-img{width:200px;height:120px;object-fit:cover;flex-shrink:0;
+             background:#111;display:block}
+.preview-img.map{object-fit:contain;background:#1a1a1a;padding:6px}
+.preview-info{padding:12px 16px;flex:1}
+.preview-label{font-size:10px;font-weight:700;text-transform:uppercase;
+               letter-spacing:.5px;color:#555;margin-bottom:4px}
+.preview-name{font-size:14px;font-weight:600;color:#e0e0e0;line-height:1.3}
+.preview-sub{font-size:12px;color:#555;margin-top:3px}
+.preview-no-img{width:200px;height:120px;flex-shrink:0;background:#151515;
+                display:flex;align-items:center;justify-content:center;
+                font-size:32px;color:#2a2a2a}
+
+/* ── Drop zone ── */
+.drop-wrap{display:flex;justify-content:center;padding:40px 24px}
+.drop-zone{background:#181818;border:2px dashed #2a2a2a;border-radius:14px;
+           padding:48px 40px;text-align:center;cursor:pointer;
+           transition:border-color .2s,background .2s;max-width:520px;width:100%}
+.drop-zone:hover,.drop-zone.over{border-color:#2196F3;background:#0d1f2e}
+.drop-icon{font-size:48px;margin-bottom:14px}
+.drop-zone h2{font-size:16px;margin-bottom:8px}
+.drop-zone p{font-size:13px;color:#555}
+
+/* ── Status ── */
+#status{text-align:center;padding:14px;font-size:13px;color:#888}
+
+/* ── Meta bar ── */
+.meta-bar{background:#161616;border-top:1px solid #222;border-bottom:1px solid #222;
+          padding:9px 28px;font-size:12px;color:#555;display:flex;gap:24px;flex-wrap:wrap;align-items:center}
+.meta-bar b{color:#999}
+.meta-car-track{font-size:12px;color:#2196F3;font-weight:600}
+.btn-reset{margin-left:auto;background:#2a2a2a;border:1px solid #3a3a3a;color:#ccc;
+           padding:5px 14px;border-radius:6px;font-size:12px;cursor:pointer}
+.btn-reset:hover{background:#333;color:#fff}
+.auto-badge{background:#0d2a40;color:#64b5f6;font-size:10px;font-weight:700;
+            padding:2px 7px;border-radius:8px;letter-spacing:.3px;margin-left:5px;
+            text-transform:uppercase}
+
+/* ── Page layout ── */
+.page{max-width:980px;margin:0 auto;padding:24px 28px}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;
+               letter-spacing:.8px;color:#555;margin:28px 0 14px}
+
+/* ── Tyre grid ── */
+.tyre-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tyre-card{background:#181818;border-radius:10px;padding:16px 18px}
+.tyre-card h3{font-size:12px;font-weight:700;text-transform:uppercase;
+              letter-spacing:.5px;color:#666;margin-bottom:14px}
+.temp-bars{display:flex;gap:6px;margin-bottom:12px}
+.temp-col{flex:1;text-align:center}
+.temp-col .lbl{font-size:10px;color:#444;text-transform:uppercase;margin-bottom:4px}
+.temp-box{border-radius:5px;padding:11px 2px;font-size:14px;font-weight:700;color:#fff}
+.tc-cold{background:#0d47a1}.tc-ok{background:#1b5e20}
+.tc-warm{background:#e65100}.tc-hot{background:#b71c1c}
+.tyre-meta{display:flex;justify-content:space-between;font-size:12px;color:#555;margin-top:6px}
+.tyre-meta em{color:#aaa;font-style:normal;font-weight:600}
+
+/* ── Balance row ── */
+.balance-row{display:flex;gap:20px;background:#181818;border-radius:8px;
+             padding:12px 18px;font-size:12px;color:#777;flex-wrap:wrap}
+.balance-item{display:flex;flex-direction:column;gap:3px}
+.balance-item .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#444}
+.balance-item .val{font-size:14px;font-weight:700;color:#ccc}
+.balance-diff{font-size:11px;color:#888}
+
+/* ── Sector handling ── */
+.sector-table{background:#181818;border-radius:10px;overflow:hidden}
+.sector-row{display:flex;align-items:center;gap:14px;padding:11px 18px;
+            border-bottom:1px solid #222}
+.sector-row:last-child{border-bottom:none}
+.s-name{font-size:12px;color:#777;flex:1}
+.badge{padding:3px 12px;border-radius:10px;font-size:11px;font-weight:700;
+       text-transform:uppercase;letter-spacing:.3px}
+.b-us{background:#0d47a1}.b-neu{background:#1b5e20}
+.b-os{background:#b71c1c}.b-nd{background:#2a2a2a;color:#444}
+
+/* ── Brake analysis ── */
+.brake-row{display:flex;gap:16px;background:#181818;border-radius:8px;
+           padding:12px 18px;font-size:12px;color:#777;flex-wrap:wrap}
+.brake-item{display:flex;flex-direction:column;gap:3px;flex:1;min-width:130px}
+.brake-item .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#444}
+.brake-item .val{font-size:14px;font-weight:700;color:#ccc}
+.brake-item .sub{font-size:11px;color:#555}
+.consistency-bar{height:8px;border-radius:4px;background:#1e1e1e;overflow:hidden;margin-top:4px;width:100%}
+.consistency-fill{height:100%;border-radius:4px;transition:width .3s}
+
+/* ── Throttle overlap ── */
+.overlap-summary{background:#181818;border-radius:8px;padding:14px 18px;
+                 display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.overlap-pct-big{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+                 font-size:2.2rem;font-weight:700;line-height:1}
+.overlap-desc{font-size:12px;color:#666;max-width:320px;line-height:1.5}
+.overlap-sectors{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.overlap-sector-row{display:flex;align-items:center;gap:12px}
+.overlap-sec-name{font-size:11px;color:#666;width:120px;flex-shrink:0}
+.overlap-bar-wrap{flex:1;background:#1e1e1e;border-radius:4px;height:10px;overflow:hidden}
+.overlap-bar-fill{height:100%;border-radius:4px}
+.overlap-sec-pct{font-size:11px;font-weight:700;color:#ccc;width:36px;text-align:right;flex-shrink:0}
+
+/* ── Recommendations ── */
+.rec-list{display:flex;flex-direction:column;gap:10px}
+.rec{background:#181818;border-radius:8px;padding:14px 18px;border-left:4px solid #333}
+.rec.high{border-left-color:#f44336}
+.rec.medium{border-left-color:#ff9800}
+.rec.low{border-left-color:#4caf50}
+.rec-head{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.rec-cat{font-size:10px;font-weight:700;text-transform:uppercase;
+         letter-spacing:.5px;color:#666}
+.rec-corner{font-size:11px;font-weight:700;color:#2196F3;
+            background:#0d2a40;padding:2px 10px;border-radius:10px}
+.rec-issue{font-size:13px;color:#ccc;margin-bottom:5px}
+.rec-action{font-size:13px;color:#66bb6a;font-style:italic}
+
+/* ── STO analysis panel ── */
+.sto-analysis{background:#141414;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;margin-top:14px}
+.sto-analysis-header{background:#181818;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222}
+.sto-analysis-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#777}
+.sto-car-badge{font-size:11px;color:#2196F3;background:#0d2a40;padding:2px 10px;border-radius:8px;font-weight:600}
+.sto-tabs{display:flex;gap:0;border-bottom:1px solid #222;overflow-x:auto}
+.sto-tab-btn{background:none;border:none;border-bottom:2px solid transparent;color:#555;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:color .15s}
+.sto-tab-btn:hover{color:#aaa}
+.sto-tab-btn.active{color:#2196F3;border-bottom-color:#2196F3}
+.sto-tab-content{padding:16px 20px;max-height:400px;overflow-y:auto}
+.sto-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#444;margin:12px 0 8px}
+.sto-section-title:first-child{margin-top:0}
+.sto-param-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #1a1a1a;font-size:12px}
+.sto-param-row:last-child{border-bottom:none}
+.sto-param-label{color:#666;flex:1}
+.sto-param-value{font-weight:700;color:#ccc;margin-left:12px;font-variant-numeric:tabular-nums}
+.sto-param-range{font-size:10px;color:#444;margin-left:8px}
+.sto-insight{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:6px;margin-top:4px;font-size:12px}
+.sto-insight.warn{background:#1a0f00;border-left:3px solid #ff9800;color:#ffb74d}
+.sto-insight.good{background:#0a1a0a;border-left:3px solid #4caf50;color:#81c784}
+.sto-insight.info{background:#0a1520;border-left:3px solid #2196F3;color:#64b5f6}
+.sto-notes-block{padding:14px 20px;border-top:1px solid #1a1a1a}
+.sto-notes-pre{color:#94a3b8;font-size:.75rem;white-space:pre-wrap;max-height:200px;overflow-y:auto;background:#0f172a;border-radius:6px;padding:12px;margin:0;line-height:1.5}
+
+/* ── Setup analysis visualizations ── */
+.setup-viz-section{padding:16px 20px;border-bottom:1px solid #1a1a1a}
+.setup-viz-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#555;margin-bottom:14px}
+.setup-viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.setup-viz-card{background:#181818;border-radius:10px;padding:16px 18px}
+.setup-viz-card h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#666;margin-bottom:12px}
+.car-outline-wrap{display:flex;justify-content:center;padding:8px 0}
+.corner-data{font-size:11px;color:#aaa}
+.corner-data .val{font-size:14px;font-weight:700;color:#ccc}
+.corner-data .unit{font-size:10px;color:#555}
+.bar-chart-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bar-chart-row .bar-label{font-size:11px;color:#666;width:80px;text-align:right;flex-shrink:0}
+.bar-chart-row .bar-wrap{flex:1;height:16px;background:#111;border-radius:3px;overflow:hidden;position:relative}
+.bar-chart-row .bar-fill{height:100%;border-radius:3px;transition:width .3s}
+.bar-chart-row .bar-val{font-size:11px;color:#aaa;width:60px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.bar-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.bar-pair-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;text-align:center}
+.bar-pair-value{font-size:13px;font-weight:700;text-align:center;margin-top:4px}
+.ratio-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;margin-left:8px}
+.ratio-badge.front-bias{background:#0d2a40;color:#64b5f6}
+.ratio-badge.rear-bias{background:#2d0a0a;color:#f44336}
+.ratio-badge.balanced{background:#0a1a0a;color:#4caf50}
+.setup-rec-list{display:flex;flex-direction:column;gap:8px}
+.setup-rec{background:#181818;border-radius:8px;padding:12px 16px;border-left:4px solid #333}
+.setup-rec.high{border-left-color:#f44336}
+.setup-rec.medium{border-left-color:#ff9800}
+.setup-rec.low{border-left-color:#4caf50}
+.setup-rec-head{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.setup-rec-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#666}
+.setup-rec-priority{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;padding:2px 6px;border-radius:6px}
+.setup-rec-priority.high{background:#2d0a0a;color:#f44336}
+.setup-rec-priority.medium{background:#1a1000;color:#ff9800}
+.setup-rec-priority.low{background:#0a1a0a;color:#4caf50}
+.setup-rec-text{font-size:12px;color:#ccc;line-height:1.5}
+.setup-rec-action{font-size:12px;color:#66bb6a;font-style:italic;margin-top:3px}
+.aero-balance-indicator{display:flex;align-items:center;gap:2px;margin:12px 0}
+.aero-balance-bar{height:8px;border-radius:4px;transition:width .3s}
+.brake-bias-bar{display:flex;height:24px;border-radius:6px;overflow:hidden;margin:8px 0}
+.brake-bias-front{background:#2196F3;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.brake-bias-rear{background:#f44336;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+
+/* ── Setup card ── */
+.setup-card{background:#141414;border:1px solid #222;border-radius:12px;overflow:hidden;margin-bottom:8px}
+.sc-header{background:#181818;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222}
+.sc-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#777}
+.btn-print{background:#1e1e1e;border:1px solid #333;color:#888;padding:5px 14px;border-radius:6px;
+           font-size:11px;cursor:pointer;font-weight:600;letter-spacing:.4px}
+.btn-print:hover{background:#252525;color:#ccc}
+.sc-section{padding:14px 20px;border-bottom:1px solid #1a1a1a}
+.sc-section:last-child{border-bottom:none}
+.sc-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#444;margin-bottom:10px}
+/* Tyre pressure grid */
+.sc-psi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sc-psi-cell{background:#181818;border-radius:8px;padding:10px 12px;text-align:center}
+.sc-psi-corner{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555;margin-bottom:5px}
+.sc-psi-hot{font-size:16px;font-weight:700;line-height:1}
+.sc-psi-hot.psi-over{color:#f44336}.sc-psi-hot.psi-under{color:#2196F3}.sc-psi-hot.psi-ok{color:#4caf50}
+.sc-psi-target{font-size:11px;color:#444;margin-top:3px}
+.sc-psi-adj{font-size:12px;font-weight:700;margin-top:6px;padding:3px 0;border-radius:4px}
+.sc-psi-adj.adj-over{color:#ff6b6b;background:#1a0505}
+.sc-psi-adj.adj-under{color:#64b5f6;background:#0a1520}
+.sc-psi-adj.adj-ok{color:#4caf50;background:#0a1a0a}
+/* Camber */
+.sc-camber-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #1a1a1a}
+.sc-camber-row:last-child{border-bottom:none}
+.sc-camber-corner{font-size:11px;font-weight:700;color:#888;width:32px}
+.sc-camber-action{font-size:13px;color:#ccc;flex:1}
+.sc-camber-detail{font-size:11px;color:#555}
+/* Suspension items */
+.sc-susp-item{padding:10px 0;border-bottom:1px solid #1a1a1a}
+.sc-susp-item:last-child{border-bottom:none}
+.sc-susp-label{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sc-susp-name{font-size:13px;font-weight:600;color:#ccc}
+.sc-priority-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;
+                   padding:2px 8px;border-radius:8px}
+.sc-priority-badge.high{background:#2d0a0a;color:#f44336}
+.sc-priority-badge.medium{background:#1a1000;color:#ff9800}
+.sc-options{display:flex;flex-direction:column;gap:4px}
+.sc-option{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#888}
+.sc-opt-num{color:#c084fc;font-weight:700;flex-shrink:0;width:16px}
+.sc-opt-text{flex:1}
+
+/* ── Track map ── */
+.tm-controls{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.tm-btn{background:#1e1e1e;border:1px solid #333;color:#666;padding:5px 14px;
+        border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;
+        text-transform:uppercase;letter-spacing:.3px;transition:background .15s,color .15s}
+.tm-btn:hover{background:#252525;color:#aaa}
+.tm-btn.active{background:#0d2a40;border-color:#2196F3;color:#64b5f6}
+
+/* ── Track map tooltip ── */
+#tm-tooltip{position:fixed;background:#1a1a1a;border:1px solid #2a2a2a;color:#e0e0e0;
+            padding:8px 12px;border-radius:6px;font-size:11px;pointer-events:none;
+            display:none;z-index:1000;line-height:1.7;min-width:100px;
+            box-shadow:0 4px 12px rgba(0,0,0,.5)}
+
+/* ── Input trace (3-panel) ── */
+.input-trace-wrap{background:#181818;border-radius:10px;padding:16px 18px}
+.it-panel-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+                color:#555;margin:8px 0 2px}
+.it-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px}
+.it-legend-item{display:flex;align-items:center;gap:5px}
+.it-legend-dot{width:18px;height:3px;border-radius:2px}
+
+/* ── Sector splits ── */
+.sector-splits-table{background:#181818;border-radius:10px;overflow:hidden}
+.ss-row{display:grid;align-items:center;padding:9px 18px;border-bottom:1px solid #222;
+        font-size:12px;color:#777}
+.ss-row:last-child{border-bottom:none}
+.ss-header{background:#111;position:sticky;top:0}
+.ss-header div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
+.ss-best{color:#c084fc;font-weight:700}
+.ss-delta{font-size:11px}
+.ss-delta.fast{color:#4caf50}.ss-delta.med{color:#ff9800}.ss-delta.slow{color:#f44336}
+
+/* ── Tyre trend ── */
+.tyre-trend-wrap{background:#181818;border-radius:10px;padding:16px 18px}
+.tt-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px}
+.tt-legend-item{display:flex;align-items:center;gap:5px}
+.tt-legend-dot{width:14px;height:3px;border-radius:2px}
+
+/* ── Speed trace ── */
+.speed-trace-wrap{background:#181818;border-radius:10px;padding:16px 18px}
+.st-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px}
+.st-legend-item{display:flex;align-items:center;gap:5px}
+.st-legend-dot{width:18px;height:3px;border-radius:2px}
+
+/* ── Stints ── */
+.stint-table{background:#181818;border-radius:10px;overflow:hidden}
+.stint-row{display:grid;grid-template-columns:52px 80px 50px 90px 90px 80px;
+           align-items:center;padding:9px 18px;border-bottom:1px solid #222;
+           font-size:12px;color:#777}
+.stint-row:last-child{border-bottom:none}
+.stint-header{background:#111;position:sticky;top:0}
+.stint-header div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
+
+/* ── Compare ── */
+.compare-wrap{background:#181818;border:2px dashed #2a2a2a;border-radius:14px;padding:28px;margin-top:16px;display:none}
+.compare-wrap.visible{display:block}
+.compare-inputs{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px}
+.compare-file-group{flex:1;min-width:200px;display:flex;flex-direction:column;gap:6px}
+.compare-file-group label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
+.compare-file-btn{background:#1e1e1e;border:1px solid #333;color:#777;padding:8px 14px;
+                  border-radius:6px;font-size:12px;cursor:pointer;text-align:left}
+.compare-file-btn.has-file{border-color:#2196F3;color:#64b5f6}
+.btn-compare-go{background:#0d2a40;border:1px solid #2196F3;color:#64b5f6;padding:8px 20px;
+                border-radius:6px;font-size:13px;font-weight:700;cursor:pointer}
+.btn-compare-go:disabled{opacity:.4;cursor:default}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.compare-col{background:#141414;border-radius:8px;padding:14px 18px}
+.compare-col-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+                   color:#2196F3;margin-bottom:10px}
+.compare-stat-row{display:flex;justify-content:space-between;align-items:center;
+                  padding:5px 0;border-bottom:1px solid #1e1e1e;font-size:12px;color:#888}
+.compare-stat-row:last-child{border-bottom:none}
+.compare-stat-label{color:#555}
+.compare-stat-val{font-weight:600;color:#ccc}
+.compare-better{color:#4caf50}
+.compare-worse{color:#f44336}
+
+/* ── Lap times ── */
+.lap-table{background:#181818;border-radius:10px;overflow:hidden;max-height:420px;overflow-y:auto}
+.lap-row{display:grid;grid-template-columns:56px 1fr 1fr;align-items:center;
+         padding:9px 18px;border-bottom:1px solid #222}
+.lap-row:last-child{border-bottom:none}
+.lap-header{background:#111;position:sticky;top:0}
+.lap-header div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555}
+.lap-num{font-size:12px;color:#666}
+.lap-time{font-size:13px;font-weight:600;color:#ccc;font-variant-numeric:tabular-nums}
+.lap-delta{font-size:12px;color:#555}
+.lap-fastest{background:#1e0a3c}
+.lap-fastest .lap-num{color:#c084fc}
+.lap-fastest .lap-time{color:#c084fc;font-weight:700}
+.lap-fastest .lap-delta{color:#a855f7;font-weight:700}
+.lap-excluded { opacity: 0.4; text-decoration: line-through; }
+.lap-excluded td { color: #555 !important; }
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:7px 16px;
+     border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none}

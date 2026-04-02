@@ -664,6 +664,28 @@ window.CARS_DATA = {
       "rear_max": 75
     }
   },
+  "ford_mustang_fr500s": {
+    "name": "Ford Mustang FR500S",
+    "class": "GT",
+    "iracing_car_path": "ford_mustang_fr500s",
+    "target_hot_psi": {
+      "LF": 30.0,
+      "RF": 30.0,
+      "LR": 30.0,
+      "RR": 30.0
+    },
+    "temp_min": 75,
+    "temp_max": 100,
+    "rear_weight_bias_c": 2.0,
+    "notes": "Front-engine RWD GT car — watch front tyre wear under hard braking, monitor rear temperatures for overdriving on exit",
+    "tech_limits": {},
+    "optimal_rh_mm": {
+      "front_min": 50,
+      "front_max": 75,
+      "rear_min": 55,
+      "rear_max": 80
+    }
+  },
   "ford_mustang_gt3": {
     "name": "Ford Mustang GT3",
     "class": "GT3",

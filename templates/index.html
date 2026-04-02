@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>iRacing Setup Advisor</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="header">
+  <h1>iRacing Setup Advisor</h1>
+  <span class="sub">v{{ version }}</span>
+</div>
+
+<!-- Car & Track selection -->
+<div class="config-bar">
+  <div class="config-group">
+    <label>Car</label>
+    <select id="car-select"><option value="">— Any / Generic —</option></select>
+  </div>
+  <div class="config-group">
+    <label>Track</label>
+    <select id="track-select"><option value="">— Any / Generic —</option></select>
+  </div>
+  <div class="config-group" style="flex:0;min-width:120px">
+    <label>Air Temp</label>
+    <div style="display:flex;align-items:center;gap:6px">
+      <input type="number" id="air-temp" placeholder="—" min="0" max="130" step="1"
+             style="background:#1e1e1e;border:1px solid #333;color:#e0e0e0;padding:8px 10px;
+                    border-radius:6px;font-size:13px;width:70px">
+      <span style="font-size:13px;color:#555">°F</span>
+    </div>
+  </div>
+  <div class="config-hint">Select your car and track, then drop your .ibt file below</div>
+</div>
+
+<!-- Preview panel -->
+<div class="preview-bar" id="preview-bar">
+  <div class="preview-card hidden" id="car-preview">
+    <div class="preview-no-img" id="car-no-img">🚗</div>
+    <img class="preview-img" id="car-img" src="" alt="" onerror="this.style.display='none';document.getElementById('car-no-img').style.display='flex'">
+    <div class="preview-info">
+      <div class="preview-label">Car</div>
+      <div class="preview-name" id="car-preview-name"></div>
+      <div class="preview-sub" id="car-preview-class"></div>
+    </div>
+  </div>
+  <div class="preview-card hidden" id="track-preview">
+    <div class="preview-no-img" id="track-no-img">🗺</div>
+    <img class="preview-img map" id="track-img" src="" alt="" onerror="this.style.display='none';document.getElementById('track-no-img').style.display='flex'">
+    <div class="preview-info">
+      <div class="preview-label">Track</div>
+      <div class="preview-name" id="track-preview-name"></div>
+      <div class="preview-sub" id="track-preview-country"></div>
+    </div>
+  </div>
+</div>
+
+<div id="library-banner" style="display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#0c1a3d;border:1px solid #1f3a7a;border-radius:8px;padding:12px 18px;margin-bottom:16px;font-size:14px;color:#93c5fd;">
+  <span>Opened from <strong>iRacing Setup Library</strong> — car &amp; track pre-selected. Upload a telemetry file to analyze this setup.</span>
+  <a href="http://localhost:5057" target="_blank" style="color:#93c5fd;font-weight:600;white-space:nowrap;">← Back to Library</a>
+</div>
+
+<div id="upload-wrap">
+  <div class="drop-wrap">
+    <div class="drop-zone" id="dz" onclick="document.getElementById('fi').click()">
+      <div class="drop-icon">🏁</div>
+      <h2>Drop your .ibt telemetry file here</h2>
+      <p>Or click to browse &nbsp;·&nbsp; Processed locally — never sent to the internet</p>
+      <input type="file" id="fi" accept=".ibt" style="display:none">
+    </div>
+  </div>
+</div>
+
+<div id="status"></div>
+<div style="text-align:center;padding:0 24px 8px">
+  <button onclick="toggleCompare()" id="btn-compare-toggle"
+          style="background:none;border:1px solid #333;color:#555;padding:5px 16px;
+                 border-radius:6px;font-size:12px;cursor:pointer">
+    ⚖ Compare two files
+  </button>
+</div>
+<div class="compare-wrap" id="compare-wrap">
+  <div style="font-size:13px;font-weight:700;color:#999;margin-bottom:14px">Compare two .ibt files</div>
+  <div class="compare-inputs">
+    <div class="compare-file-group">
+      <label>File A</label>
+      <button class="compare-file-btn" id="cmp-btn-a" onclick="document.getElementById('cmp-fi-a').click()">Choose .ibt file…</button>
+      <input type="file" id="cmp-fi-a" accept=".ibt" style="display:none">
+    </div>
+    <div class="compare-file-group">
+      <label>File B</label>
+      <button class="compare-file-btn" id="cmp-btn-b" onclick="document.getElementById('cmp-fi-b').click()">Choose .ibt file…</button>
+      <input type="file" id="cmp-fi-b" accept=".ibt" style="display:none">
+    </div>
+    <div style="display:flex;align-items:flex-end">
+      <button class="btn-compare-go" id="btn-cmp-go" onclick="runCompare()" disabled>Compare →</button>
+    </div>
+  </div>
+  <div id="compare-results"></div>
+</div>
+<div id="sto-wrap" style="margin-top:16px">
+  <button onclick="toggleStoPanel()" class="btn" style="background:#374151;font-size:.8rem;padding:6px 14px">
+    🔧 Analyze Setup (.sto)
+  </button>
+  <div id="sto-panel" style="display:none;margin-top:10px;background:#1e293b;border-radius:10px;padding:14px">
+    <div id="sto-drop" style="border:2px dashed #374151;border-radius:8px;padding:20px;text-align:center;color:#64748b;font-size:.85rem;cursor:pointer"
+         onclick="document.getElementById('sto-file-input').click()"
+         ondragover="event.preventDefault()"
+         ondrop="handleStoDrop(event)">
+      Drop your .sto setup file here or click to browse
+      <div style="font-size:.75rem;margin-top:6px;color:#4b5563">Parameters decoded and cross-referenced with your telemetry</div>
+    </div>
+    <input type="file" id="sto-file-input" accept=".sto" style="display:none" onchange="handleStoFile(this.files[0])">
+    <div id="sto-loading" style="display:none;text-align:center;padding:16px;color:#555;font-size:13px">Decoding setup…</div>
+    <div id="sto-analysis-output" style="display:none"></div>
+  </div>
+</div>
+<div id="tm-tooltip"></div>
+<div id="results" style="display:none"></div>
+
+<script src="{{ url_for('static', filename='js/visualizations.js') }}"></script>
+<script src="{{ url_for('static', filename='js/setup-analysis.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/heartbeat.js') }}"></script>
+</body>
+</html>
