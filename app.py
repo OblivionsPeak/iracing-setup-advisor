@@ -12,6 +12,7 @@ import socket
 import sys
 import tempfile
 import threading
+import time
 import webbrowser
 
 from flask import Flask, jsonify, request
@@ -457,6 +458,44 @@ def sto_decode_route():
         'row_count': len(rows),
         'mapped_count': sum(1 for r in rows if r.get('is_mapped')),
     })
+
+
+# ── Heartbeat / auto-shutdown (desktop mode only) ────────────────────────────
+_last_heartbeat = time.monotonic()
+_HEARTBEAT_TIMEOUT = 15          # seconds with no heartbeat before shutdown
+_desktop_mode = False             # toggled True only in __main__
+
+
+@app.route('/api/heartbeat')
+def heartbeat():
+    global _last_heartbeat
+    _last_heartbeat = time.monotonic()
+    return '', 200
+
+
+@app.route('/api/shutdown', methods=['POST'])
+def shutdown():
+    # Only allow from localhost
+    if request.remote_addr not in ('127.0.0.1', '::1'):
+        return '', 403
+    if _desktop_mode:
+        threading.Thread(target=_do_shutdown, daemon=True).start()
+    return '', 200
+
+
+def _do_shutdown():
+    """Give Flask a moment to send the 200 response, then exit."""
+    time.sleep(0.5)
+    os._exit(0)
+
+
+def _watchdog():
+    """Background thread: exit if no heartbeat for _HEARTBEAT_TIMEOUT seconds."""
+    while True:
+        time.sleep(3)
+        if time.monotonic() - _last_heartbeat > _HEARTBEAT_TIMEOUT:
+            print("\n[watchdog] No heartbeat received — shutting down.")
+            os._exit(0)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -2579,6 +2618,19 @@ async function saveToLibrary(carKey, trackKey) {
     statusEl.style.color = '#fca5a5';
   }
 }
+
+// ── Heartbeat: keep desktop server alive while tab is open ──────────────
+(function() {
+  var hbTimer = setInterval(function() {
+    fetch('/api/heartbeat').catch(function(){});
+  }, 4000);
+
+  function sendShutdown() {
+    navigator.sendBeacon('/api/shutdown');
+  }
+  window.addEventListener('beforeunload', sendShutdown);
+  window.addEventListener('pagehide',     sendShutdown);
+})();
 </script>
 </body>
 </html>
@@ -2586,6 +2638,13 @@ async function saveToLibrary(carKey, trackKey) {
 
 if __name__ == '__main__':
     try:
+        _desktop_mode = True
+        _last_heartbeat = time.monotonic()
+
+        # Start watchdog thread — auto-shuts down when browser tab closes
+        _wd = threading.Thread(target=_watchdog, daemon=True)
+        _wd.start()
+
         port = _free_port(start=7701)
         url  = f'http://localhost:{port}'
         print(f"\n{'='*52}")
