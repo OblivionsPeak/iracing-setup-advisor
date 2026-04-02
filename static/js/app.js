@@ -862,16 +862,69 @@ function renderLapTimes(lapTimes) {
 function renderRecs(recs) {
   if (!recs || !recs.length)
     return '<p style="color:#444;font-size:13px">No issues flagged \u2014 data looks good, or insufficient data to analyse.</p>';
-  return recs.map(function(r) {
+
+  return recs.map(function(r, idx) {
+    // Per-corner IN·MID·OUT temperature bar
+    var tempBar = '';
+    if (r.values && r.values.inner_f != null) {
+      var v = r.values;
+      var cells = [{label:'IN',val:v.inner_f},{label:'MID',val:v.mid_f},{label:'OUT',val:v.outer_f}];
+      var lo = Math.min(v.inner_f,v.mid_f,v.outer_f), hi = Math.max(v.inner_f,v.mid_f,v.outer_f), rng = hi-lo||1;
+      var cellHtml = cells.map(function(c){
+        var pct=(c.val-lo)/rng;
+        var col=pct<0.33?'#60a5fa':pct<0.66?'#fbbf24':'#f87171';
+        return '<div style="text-align:center;flex:1">'
+          +'<div style="font-size:9px;color:#555;text-transform:uppercase;letter-spacing:.4px">'+c.label+'</div>'
+          +'<div style="font-size:13px;font-weight:700;color:'+col+'">'+c.val+'\u00b0</div>'
+          +'</div>';
+      }).join('<div style="width:1px;background:#222;margin:2px 0"></div>');
+      var spreadLabel = v.spread_f!=null
+        ? '<span style="font-size:10px;color:#888;margin-left:10px">spread '+(v.spread_f>0?'+':'')+v.spread_f+'\u00b0F</span>'
+        : v.crown_f!=null
+        ? '<span style="font-size:10px;color:#888;margin-left:10px">crown '+(v.crown_f>0?'+':'')+v.crown_f+'\u00b0F</span>'
+        : '';
+      tempBar = '<div style="display:flex;align-items:center;gap:0;background:#161616;border-radius:6px;padding:6px 10px;margin:8px 0 4px;width:fit-content">'
+        +cellHtml+spreadLabel+'</div>';
+    }
+
+    // Numbered action steps
+    var actionHtml = '';
+    if (r.action) {
+      actionHtml = '<div class="rec-actions">'
+        + r.action
+          .replace(/\u2460/g,'<span class="rec-step">1</span>')
+          .replace(/\u2461/g,'<span class="rec-step">2</span>')
+          .replace(/\u2462/g,'<span class="rec-step">3</span>')
+          .replace(/\u2463/g,'<span class="rec-step">4</span>')
+          .split('  ').filter(function(s){return s.trim();})
+          .map(function(s){return '<div class="rec-action-row">'+s.trim()+'</div>';})
+          .join('')
+        + '</div>';
+    }
+
+    // Expandable physics explanation
+    var detailHtml = '';
+    if (r.detail) {
+      var uid = 'rd'+idx;
+      detailHtml = '<div class="rec-detail-toggle" onclick="var b=document.getElementById(\''+uid+'\');b.style.display=b.style.display===\'none\'?\'block\':\'none\';this.classList.toggle(\'open\')">Why does this happen?</div>'
+        +'<div id="'+uid+'" class="rec-detail-body" style="display:none">'+r.detail+'</div>';
+    }
+
+    var toeWarn = r.toe_verify
+      ? '<div class="rec-toe-warn">\u26a0 Toe adjustment \u2014 verify current toe angle and series legal limits before applying.</div>' : '';
+
     return '<div class="rec '+r.priority+'">'
-      + '<div class="rec-head">'
-      + '<span class="rec-cat">'+r.category+'</span>'
-      + '<span class="rec-corner">'+r.corner+'</span>'
-      + '</div>'
-      + '<div class="rec-issue">'+r.issue+'</div>'
-      + '<div class="rec-action">\u2192 '+r.action+'</div>'
-      + (r.toe_verify ? '<div style="color:#f59e0b;font-size:.75rem;margin-top:4px">\u26a0 Toe adjustment suggested \u2014 iRacing telemetry does not report current toe angle. Verify the change is within your series\' legal adjustment range before applying.</div>' : '')
-      + '</div>';
+      +'<div class="rec-head">'
+      +'<span class="rec-cat">'+r.category+'</span>'
+      +'<span class="rec-corner">'+r.corner+'</span>'
+      +'<span class="rec-pri-badge '+r.priority+'">'+r.priority+'</span>'
+      +'</div>'
+      +'<div class="rec-issue">'+r.issue+'</div>'
+      +tempBar
+      +actionHtml
+      +toeWarn
+      +detailHtml
+      +'</div>';
   }).join('');
 }
 
